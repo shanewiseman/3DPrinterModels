@@ -1,0 +1,32 @@
+{
+  "input": "cad_outputs/arduino_giga_r1_enclosure_lid_inner_wall_removed.step",
+  "mode": "view",
+  "outputs": [
+    {
+      "path": "cad_outputs/snapshots/revised_iso.png",
+      "camera": "iso"
+    },
+    {
+      "path": "cad_outputs/snapshots/revised_underside.png",
+      "camera": {
+        "direction": [-1, 1, 0.8]
+      }
+    },
+    {
+      "path": "cad_outputs/snapshots/revised_top.png",
+      "camera": "top"
+    },
+    {
+      "path": "cad_outputs/snapshots/revised_front.png",
+      "camera": "front"
+    }
+  ],
+  "display": {
+    "mode": "solid"
+  },
+  "render": {
+    "viewLabels": true,
+    "padding": 0.12,
+    "sizeProfile": "diagnostic"
+  }
+}

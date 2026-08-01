@@ -1,0 +1,36 @@
+{
+  "input": "wpc_25mm_open_end_wrench.step",
+  "mode": "view",
+  "outputs": [
+    {
+      "path": "snapshots/wrench_iso.png",
+      "camera": "iso"
+    },
+    {
+      "path": "snapshots/wrench_iso_opposite.png",
+      "camera": {
+        "direction": [-1, 1, -0.8]
+      }
+    },
+    {
+      "path": "snapshots/wrench_top.png",
+      "camera": "top"
+    },
+    {
+      "path": "snapshots/wrench_bottom.png",
+      "camera": "bottom"
+    },
+    {
+      "path": "snapshots/wrench_front_color_split.png",
+      "camera": "front"
+    }
+  ],
+  "display": {
+    "mode": "solid"
+  },
+  "render": {
+    "viewLabels": true,
+    "padding": 0.12,
+    "sizeProfile": "diagnostic"
+  }
+}

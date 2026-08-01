@@ -1,0 +1,71 @@
+{
+  "jobs": [
+    {
+      "input": "cad_outputs/snapfit_enclosure/arduino_giga_r1_enclosure_lid_snapfit.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "cad_outputs/snapfit_enclosure/snapshots/lid_thick_top_iso.png",
+          "camera": "iso"
+        },
+        {
+          "path": "cad_outputs/snapfit_enclosure/snapshots/lid_thick_top_underside.png",
+          "camera": {
+            "direction": [-1, 1, 0.8]
+          }
+        },
+        {
+          "path": "cad_outputs/snapfit_enclosure/snapshots/lid_thick_top_front.png",
+          "camera": "front"
+        }
+      ],
+      "display": {
+        "mode": "solid"
+      },
+      "render": {
+        "viewLabels": true,
+        "padding": 0.1,
+        "sizeProfile": "diagnostic"
+      }
+    },
+    {
+      "input": "cad_outputs/snapfit_enclosure/arduino_giga_r1_enclosure_lid_snapfit.step",
+      "mode": "section",
+      "section": {
+        "plane": "XZ",
+        "offset": 0.0
+      },
+      "outputs": [
+        {
+          "path": "cad_outputs/snapfit_enclosure/snapshots/lid_thick_top_section_xz.png"
+        }
+      ],
+      "render": {
+        "viewLabels": true,
+        "sizeProfile": "section"
+      }
+    },
+    {
+      "input": "cad_outputs/snapfit_enclosure/arduino_giga_r1_enclosure_snapfit_print_layout.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "cad_outputs/snapfit_enclosure/snapshots/print_layout_thick_top_iso.png",
+          "camera": "iso"
+        },
+        {
+          "path": "cad_outputs/snapfit_enclosure/snapshots/print_layout_thick_top_front.png",
+          "camera": "front"
+        }
+      ],
+      "display": {
+        "mode": "solid"
+      },
+      "render": {
+        "viewLabels": true,
+        "padding": 0.08,
+        "sizeProfile": "assembly"
+      }
+    }
+  ]
+}

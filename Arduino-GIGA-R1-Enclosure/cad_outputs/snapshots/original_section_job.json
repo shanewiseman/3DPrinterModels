@@ -1,0 +1,17 @@
+{
+  "input": "cad_outputs/arduino_giga_r1_enclosure_lid_original.step",
+  "mode": "section",
+  "section": {
+    "plane": "XY",
+    "offset": 18.0
+  },
+  "outputs": [
+    {
+      "path": "cad_outputs/snapshots/original_section_z18.png"
+    }
+  ],
+  "render": {
+    "viewLabels": true,
+    "sizeProfile": "section"
+  }
+}
