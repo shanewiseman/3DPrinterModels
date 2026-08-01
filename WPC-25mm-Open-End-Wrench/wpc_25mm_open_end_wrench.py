@@ -44,10 +44,12 @@ HANDLE_LENGTH = 4.0 * 25.4
 HEAD_RADIUS = 27.0
 HEAD_REAR_DATUM_X = -HEAD_RADIUS
 JAW_THROAT_X = -2.0
-JAW_CUT_END_X = 43.0
-JAW_TIP_CENTER_X = 29.0
+JAW_PARALLEL_LENGTH = 30.0
 JAW_TIP_CENTER_Y = 18.0
 JAW_TIP_RADIUS = 9.0
+JAW_MOUTH_X = JAW_THROAT_X + JAW_PARALLEL_LENGTH
+JAW_TIP_CENTER_X = JAW_MOUTH_X - JAW_TIP_RADIUS
+JAW_CUT_END_X = JAW_MOUTH_X + 5.0
 
 # Strength-oriented neck and ergonomic handle geometry.
 NECK_CENTER_X = -24.0
@@ -60,21 +62,28 @@ HANDLE_END_X = HEAD_REAR_DATUM_X - HANDLE_LENGTH
 HANDLE_END_RADIUS = 14.0
 HANDLE_END_CENTER_X = HANDLE_END_X + HANDLE_END_RADIUS
 FINGER_CONTOUR_RADIUS = 210.0
-FINGER_CONTOUR_CENTER_X = -80.0
+HANDLE_MIDPOINT_X = (HANDLE_END_X + HEAD_REAR_DATUM_X) / 2.0
+FINGER_CONTOUR_CENTER_X = HANDLE_MIDPOINT_X
 FINGER_CONTOUR_CENTER_Y = -224.0
-HANDLE_EDGE_FILLET = 3.0
+EXTERNAL_EDGE_FILLET = 2.0
+EDGE_CLASSIFICATION_TOLERANCE = 1e-5
 
 # Two-color split and photo-inspired logo inlay.
 SECONDARY_LAYER_THICKNESS = 5.0
 LOGO_INLAY_DEPTH = 0.8
-LOGO_CENTER_X = -80.0
-LOGO_CENTER_Y = 1.5
-LOGO_OUTER_RADIUS = 15.5
-LOGO_OUTER_RING_WIDTH = 0.75
-LOGO_INNER_RING_RADIUS = 10.8
-LOGO_INNER_RING_WIDTH = 0.60
-LOGO_TOP_TEXT_RADIUS = 13.25
-LOGO_BOTTOM_TEXT_RADIUS = 13.15
+LOGO_NECK_SEARCH_MIN_X = -60.0
+LOGO_NECK_SEARCH_MAX_X = HEAD_REAR_DATUM_X
+LOGO_CENTER_X = -49.7
+LOGO_CENTER_Y = 0.0
+LOGO_REFERENCE_OUTER_RADIUS = 15.5
+LOGO_OUTER_RADIUS = 12.5
+LOGO_SCALE = LOGO_OUTER_RADIUS / LOGO_REFERENCE_OUTER_RADIUS
+LOGO_OUTER_RING_WIDTH = 0.75 * LOGO_SCALE
+LOGO_INNER_RING_RADIUS = 10.8 * LOGO_SCALE
+LOGO_INNER_RING_WIDTH = 0.60 * LOGO_SCALE
+LOGO_TOP_TEXT_RADIUS = 13.25 * LOGO_SCALE
+LOGO_BOTTOM_TEXT_RADIUS = 13.15 * LOGO_SCALE
+LOGO_EDGE_CLEARANCE = 1.0
 BOOLEAN_OVERSHOOT = 0.2
 
 PRIMARY_COLOR = Color(0.18, 0.22, 0.28)
@@ -143,28 +152,48 @@ def _unfilleted_body():
     return body
 
 
-def _round_handle_edges(body):
-    """Round the palm/back broad-face edges while keeping jaw flats crisp."""
-    selected = []
-    tolerance = 1e-5
-    for edge in body.edges():
-        bounds = edge.bounding_box()
-        on_bottom = abs(bounds.min.Z) <= tolerance and abs(bounds.max.Z) <= tolerance
-        on_top = (
-            abs(bounds.min.Z - PROFILE_DEPTH) <= tolerance
-            and abs(bounds.max.Z - PROFILE_DEPTH) <= tolerance
-        )
-        entirely_handle_side = bounds.max.X <= HEAD_REAR_DATUM_X + tolerance
-        palm_side = bounds.min.Y >= -tolerance
-        rounded_handle_end = bounds.min.X <= HANDLE_END_X + HANDLE_END_RADIUS * 0.9
-        if (on_bottom or on_top) and entirely_handle_side and (
-            palm_side or rounded_handle_end
-        ):
-            selected.append(edge)
+def _is_jaw_inlet_edge(edge, body_max_x: float):
+    """Protect the jaw flats, throat, and complete open tip faces from fillets."""
+    bounds = edge.bounding_box()
+    tolerance = EDGE_CLASSIFICATION_TOLERANCE
+    jaw_half_gap = JAW_OPENING / 2.0
+
+    on_upper_flat = (
+        bounds.min.X >= JAW_THROAT_X - tolerance
+        and abs(bounds.min.Y - jaw_half_gap) <= tolerance
+        and abs(bounds.max.Y - jaw_half_gap) <= tolerance
+    )
+    on_lower_flat = (
+        bounds.min.X >= JAW_THROAT_X - tolerance
+        and abs(bounds.min.Y + jaw_half_gap) <= tolerance
+        and abs(bounds.max.Y + jaw_half_gap) <= tolerance
+    )
+    on_throat = (
+        edge.geom_type.name == "CIRCLE"
+        and abs(bounds.min.X - (JAW_THROAT_X - jaw_half_gap)) <= tolerance
+        and abs(bounds.max.X - JAW_THROAT_X) <= tolerance
+        and abs(bounds.min.Y + jaw_half_gap) <= tolerance
+        and abs(bounds.max.Y - jaw_half_gap) <= tolerance
+    )
+    on_open_tip = (
+        abs(bounds.min.X - body_max_x) <= tolerance
+        and abs(bounds.max.X - body_max_x) <= tolerance
+    )
+    return on_upper_flat or on_lower_flat or on_throat or on_open_tip
+
+
+def _round_external_edges(body):
+    """Round every exposed sharp edge except the bolt-entry interface."""
+    body_max_x = body.bounding_box().max.X
+    selected = [
+        edge
+        for edge in body.edges()
+        if not _is_jaw_inlet_edge(edge, body_max_x)
+    ]
 
     if not selected:
-        raise RuntimeError("No handle perimeter edges were found for comfort fillets")
-    rounded = fillet(selected, radius=HANDLE_EDGE_FILLET)
+        raise RuntimeError("No external edges were found for comfort fillets")
+    rounded = fillet(selected, radius=EXTERNAL_EDGE_FILLET)
     rounded.label = body.label
     return rounded
 
@@ -216,14 +245,14 @@ def _logo_profile():
             LOGO_TOP_TEXT_RADIUS,
             156.0,
             24.0,
-            2.15,
+            2.15 * LOGO_SCALE,
         )
         _arc_text(
             "CARTRIDGES",
             LOGO_BOTTOM_TEXT_RADIUS,
             204.0,
             336.0,
-            2.05,
+            2.05 * LOGO_SCALE,
             bottom_arc=True,
         )
 
@@ -235,35 +264,35 @@ def _logo_profile():
                     LOGO_CENTER_Y + LOGO_TOP_TEXT_RADIUS * sin(radians(angle)),
                 )
             ):
-                Circle(0.55)
+                Circle(0.55 * LOGO_SCALE)
 
         # Central stacked monogram and compact location/established details.
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y + 3.7)):
+        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y + 3.7 * LOGO_SCALE)):
             Text(
                 "W",
-                font_size=8.0,
+                font_size=8.0 * LOGO_SCALE,
                 font=SERIF_FONT,
                 font_style=FontStyle.BOLD,
             )
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 1.0)):
+        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 1.0 * LOGO_SCALE)):
             Text(
                 "PC",
-                font_size=6.2,
+                font_size=6.2 * LOGO_SCALE,
                 font=SERIF_FONT,
             )
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 5.2)):
+        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 5.2 * LOGO_SCALE)):
             Text(
                 "ACTON, MA",
-                font_size=1.35,
+                font_size=1.35 * LOGO_SCALE,
                 font=SANS_FONT,
                 font_style=FontStyle.BOLD,
             )
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 6.4)):
-            Rectangle(11.5, 0.30)
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 7.6)):
+        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 6.4 * LOGO_SCALE)):
+            Rectangle(11.5 * LOGO_SCALE, 0.30 * LOGO_SCALE)
+        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 7.6 * LOGO_SCALE)):
             Text(
                 "EST. 2026",
-                font_size=1.25,
+                font_size=1.25 * LOGO_SCALE,
                 font=SANS_FONT,
                 font_style=FontStyle.BOLD,
             )
@@ -302,7 +331,7 @@ def _single_solid(shape_or_shapes, feature_name: str):
 
 def build_wrench_details():
     """Return the labeled color bodies plus validation intermediates."""
-    full_body = _round_handle_edges(_unfilleted_body())
+    full_body = _round_external_edges(_unfilleted_body())
 
     secondary_layer = _single_solid(
         full_body.intersect(

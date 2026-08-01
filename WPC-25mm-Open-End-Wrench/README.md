@@ -13,13 +13,16 @@ Parametric STEP-first, multi-material model of a printable open-end wrench for a
 ## Key dimensions
 
 - Jaw opening: 25.4 mm, including 0.4 mm total first-print clearance.
+- Parallel jaw section: 30.0 mm from the throat tangent to the mouth.
+- Total inlet depth: 42.7 mm including the rounded throat.
 - Part thickness: 25.0 mm.
 - Handle length: 101.6 mm (4.000 in) from the rear head datum to the handle end.
-- Overall envelope: approximately 166.6 × 54.0 × 25.0 mm.
+- Overall envelope: approximately 156.6 × 54.0 × 25.0 mm.
 - Measured reinforced neck width: 29.22 mm at the validation section.
-- Finger grip: one shallow continuous R210 lower-edge contour.
+- Finger grip: one shallow continuous R210 lower-edge contour with its peak at X=-77.8 mm, the exact midpoint of the handle-only span.
+- Edge treatment: 2 mm comfort fillets on all exposed sharp edges except the bolt-entry flats, throat, and jaw-tip inlet edges.
 - Secondary-color build-plate layer: complete Z=0..5 mm volume.
-- Logo: 31 mm photo-inspired Wiseman Precision design, flush-inlaid 0.8 mm into the top face as a separate secondary-color body.
+- Logo: 25 mm photo-inspired Wiseman Precision design, flush-inlaid 0.8 mm into the top face as a separate secondary-color body. It is centered at X=-49.7 mm, Y=0 on the widest usable flat neck section and retains more than 1 mm clearance from the rounded top perimeter.
 
 ## Color-body structure
 
