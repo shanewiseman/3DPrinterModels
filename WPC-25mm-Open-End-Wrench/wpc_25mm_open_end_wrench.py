@@ -1,16 +1,14 @@
-"""Parametric two-color 25 mm open-end wrench for FDM prototyping.
+"""Parametric two-piece, two-color 25 mm open-end wrench for FDM prototyping.
 
 Coordinate convention:
 - XY is the wrench profile.
-- +Z is the 25 mm extrusion direction.
+- +Z is the 15 mm extrusion direction.
 - The nominal bolt center is at XY=(0, 0).
 - The jaw opens toward +X and the handle extends toward -X.
 - Z=0..5 mm is the secondary-color build-plate layer.
 """
 
 from __future__ import annotations
-
-from math import cos, radians, sin
 
 from build123d import (
     Align,
@@ -20,24 +18,28 @@ from build123d import (
     Color,
     Compound,
     FontStyle,
+    Kind,
     Location,
     Locations,
     Mode,
     Plane,
+    Polygon,
     Rectangle,
     Text,
     add,
     extrude,
     fillet,
     make_hull,
+    offset,
 )
+from cadpy.assembly import AssemblyHelper
 
 
 # User-controlled dimensions.
 NOMINAL_FASTENER_AF = 25.0
 JAW_CLEARANCE = 0.4
 JAW_OPENING = NOMINAL_FASTENER_AF + JAW_CLEARANCE
-PROFILE_DEPTH = 25.0
+PROFILE_DEPTH = 15.0
 HANDLE_LENGTH = 4.0 * 25.4
 
 # Head and jaw geometry.
@@ -68,6 +70,16 @@ FINGER_CONTOUR_CENTER_Y = -224.0
 EXTERNAL_EDGE_FILLET = 2.0
 EDGE_CLASSIFICATION_TOLERANCE = 1e-5
 
+# Two-piece split, single sliding dovetail, and slicer-ready print layout.
+SPLIT_X = -64.0
+CONNECTOR_LENGTH = 12.0
+DOVETAIL_NECK_WIDTH = 10.0
+DOVETAIL_TAIL_WIDTH = 18.0
+CONNECTOR_CLEARANCE = 0.25
+CONNECTOR_ROOT_OVERLAP = 0.5
+PRINT_LAYOUT_HANDLE_OFFSET_Y = 50.0
+PRINT_LAYOUT_MINIMUM_GAP = 5.0
+
 # Two-color split and photo-inspired logo inlay.
 SECONDARY_LAYER_THICKNESS = 5.0
 LOGO_INLAY_DEPTH = 0.8
@@ -75,21 +87,19 @@ LOGO_NECK_SEARCH_MIN_X = -60.0
 LOGO_NECK_SEARCH_MAX_X = HEAD_REAR_DATUM_X
 LOGO_CENTER_X = -49.7
 LOGO_CENTER_Y = 0.0
-LOGO_REFERENCE_OUTER_RADIUS = 15.5
 LOGO_OUTER_RADIUS = 12.5
-LOGO_SCALE = LOGO_OUTER_RADIUS / LOGO_REFERENCE_OUTER_RADIUS
-LOGO_OUTER_RING_WIDTH = 0.75 * LOGO_SCALE
-LOGO_INNER_RING_RADIUS = 10.8 * LOGO_SCALE
-LOGO_INNER_RING_WIDTH = 0.60 * LOGO_SCALE
-LOGO_TOP_TEXT_RADIUS = 13.25 * LOGO_SCALE
-LOGO_BOTTOM_TEXT_RADIUS = 13.15 * LOGO_SCALE
+LOGO_OUTER_RING_WIDTH = 0.60
+LOGO_INNER_RING_RADIUS = 8.70
+LOGO_INNER_RING_WIDTH = 0.50
+LOGO_TEXT = "WPC"
+LOGO_TEXT_SIZE = 6.0
+LOGO_FONT_STYLE = FontStyle.BOLD
 LOGO_EDGE_CLEARANCE = 1.0
 BOOLEAN_OVERSHOOT = 0.2
 
 PRIMARY_COLOR = Color(0.18, 0.22, 0.28)
 SECONDARY_COLOR = Color(0.95, 0.55, 0.08)
 SERIF_FONT = "DejaVu Serif"
-SANS_FONT = "DejaVu Sans"
 
 
 def _head_profile():
@@ -198,105 +208,97 @@ def _round_external_edges(body):
     return rounded
 
 
-def _arc_text(
-    text: str,
-    radius: float,
-    start_angle: float,
-    end_angle: float,
-    font_size: float,
-    bottom_arc: bool = False,
-):
-    """Add individually rotated characters to the active BuildSketch."""
-    if len(text) < 2:
-        angles = [start_angle]
-    else:
-        angles = [
-            start_angle + (end_angle - start_angle) * index / (len(text) - 1)
-            for index in range(len(text))
-        ]
-
-    for character, angle in zip(text, angles):
-        if character == " ":
-            continue
-        x = LOGO_CENTER_X + radius * cos(radians(angle))
-        y = LOGO_CENTER_Y + radius * sin(radians(angle))
-        rotation = angle + 90.0 if bottom_arc else angle - 90.0
-        with Locations((x, y)):
-            Text(
-                character,
-                font_size=font_size,
-                font=SERIF_FONT,
-                font_style=FontStyle.BOLD,
-                rotation=rotation,
-            )
-
-
 def _logo_profile():
-    """Printable vector interpretation of the supplied Wiseman logo image."""
+    """Simplified bold WPC monogram retained inside two concentric rings."""
     with BuildSketch(Plane.XY) as logo:
         with Locations((LOGO_CENTER_X, LOGO_CENTER_Y)):
             Circle(LOGO_OUTER_RADIUS)
             Circle(LOGO_OUTER_RADIUS - LOGO_OUTER_RING_WIDTH, mode=Mode.SUBTRACT)
             Circle(LOGO_INNER_RING_RADIUS)
             Circle(LOGO_INNER_RING_RADIUS - LOGO_INNER_RING_WIDTH, mode=Mode.SUBTRACT)
-
-        _arc_text(
-            "WISEMAN PRECISION",
-            LOGO_TOP_TEXT_RADIUS,
-            156.0,
-            24.0,
-            2.15 * LOGO_SCALE,
-        )
-        _arc_text(
-            "CARTRIDGES",
-            LOGO_BOTTOM_TEXT_RADIUS,
-            204.0,
-            336.0,
-            2.05 * LOGO_SCALE,
-            bottom_arc=True,
-        )
-
-        # Separator dots from the reference artwork.
-        for angle in (192.0, 348.0):
-            with Locations(
-                (
-                    LOGO_CENTER_X + LOGO_TOP_TEXT_RADIUS * cos(radians(angle)),
-                    LOGO_CENTER_Y + LOGO_TOP_TEXT_RADIUS * sin(radians(angle)),
-                )
-            ):
-                Circle(0.55 * LOGO_SCALE)
-
-        # Central stacked monogram and compact location/established details.
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y + 3.7 * LOGO_SCALE)):
+        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y)):
             Text(
-                "W",
-                font_size=8.0 * LOGO_SCALE,
+                LOGO_TEXT,
+                font_size=LOGO_TEXT_SIZE,
                 font=SERIF_FONT,
-                font_style=FontStyle.BOLD,
-            )
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 1.0 * LOGO_SCALE)):
-            Text(
-                "PC",
-                font_size=6.2 * LOGO_SCALE,
-                font=SERIF_FONT,
-            )
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 5.2 * LOGO_SCALE)):
-            Text(
-                "ACTON, MA",
-                font_size=1.35 * LOGO_SCALE,
-                font=SANS_FONT,
-                font_style=FontStyle.BOLD,
-            )
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 6.4 * LOGO_SCALE)):
-            Rectangle(11.5 * LOGO_SCALE, 0.30 * LOGO_SCALE)
-        with Locations((LOGO_CENTER_X, LOGO_CENTER_Y - 7.6 * LOGO_SCALE)):
-            Text(
-                "EST. 2026",
-                font_size=1.25 * LOGO_SCALE,
-                font=SANS_FONT,
-                font_style=FontStyle.BOLD,
+                font_style=LOGO_FONT_STYLE,
             )
     return logo.sketch
+
+
+def _x_slice_box(x_min: float, x_max: float):
+    """Oversized box spanning an X partition and the complete wrench depth."""
+    return Box(
+        x_max - x_min,
+        100.0,
+        PROFILE_DEPTH + 2.0 * BOOLEAN_OVERSHOOT,
+    ).moved(
+        Location(
+            (
+                (x_min + x_max) / 2.0,
+                0.0,
+                PROFILE_DEPTH / 2.0,
+            )
+        )
+    )
+
+
+def _dovetail_connector(clearance: float = 0.0, through_cutter: bool = False):
+    """Single plan-view dovetail, narrow at the jaw and flared in the handle."""
+    root_x = SPLIT_X + CONNECTOR_ROOT_OVERLAP
+    tail_x = SPLIT_X - CONNECTOR_LENGTH
+    neck_half_width = DOVETAIL_NECK_WIDTH / 2.0
+    tail_half_width = DOVETAIL_TAIL_WIDTH / 2.0
+
+    with BuildSketch(Plane.XY) as dovetail:
+        Polygon(
+            (root_x, -neck_half_width),
+            (root_x, neck_half_width),
+            (tail_x, tail_half_width),
+            (tail_x, -tail_half_width),
+        )
+        if clearance > 0.0:
+            offset(amount=clearance, kind=Kind.INTERSECTION)
+    z_min = -BOOLEAN_OVERSHOOT if through_cutter else 0.0
+    z_max = (
+        PROFILE_DEPTH + BOOLEAN_OVERSHOOT
+        if through_cutter
+        else PROFILE_DEPTH
+    )
+    connector = extrude(dovetail.sketch, amount=z_max - z_min).moved(
+        Location((0.0, 0.0, z_min))
+    )
+    return _single_solid(connector, "dovetail connector")
+
+
+def _split_mechanical_body(full_body):
+    """Create two mating solids with one male dovetail on the jaw section."""
+    jaw_partition = _single_solid(
+        full_body.intersect(_x_slice_box(SPLIT_X, JAW_MOUTH_X + 10.0)),
+        "jaw partition",
+    )
+    handle_partition = _single_solid(
+        full_body.intersect(_x_slice_box(HANDLE_END_X - 10.0, SPLIT_X)),
+        "handle partition",
+    )
+    male_connector = _dovetail_connector()
+    female_cutter = _dovetail_connector(
+        CONNECTOR_CLEARANCE,
+        through_cutter=True,
+    )
+    jaw_piece = _single_solid(
+        jaw_partition.fuse(male_connector),
+        "jaw piece with male connector",
+    )
+    handle_piece = _single_solid(
+        handle_partition.cut(female_cutter),
+        "handle piece with female connector",
+    )
+    jaw_piece.label = "jaw_piece_mechanical_body"
+    handle_piece.label = "handle_piece_mechanical_body"
+    male_connector.label = "male_single_dovetail"
+    female_cutter.label = "female_single_dovetail_socket_clearance"
+    return jaw_piece, handle_piece, male_connector, female_cutter
 
 
 def _slice_box(z_min: float, z_max: float):
@@ -309,13 +311,13 @@ def _slice_box(z_min: float, z_max: float):
 def _labeled_logo_compound(logo_intersection):
     logo_solids = list(logo_intersection.solids())
     if not logo_solids:
-        raise RuntimeError("Logo profile did not intersect the wrench palm")
+        raise RuntimeError("Logo profile did not intersect the jaw-side neck")
     for index, solid in enumerate(logo_solids, start=1):
         solid.label = f"logo_inlay_{index:02d}"
         solid.color = SECONDARY_COLOR
     return Compound(
         children=logo_solids,
-        label="wiseman_precision_logo_inlay",
+        label="bold_wpc_two_circle_logo_inlay",
         color=SECONDARY_COLOR,
     )
 
@@ -330,47 +332,95 @@ def _single_solid(shape_or_shapes, feature_name: str):
 
 
 def build_wrench_details():
-    """Return the labeled color bodies plus validation intermediates."""
+    """Return two keyed mechanical pieces with labeled multi-color bodies."""
     full_body = _round_external_edges(_unfilleted_body())
+    jaw_piece, handle_piece, male_connector, female_cutter = (
+        _split_mechanical_body(full_body)
+    )
 
-    secondary_layer = _single_solid(
-        full_body.intersect(
+    jaw_secondary_layer = _single_solid(
+        jaw_piece.intersect(
             _slice_box(-BOOLEAN_OVERSHOOT, SECONDARY_LAYER_THICKNESS)
         ),
-        "secondary layer",
+        "jaw secondary layer",
     )
-    primary_blank = _single_solid(
-        full_body.intersect(
+    jaw_primary_blank = _single_solid(
+        jaw_piece.intersect(
             _slice_box(SECONDARY_LAYER_THICKNESS, PROFILE_DEPTH + BOOLEAN_OVERSHOOT)
         ),
-        "primary layer",
+        "jaw primary layer",
+    )
+    handle_secondary_layer = _single_solid(
+        handle_piece.intersect(
+            _slice_box(-BOOLEAN_OVERSHOOT, SECONDARY_LAYER_THICKNESS)
+        ),
+        "handle secondary layer",
+    )
+    handle_primary_body = _single_solid(
+        handle_piece.intersect(
+            _slice_box(SECONDARY_LAYER_THICKNESS, PROFILE_DEPTH + BOOLEAN_OVERSHOOT)
+        ),
+        "handle primary layer",
     )
 
     logo_prism = extrude(
         _logo_profile(),
         amount=LOGO_INLAY_DEPTH + BOOLEAN_OVERSHOOT,
     ).moved(Location((0.0, 0.0, PROFILE_DEPTH - LOGO_INLAY_DEPTH)))
-    logo_intersection = primary_blank.intersect(logo_prism)
-    primary_body = _single_solid(primary_blank.cut(logo_prism), "primary logo pocket")
+    logo_intersection = jaw_primary_blank.intersect(logo_prism)
+    jaw_primary_body = _single_solid(
+        jaw_primary_blank.cut(logo_prism),
+        "jaw primary logo pocket",
+    )
 
-    primary_body.label = "primary_wrench_body"
-    primary_body.color = PRIMARY_COLOR
-    secondary_layer.label = "secondary_5mm_surface_layer"
-    secondary_layer.color = SECONDARY_COLOR
+    jaw_primary_body.label = "jaw_piece_primary_body"
+    jaw_primary_body.color = PRIMARY_COLOR
+    jaw_secondary_layer.label = "jaw_piece_secondary_5mm_layer"
+    jaw_secondary_layer.color = SECONDARY_COLOR
+    handle_primary_body.label = "handle_piece_primary_body"
+    handle_primary_body.color = PRIMARY_COLOR
+    handle_secondary_layer.label = "handle_piece_secondary_5mm_layer"
+    handle_secondary_layer.color = SECONDARY_COLOR
     logo_inlay = _labeled_logo_compound(logo_intersection)
 
-    final = Compound(
-        children=[primary_body, secondary_layer, logo_inlay],
-        label="wpc_25mm_open_end_wrench_two_color",
+    # Export the two modules in a print layout rather than their mated pose.
+    # Both remain broad-face-down at Z=0; the handle moves only in +Y.
+    handle_layout_location = Location((0.0, PRINT_LAYOUT_HANDLE_OFFSET_Y, 0.0))
+    handle_primary_layout = handle_primary_body.moved(handle_layout_location)
+    handle_secondary_layout = handle_secondary_layer.moved(handle_layout_location)
+    handle_primary_layout.label = "handle_piece_primary_body"
+    handle_primary_layout.color = PRIMARY_COLOR
+    handle_secondary_layout.label = "handle_piece_secondary_5mm_layer"
+    handle_secondary_layout.color = SECONDARY_COLOR
+
+    assembly = AssemblyHelper("wpc_25mm_open_end_wrench_two_object_print_layout")
+    jaw_module = assembly.add_module(
+        "jaw_piece",
+        [jaw_primary_body, jaw_secondary_layer, logo_inlay],
     )
+    handle_module = assembly.add_module(
+        "handle_piece",
+        [handle_primary_layout, handle_secondary_layout],
+    )
+    final = assembly.build()
 
     return {
         "final": final,
         "full_body": full_body,
-        "primary_body": primary_body,
-        "secondary_layer": secondary_layer,
+        "jaw_piece": jaw_piece,
+        "handle_piece": handle_piece,
+        "male_connector": male_connector,
+        "female_cutter": female_cutter,
+        "jaw_primary_body": jaw_primary_body,
+        "jaw_secondary_layer": jaw_secondary_layer,
+        "handle_primary_body": handle_primary_body,
+        "handle_secondary_layer": handle_secondary_layer,
+        "handle_primary_layout": handle_primary_layout,
+        "handle_secondary_layout": handle_secondary_layout,
         "logo_inlay": logo_inlay,
         "logo_prism": logo_prism,
+        "jaw_module": jaw_module,
+        "handle_module": handle_module,
     }
 
 

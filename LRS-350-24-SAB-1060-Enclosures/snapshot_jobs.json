@@ -1,0 +1,37 @@
+{
+  "jobs": [
+    {
+      "input": "lrs_350_24_print_set.step",
+      "mode": "view",
+      "outputs": [
+        {"path": "snapshots/lrs_print_iso.png", "camera": "iso"},
+        {"path": "snapshots/lrs_print_iso_opposite.png", "camera": {"direction": [-1, 1, -0.8]}},
+        {"path": "snapshots/lrs_print_top.png", "camera": "top"},
+        {"path": "snapshots/lrs_print_front.png", "camera": "front"}
+      ],
+      "render": {"viewLabels": true, "padding": 0.12, "sizeProfile": "diagnostic"}
+    },
+    {
+      "input": "sab_1060_print_set.step",
+      "mode": "view",
+      "outputs": [
+        {"path": "snapshots/sab_print_iso.png", "camera": "iso"},
+        {"path": "snapshots/sab_print_iso_opposite.png", "camera": {"direction": [-1, 1, -0.8]}},
+        {"path": "snapshots/sab_print_top.png", "camera": "top"},
+        {"path": "snapshots/sab_print_front.png", "camera": "front"}
+      ],
+      "render": {"viewLabels": true, "padding": 0.12, "sizeProfile": "diagnostic"}
+    },
+    {
+      "input": "enclosure_fit_check.step",
+      "mode": "view",
+      "outputs": [
+        {"path": "snapshots/enclosure_fit_iso.png", "camera": "iso"},
+        {"path": "snapshots/enclosure_fit_iso_opposite.png", "camera": {"direction": [-1, 1, -0.8]}},
+        {"path": "snapshots/enclosure_fit_top.png", "camera": "top"},
+        {"path": "snapshots/enclosure_fit_front.png", "camera": "front"}
+      ],
+      "render": {"viewLabels": true, "padding": 0.12, "sizeProfile": "assembly"}
+    }
+  ]
+}

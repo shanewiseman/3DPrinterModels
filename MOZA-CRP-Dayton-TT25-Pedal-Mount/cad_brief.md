@@ -1,0 +1,17 @@
+# CAD brief
+
+- Model: one-piece perpendicular Dayton Audio TT25-8 carrier with a short reinforced lever and a two-arm yoke around the original MOZA CRP upper pivot.
+- Task type: source modification of the printable holder and installed-pose fit-check assembly.
+- Units: millimeters.
+- Inputs: the existing validated TT25 carrier, Dayton Audio's official TT25 STEP, and the user's instruction that the puck face be 90 degrees to the pedal with arms on both sides of the pedal mount.
+- Coordinate convention: global X is the pedal pivot axis; the pedal side plane is YZ; the puck carrier face is XZ; the pivot is XYZ=(0,0,0); the puck center is XYZ=(0,-26,65).
+- Orientation: puck face XZ and pedal side YZ have perpendicular normals, producing the requested 90 degree relationship.
+- Puck carrier: 106 mm outside diameter, 8.5 mm thick, 70.5 mm through relief, 82.0 mm × 1.7 mm rear-cover seat, exact six-hole Dayton pattern, six M3 nut pockets, and an enclosed 10 mm cable pass-through at the bottom. The hole is centered on the exact midpoint of the lower manufacturer screw pair, sits within the gap between the yoke arms, retains approximately 3.9 mm of material on both radial sides, and clears either arm by at least 5.1 mm.
+- Lever/yoke: two 4.5 mm arms grow from 33 mm pivot bosses through tapered lever profiles into the front side of the carrier. The lever pads overlap 4.25 mm into the carrier and do not cross the puck seating face.
+- Pedal interface assumption: 20.0 mm pedal pivot width with 0.6 mm total side clearance, giving a 20.6 mm clear yoke span. The dimension is parametric because MOZA does not publish this exposed stack width.
+- M8 interface: 8.6 mm coaxial bores across both arms; matching 13.4 mm AF receivers in symmetrically thickened outer bosses; 6.8 mm pocket depth and 4.0 mm printed support floor on each side; at least 8.76 mm radial material beyond the pocket corners. Either receiver can capture the nut while the opposite one nests the socket head.
+- Hardware fit check: bored standard M8 nut and M8 × 40 socket-head reference bolt with threads omitted, plus a bored 20 mm pedal-pivot envelope between the arms.
+- Manufacturing: one printable solid. In the slicer, rotate the part so the broad puck-carrier face lies on the bed; use tree/organic support beneath the raised yoke. Prefer ASA/ABS, PA, PA-CF, or PET-CF; PETG is the minimum prototype material.
+- Paths: `moza_crp_dayton_tt25_mount.py` → printable STEP; `moza_crp_dayton_tt25_fit_check.py` → official-puck, pedal-envelope, and hardware assembly; `reference/dayton_tt25-8_and-16.step` → unmodified manufacturer component.
+- Validation targets: one valid connected holder solid; a continuous carrier perimeter around an unobstructed 10 mm cable hole with at least 3.5 mm inner and outer radial ligaments; exact cable-hole alignment to the lower screw-pair midpoint and at least 5.0 mm clearance to each arm; carrier face 90 degrees to pedal plane; 20.6 mm fork span; 4.5 mm arm thickness; two reversible receivers with 4.0 mm support floors; unobstructed pivot, puck holes, center relief, and shallow relief; a standard M8 nut fits fully in either receiver; no holder/puck or holder/pedal overlap; bolt/nut/pedal/holder clearances; full 6.5 mm nut engagement; five labeled top-level fit-check occurrences; mandatory multi-view review.
+- Fit caveat: confirm the actual pedal-mount width and pivot hardware before printing. The current 20.0 mm width and M8 × 40 reference bolt are first-prototype assumptions, not published MOZA dimensions.
