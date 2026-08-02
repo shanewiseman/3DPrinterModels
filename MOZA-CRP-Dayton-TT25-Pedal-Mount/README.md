@@ -17,7 +17,8 @@ Parametric STEP-first holder that places a Dayton Audio TT25-8 tactile puck 90 d
 - Puck center: 65 mm above and 26 mm behind the pedal pivot.
 - Carrier: 106 mm outside diameter × 8.5 mm thick.
 - TT25 relief: 70.5 mm through opening plus an 82.0 mm × 1.7 mm shallow rear-cover seat.
-- Puck attachment: six exact manufacturer-pattern 3.8 mm holes with rear M3 nut traps.
+- Puck orientation: rotated 180 degrees about installed Z, with the Dayton logo facing outward (negative Y) and the opposite lug faces seated directly on the carrier.
+- Puck attachment: six exact, rotation-matched manufacturer-pattern 3.8 mm holes with pedal-side M3 nut traps.
 - Yoke: two 4.5 mm arms with a 20.6 mm clear span around an assumed 20.0 mm pedal mount.
 - Pivot: 8.6 mm M8 clearance through both arms.
 - Reversible receivers: matching 13.4 mm across-flats pockets on both arms, each 6.8 mm deep with a 4.0 mm printed support floor.
@@ -28,11 +29,11 @@ Parametric STEP-first holder that places a Dayton Audio TT25-8 tactile puck 90 d
 
 Remove the original upper pivot bolt and washers. Place the two printed fork arms on opposite sides of the pedal pivot, insert the M8 nut into either external hex pocket, and pass the bolt through the opposite receiver, pedal pivot, and captured nut. The socket head nests in the unused receiver, so the hardware direction is reversible. Confirm the pedal still moves freely before attaching the TT25.
 
-The modeled 20 mm pedal width and M8 × 40 bolt are first-fit references. Measure the actual width across the pivot and select a bolt that fully engages the 6.5 mm nut without projecting into moving components. Match or exceed the original bolt's strength grade.
+The modeled 20 mm pedal width and M8 × 40 bolt are first-fit references. Measure the actual width across the pivot and select a bolt that fully engages the 6.5 mm nut without projecting into moving components. Match or exceed the original bolt's strength grade. The puck reversal does not change this M8 pivot stack; the reduced fastener is the TT25's M3 mounting screw.
 
 ## Hardware
 
-- 6× M3 screws sized for the TT25 lugs and 8.5 mm carrier.
+- 6× M3 × 18 screws. The reversed 8.5 mm TT25 lug plus 8.5 mm carrier stack is 17.0 mm to the outer nut face, leaving approximately 1.0 mm tip projection.
 - 6× M3 standard nuts.
 - 1× M8 standard hex nut, 13 mm across flats and approximately 6.5 mm thick.
 - 1× appropriately graded M8 socket-head bolt; M8 × 40 is shown in the fit check.

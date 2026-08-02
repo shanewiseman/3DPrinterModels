@@ -37,15 +37,24 @@ TT25_OVERALL_ENVELOPE = 104.5
 TT25_MOUNTING_HOLE_DIAMETER = 3.5
 TT25_HOLDER_HOLE_DIAMETER = 3.8
 
-# Exact bare-puck hole centers transformed from the official STEP. The second
-# coordinate becomes installed global Z relative to PUCK_CENTER_Z.
-TT25_MOUNTING_HOLE_POSITIONS = (
+# Exact bare-puck hole centers transformed from the official STEP before the
+# requested 180-degree installed-Z rotation. The second coordinate becomes
+# installed global Z relative to PUCK_CENTER_Z.
+TT25_SOURCE_MOUNTING_HOLE_POSITIONS = (
     (10.0, 47.550505),
     (-10.0, 47.050505),
     (36.179945, -32.435506),
     (45.746932, -14.864998),
     (-46.179945, -15.114998),
     (-35.746932, -32.185506),
+)
+
+# Rotating the physical puck 180 degrees about installed global Z mirrors the
+# slightly asymmetric manufacturer pattern in X. Rotate the carrier holes with
+# it so the six lug centers and their diameters remain an exact match.
+TT25_ROTATION_ABOUT_INSTALLED_Z_DEGREES = 180.0
+TT25_MOUNTING_HOLE_POSITIONS = tuple(
+    (-x, local_z) for x, local_z in TT25_SOURCE_MOUNTING_HOLE_POSITIONS
 )
 
 # Perpendicular puck carrier.
@@ -249,6 +258,9 @@ def build_holder_details():
         (x, PUCK_CENTER_Z + local_z)
         for x, local_z in TT25_MOUNTING_HOLE_POSITIONS
     )
+    # The reversed puck seats its opposite lug face against the carrier's
+    # negative-Y side. M3 screws enter from the outward logo side and remain
+    # captured by these pockets on the carrier's positive-Y face.
     puck_nut_pockets = _hex_prisms_y(
         ring_hole_positions,
         PUCK_NUT_POCKET_AF,

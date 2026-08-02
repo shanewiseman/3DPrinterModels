@@ -15,6 +15,9 @@ from moza_crp_dayton_tt25_fit_check import (
     M8_BOLT_SOCKET_DEPTH,
     M8_NUT_AF,
     M8_NUT_THICKNESS,
+    PUCK_M3_RECOMMENDED_LENGTH,
+    PUCK_M3_STACK_TO_NUT_OUTER_FACE,
+    TT25_MOUNTING_LUG_THICKNESS,
     build_fit_details,
 )
 from moza_crp_dayton_tt25_mount import (
@@ -36,10 +39,13 @@ from moza_crp_dayton_tt25_mount import (
     PUCK_CENTER_Z,
     PUCK_NUT_POCKET_DEPTH,
     TT25_HOLDER_HOLE_DIAMETER,
+    TT25_MOUNTING_HOLE_DIAMETER,
     TT25_MOUNTING_HOLE_POSITIONS,
     TT25_REAR_COVER_RELIEF_DEPTH,
     TT25_REAR_COVER_RELIEF_DIAMETER,
     TT25_RELIEF_DIAMETER,
+    TT25_ROTATION_ABOUT_INSTALLED_Z_DEGREES,
+    TT25_SOURCE_MOUNTING_HOLE_POSITIONS,
     _cylinder_x,
     _cylinder_y,
     build_holder_details,
@@ -92,6 +98,17 @@ def main():
             TT25_HOLDER_HOLE_DIAMETER / 2.0,
             ring_back_y - 1.0,
             ring_front_y + 1.0,
+            x=x,
+            z=PUCK_CENTER_Z + local_z,
+        )
+        for x, local_z in TT25_MOUNTING_HOLE_POSITIONS
+    ]
+    puck_bbox = puck.bounding_box()
+    official_puck_hole_probes = [
+        _cylinder_y(
+            TT25_MOUNTING_HOLE_DIAMETER / 2.0 - 0.05,
+            puck_bbox.min.Y - 1.0,
+            puck_bbox.max.Y + 1.0,
             x=x,
             z=PUCK_CENTER_Z + local_z,
         )
@@ -221,16 +238,37 @@ def main():
             "pedal_side_plane": "YZ",
             "puck_face_plane": "XZ",
             "included_angle_degrees": 90.0,
+            "puck_rotation_about_installed_z_degrees": (
+                TT25_ROTATION_ABOUT_INSTALLED_Z_DEGREES
+            ),
+            "logo_direction": "negative Y, outward from pedal pivot",
         },
         "puck_interface": {
             "mounting_hole_count": len(TT25_MOUNTING_HOLE_POSITIONS),
+            "rotated_mounting_hole_centers_xz_mm": [
+                [x, PUCK_CENTER_Z + local_z]
+                for x, local_z in TT25_MOUNTING_HOLE_POSITIONS
+            ],
             "holder_hole_diameter_mm": TT25_HOLDER_HOLE_DIAMETER,
             "blocked_hole_probe_volumes_mm3": [
                 _volume(holder.intersect(probe)) for probe in hole_probes
             ],
+            "official_puck_blocked_hole_probe_volumes_mm3": [
+                _volume(puck.intersect(probe))
+                for probe in official_puck_hole_probes
+            ],
             "minimum_outer_ligament_mm": minimum_outer_ligament,
             "minimum_inner_ligament_mm": minimum_inner_ligament,
             "m3_nut_pocket_depth_mm": PUCK_NUT_POCKET_DEPTH,
+            "official_lug_thickness_mm": TT25_MOUNTING_LUG_THICKNESS,
+            "m3_stack_to_nut_outer_face_mm": (
+                PUCK_M3_STACK_TO_NUT_OUTER_FACE
+            ),
+            "recommended_m3_screw_length_mm": PUCK_M3_RECOMMENDED_LENGTH,
+            "recommended_m3_tip_projection_mm": (
+                PUCK_M3_RECOMMENDED_LENGTH
+                - PUCK_M3_STACK_TO_NUT_OUTER_FACE
+            ),
             "installed_holder_puck_overlap_mm3": holder_puck_overlap,
         },
         "pedal_yoke": {
@@ -288,10 +326,32 @@ def main():
     assert result["holder"]["cable_left_arm_clearance_mm"] >= 5.0
     assert result["holder"]["cable_right_arm_clearance_mm"] >= 5.0
     assert result["orientation"]["included_angle_degrees"] == 90.0
+    assert (
+        result["orientation"]["puck_rotation_about_installed_z_degrees"]
+        == 180.0
+    )
+    assert TT25_MOUNTING_HOLE_POSITIONS == tuple(
+        (-x, local_z)
+        for x, local_z in TT25_SOURCE_MOUNTING_HOLE_POSITIONS
+    )
     assert result["puck_interface"]["mounting_hole_count"] == 6
+    assert result["puck_interface"]["official_lug_thickness_mm"] == 8.5
+    assert result["puck_interface"]["m3_stack_to_nut_outer_face_mm"] == 17.0
+    assert result["puck_interface"]["recommended_m3_screw_length_mm"] == 18.0
+    assert (
+        0.5
+        <= result["puck_interface"]["recommended_m3_tip_projection_mm"]
+        <= 1.5
+    )
     assert all(
         volume < 1e-6
         for volume in result["puck_interface"]["blocked_hole_probe_volumes_mm3"]
+    )
+    assert all(
+        volume < 1e-6
+        for volume in result["puck_interface"][
+            "official_puck_blocked_hole_probe_volumes_mm3"
+        ]
     )
     assert result["puck_interface"]["minimum_outer_ligament_mm"] >= 2.0
     assert result["puck_interface"]["minimum_inner_ligament_mm"] >= 10.0

@@ -14,6 +14,7 @@ from moza_crp_dayton_tt25_mount import (
     PUCK_CENTER_Z,
     PIVOT_HEX_POCKET_AF,
     PIVOT_HEX_POCKET_DEPTH,
+    TT25_ROTATION_ABOUT_INSTALLED_Z_DEGREES,
     _cylinder_x,
     _hex_prism_x,
     _single_solid,
@@ -22,7 +23,23 @@ from moza_crp_dayton_tt25_mount import (
 
 
 TT25_REFERENCE_STEP = "reference/dayton_tt25-8_and-16.step"
-TT25_SOURCE_MOUNT_PLANE_Y = 1.5
+# The original logo-inward arrangement used the source front datum at Y=1.5.
+# Reversing the puck seats the printed carrier against the opposite faces of
+# the 8.5 mm mounting lugs, whose official STEP rear datum is Y=12.9.
+TT25_SOURCE_LOGO_SIDE_LUG_PLANE_Y = 4.4
+TT25_SOURCE_REVERSED_MOUNT_PLANE_Y = 12.9
+TT25_MOUNTING_LUG_THICKNESS = (
+    TT25_SOURCE_REVERSED_MOUNT_PLANE_Y
+    - TT25_SOURCE_LOGO_SIDE_LUG_PLANE_Y
+)
+
+# With the opposite lug face seated directly against the 8.5 mm carrier, the
+# distance from the screw-head bearing face to the outer face of a captured
+# nut is 17.0 mm. M3 x 18 gives 1.0 mm of controlled tip projection.
+PUCK_M3_STACK_TO_NUT_OUTER_FACE = (
+    TT25_MOUNTING_LUG_THICKNESS + HOLDER_THICKNESS
+)
+PUCK_M3_RECOMMENDED_LENGTH = 18.0
 
 # M8 reference hardware. Threads are omitted from the BREP; the nut has a
 # physical clearance bore so the fit-check contains no false solid overlap.
@@ -125,17 +142,21 @@ def build_fit_details():
     if len(imported.children) < 1:
         raise RuntimeError("Official TT25 STEP did not expose the bare-puck child")
 
-    # Native Dayton geometry is already broad in XZ. Rotating 180 degrees
-    # around X maps the extracted hole pattern into the holder's global X/Z
-    # coordinates and points the puck body away from the pedal.
+    # Native Dayton geometry is already broad in XZ. The X rotation maps the
+    # extracted hole pattern into installed X/Z. The requested second 180
+    # degree turn about installed Z points the logo outward. Seat the opposite
+    # lug faces on the carrier's negative-Y side; this avoids burying the lugs
+    # in the carrier and removes the former front-datum offset from the M3
+    # screw stack. The carrier pattern is rotated identically so all six
+    # manufacturer lug centers remain aligned.
     ring_back_y = holder_details["ring_back_y"]
     puck_location = Location(
         (
             0.0,
-            ring_back_y + TT25_SOURCE_MOUNT_PLANE_Y,
+            ring_back_y - TT25_SOURCE_REVERSED_MOUNT_PLANE_Y,
             PUCK_CENTER_Z,
         ),
-        (180.0, 0.0, 0.0),
+        (180.0, 0.0, TT25_ROTATION_ABOUT_INSTALLED_Z_DEGREES),
     )
     placed_puck_solids = []
     for index, source_solid in enumerate(imported.children[0].solids(), start=1):
