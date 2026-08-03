@@ -16,12 +16,48 @@ from enclosure_geometry import (
     LID_CLEARANCE_PER_SIDE,
     LID_TOP,
     LRS_BASE_HEIGHT,
+    LRS_COMPONENT_Z,
+    LRS_ENCLOSURE_CENTER_X,
+    LRS_FLOOR_RIB_HEIGHT,
+    LRS_FLOOR_RIB_WIDTH,
     LRS_INNER_X,
+    LRS_INNER_MAX_X,
+    LRS_INNER_MIN_X,
     LRS_INNER_Y,
+    LRS_LENGTH,
+    LRS_LID_TOP,
+    LRS_LID_VENT_X_POSITIONS,
+    LRS_LID_VENT_Y_POSITIONS,
     LRS_MOUNT_SPACING_X,
     LRS_MOUNT_SPACING_Y,
+    LRS_NUT_TRAP_BOTTOM_Z,
+    LRS_NUT_TRAP_CENTER_Z,
+    LRS_NUT_TRAP_FIT_COUPON_BOTTOM,
+    LRS_NUT_TRAP_FIT_COUPON_HEIGHT,
+    LRS_NUT_TRAP_FIT_COUPON_X,
+    LRS_NUT_TRAP_FIT_COUPON_Y,
     LRS_OUTER_X,
+    LRS_OUTER_MAX_X,
+    LRS_OUTER_MIN_X,
     LRS_OUTER_Y,
+    LRS_POSITIVE_X_EXTENSION,
+    LRS_REAR_PORT_CENTER_YS,
+    LRS_REAR_PORT_CENTER_Z,
+    LRS_REAR_PORT_DIAMETERS,
+    LRS_REAR_PORT_RIGHT_EDGE_OFFSETS,
+    M3_BUTTON_HEAD_NOMINAL_DIAMETER,
+    M3_BUTTON_HEAD_NOMINAL_HEIGHT,
+    M3_BUTTON_HEAD_RECESS_DEPTH,
+    M3_BUTTON_HEAD_RECESS_DIAMETER,
+    M3_LID_CLEARANCE_DIAMETER,
+    M3_NUT_INSERTION_SLOT_HEIGHT,
+    M3_NUT_INSERTION_SLOT_WIDTH,
+    M3_NUT_NOMINAL_ACROSS_FLATS,
+    M3_NUT_NOMINAL_THICKNESS,
+    M3_NUT_TRAP_ACROSS_FLATS,
+    M3_NUT_TRAP_HEIGHT,
+    M3_SCREW_TIP_PROTRUSION,
+    M3_SELECTED_SCREW_LENGTH,
     SAB_BASE_HEIGHT,
     SAB_BASE_PIN_RECEIVER_DEPTH,
     SAB_BASE_PIN_RECEIVER_DIAMETER,
@@ -34,9 +70,11 @@ from enclosure_geometry import (
     SAB_FAN_FRONT_CLEARANCE_USER_MEASURED,
     SAB_FAN_GUARD_FRAME_WIDTH,
     SAB_FAN_GUARD_OUTER_SIZE,
+    SAB_FAN_GUARD_RISER_INNER_SIZE,
     SAB_FAN_GUARD_SKIRT_DEPTH,
     SAB_FAN_GUARD_SKIRT_INNER_SIZE,
     SAB_FAN_GUARD_SKIRT_OUTER_SIZE,
+    SAB_FAN_GUARD_STANDOFF_HEIGHT,
     SAB_FAN_GUARD_THICKNESS,
     SAB_FAN_HEIGHT_ASSUMED,
     SAB_FAN_LEFT_CLEARANCE_USER_MEASURED,
@@ -109,11 +147,16 @@ from enclosure_geometry import (
     SAB_USB_CONNECTOR_HEIGHT_ASSUMED,
     assembled_lid,
     build_lrs_base_details,
+    build_lrs_fastener_clearance_probes_installed,
     build_lrs_lid_print,
+    build_lrs_nut_reference_probes_installed,
+    build_lrs_nut_trap_fit_coupon,
+    build_lrs_print_extras,
     build_lrs_reference,
     build_sab_base_details,
     build_sab_fan_guard_installed,
     build_sab_fan_guard_print,
+    build_sab_fan_guard_standoff_clearance_probe_installed,
     build_sab_front_connector_access_probes_installed,
     build_sab_front_connector_joined_access_probe_installed,
     build_sab_lid_pin_fit_coupon,
@@ -179,8 +222,15 @@ def validate():
     lrs_details = build_lrs_base_details()
     lrs_base = lrs_details["base"]
     lrs_lid_print = build_lrs_lid_print()
-    lrs_lid_installed = assembled_lid(lrs_lid_print, LRS_BASE_HEIGHT)
+    lrs_lid_installed = assembled_lid(
+        lrs_lid_print,
+        LRS_BASE_HEIGHT,
+        lid_top_thickness=LRS_LID_TOP,
+    )
     lrs_reference = build_lrs_reference()
+    lrs_nut_trap_fit_coupon = build_lrs_nut_trap_fit_coupon()
+    lrs_nut_references = build_lrs_nut_reference_probes_installed()
+    lrs_fastener_probes = build_lrs_fastener_clearance_probes_installed()
 
     sab_details = build_sab_base_details()
     sab_base = sab_details["base"]
@@ -195,6 +245,9 @@ def validate():
     sab_caps_print = build_sab_retaining_caps_print()
     sab_fan_guard_installed = build_sab_fan_guard_installed()
     sab_fan_guard_print = build_sab_fan_guard_print()
+    sab_fan_guard_standoff_probe = (
+        build_sab_fan_guard_standoff_clearance_probe_installed()
+    )
     sab_fit_coupon = build_sab_post_fit_coupon()
     sab_lid_pin_fit_coupon = build_sab_lid_pin_fit_coupon()
     sab_near_wall_clearance_probe = (
@@ -210,6 +263,7 @@ def validate():
     printable_shapes = (
         ("LRS base", lrs_base),
         ("LRS lid", lrs_lid_print),
+        ("LRS M3 captive-nut trap fit coupon", lrs_nut_trap_fit_coupon),
         ("SAB base", sab_base),
         ("SAB lid", sab_lid_print),
         ("SAB removable fan guard", sab_fan_guard_print),
@@ -232,9 +286,257 @@ def validate():
         "LRS reference overlaps its installed lid",
     )
     _require(
+        _intersection_volume(lrs_base, lrs_lid_installed) < TOLERANCE,
+        "LRS lid locating plug or fastener ears interfere with the base",
+    )
+    lrs_reference_bounds = lrs_reference.bounding_box()
+    _require(
+        abs(LRS_POSITIVE_X_EXTENSION - 15.0) < TOLERANCE
+        and abs(LRS_ENCLOSURE_CENTER_X - 7.5) < TOLERANCE
+        and abs(LRS_INNER_X - 238.0) < TOLERANCE
+        and abs(LRS_OUTER_X - 244.0) < TOLERANCE,
+        "LRS enclosure does not extend exactly 15 mm toward +X",
+    )
+    _require(
+        abs(LRS_INNER_MIN_X + 111.5) < TOLERANCE
+        and abs(LRS_INNER_MAX_X - 126.5) < TOLERANCE
+        and abs(LRS_OUTER_MIN_X + 114.5) < TOLERANCE
+        and abs(LRS_OUTER_MAX_X - 129.5) < TOLERANCE,
+        "LRS asymmetric wall datums are incorrect",
+    )
+    _require(
+        abs(lrs_reference_bounds.min.X + LRS_LENGTH / 2.0) < TOLERANCE
+        and abs(lrs_reference_bounds.max.X - LRS_LENGTH / 2.0) < TOLERANCE
+        and abs(lrs_reference_bounds.center().X) < TOLERANCE,
+        "LRS power-supply envelope moved from its original X datum",
+    )
+    _require(
+        abs(lrs_reference_bounds.min.X - LRS_INNER_MIN_X - 4.0)
+        < TOLERANCE
+        and abs(LRS_INNER_MAX_X - lrs_reference_bounds.max.X - 19.0)
+        < TOLERANCE,
+        "LRS PSU-to-wall clearances are not 4 mm at -X and 19 mm at +X",
+    )
+    _require(
+        set(lrs_details["mount_centers"])
+        == {(-75.0, -25.0), (75.0, -25.0), (-75.0, 25.0), (75.0, 25.0)},
+        "LRS 150 x 50 mm power-supply mount pattern moved",
+    )
+    _require(
+        LRS_LID_VENT_X_POSITIONS
+        == (-84.0, -60.0, -36.0, -12.0, 12.0, 36.0, 60.0, 84.0, 108.0)
+        and len(LRS_LID_VENT_Y_POSITIONS) == 5,
+        "LRS lid ventilation does not cover the added +X cable bay",
+    )
+    _require(
         _intersection_volume(lrs_details["terminal_access_probe"], lrs_base)
         < TOLERANCE,
         "LRS terminal access bay is obstructed",
+    )
+    _require(
+        len(lrs_details["rear_vent_cutters"]) == 0,
+        "LRS +X short end still contains rectangular windows",
+    )
+    _require(
+        len(lrs_details["side_vent_cutters"]) == 0,
+        "LRS long walls still contain rectangular windows",
+    )
+    _require(
+        len(lrs_details["rear_port_cutters"]) == 2,
+        "LRS +X short end must contain exactly two circular ports",
+    )
+    _require(
+        LRS_REAR_PORT_DIAMETERS == (8.0, 5.0),
+        "LRS short-end port diameters changed",
+    )
+    _require(
+        LRS_REAR_PORT_RIGHT_EDGE_OFFSETS == (20.0, 60.0),
+        "LRS short-end port right-edge offsets changed",
+    )
+    for index, (diameter, center_y) in enumerate(
+        lrs_details["rear_port_specs"],
+        start=1,
+    ):
+        port_bounds = lrs_details["rear_port_cutters"][
+            index - 1
+        ].bounding_box()
+        expected_center_y = (
+            LRS_OUTER_Y / 2.0
+            - LRS_REAR_PORT_RIGHT_EDGE_OFFSETS[index - 1]
+        )
+        _require(
+            abs(center_y - expected_center_y) < TOLERANCE
+            and abs(center_y - LRS_REAR_PORT_CENTER_YS[index - 1])
+            < TOLERANCE,
+            f"LRS short-end port {index} is not positioned from the right edge",
+        )
+        _require(
+            abs(diameter - LRS_REAR_PORT_DIAMETERS[index - 1]) < TOLERANCE,
+            f"LRS short-end port {index} diameter is incorrect",
+        )
+        _require(
+            abs(port_bounds.center().X - LRS_OUTER_MAX_X) < TOLERANCE,
+            f"LRS short-end circular port {index} did not move with the +X wall",
+        )
+        _require(
+            _intersection_volume(
+                lrs_details["rear_port_cutters"][index - 1],
+                lrs_base,
+            )
+            < TOLERANCE,
+            f"LRS short-end circular port {index} is obstructed",
+        )
+    _require(
+        abs(LRS_REAR_PORT_CENTER_Z - 20.0) < TOLERANCE,
+        "LRS short-end ports no longer share the former window center height",
+    )
+    _require(
+        _count_45_degree_planar_edges(lrs_base, LRS_BASE_HEIGHT) == 8,
+        "LRS base does not have two 45-degree tangent edges at all four towers",
+    )
+    _require(
+        _count_45_degree_planar_edges(lrs_lid_print, LRS_LID_TOP) == 8,
+        "LRS lid does not have two 45-degree tangent edges at all four ears",
+    )
+    _require(
+        len(lrs_details["floor_ribs"]) == 6,
+        "LRS base must contain a six-member orthogonal floor-rib grid",
+    )
+    _require(
+        abs(LRS_FLOOR_RIB_WIDTH - 3.0) < TOLERANCE
+        and abs(LRS_FLOOR_RIB_HEIGHT - 0.5) < TOLERANCE,
+        "LRS floor ribs are not 3.0 mm wide x 0.5 mm high",
+    )
+    for index, rib in enumerate(lrs_details["floor_ribs"], start=1):
+        _require(
+            rib.bounding_box().max.Z <= LRS_COMPONENT_Z - 0.5 + TOLERANCE,
+            f"LRS floor rib {index} does not preserve 0.5 mm PSU clearance",
+        )
+    _require(
+        len(lrs_details["nut_traps"]) == 4,
+        "LRS base must contain four side-loading captive-nut traps",
+    )
+    nominal_nut_bottom_z = LRS_NUT_TRAP_BOTTOM_Z + (
+        M3_NUT_TRAP_HEIGHT - M3_NUT_NOMINAL_THICKNESS
+    ) / 2.0
+    button_head_seat_z = (
+        LRS_BASE_HEIGHT + LRS_LID_TOP - M3_BUTTON_HEAD_RECESS_DEPTH
+    )
+    screw_tip_z = button_head_seat_z - M3_SELECTED_SCREW_LENGTH
+    _require(
+        abs(M3_SELECTED_SCREW_LENGTH - 16.0) < TOLERANCE
+        and abs(nominal_nut_bottom_z - screw_tip_z - M3_SCREW_TIP_PROTRUSION)
+        < TOLERANCE,
+        "LRS M3 x 16 screw does not fully engage the captive nut",
+    )
+    _require(
+        abs(
+            LRS_NUT_TRAP_CENTER_Z
+            - LRS_NUT_TRAP_BOTTOM_Z
+            - M3_NUT_TRAP_HEIGHT / 2.0
+        )
+        < TOLERANCE
+        and abs(LRS_NUT_TRAP_CENTER_Z - 25.25) < TOLERANCE,
+        "LRS captive-nut trap is not at the intended Z position",
+    )
+    _require(
+        (2.0 * CORNER_TOWER_RADIUS - 2.0 * M3_NUT_TRAP_ACROSS_FLATS / sqrt(3.0))
+        / 2.0
+        >= 2.0
+        and (
+            2.0 * CORNER_TOWER_RADIUS - M3_NUT_INSERTION_SLOT_WIDTH
+        )
+        / 2.0
+        >= 2.5,
+        "LRS corner towers do not retain enough material around the nut trap",
+    )
+    for index, trap in enumerate(lrs_details["nut_traps"], start=1):
+        pocket_bounds = trap["nut_pocket"].bounding_box()
+        slot_bounds = trap["insertion_slot"].bounding_box()
+        bore_bounds = trap["screw_bore"].bounding_box()
+        _require(
+            abs(pocket_bounds.size.X - M3_NUT_TRAP_ACROSS_FLATS) < TOLERANCE
+            and abs(pocket_bounds.size.Z - M3_NUT_TRAP_HEIGHT) < TOLERANCE,
+            f"LRS nut pocket {index} dimensions are incorrect",
+        )
+        _require(
+            abs(slot_bounds.size.X - M3_NUT_INSERTION_SLOT_WIDTH) < TOLERANCE
+            and abs(slot_bounds.size.Z - M3_NUT_INSERTION_SLOT_HEIGHT)
+            < TOLERANCE,
+            f"LRS nut insertion slot {index} dimensions are incorrect",
+        )
+        _require(
+            abs(bore_bounds.size.X - M3_LID_CLEARANCE_DIAMETER) < TOLERANCE,
+            f"LRS vertical screw bore {index} is not sized for M3 clearance",
+        )
+        for feature_name, cutter in trap.items():
+            _require(
+                _intersection_volume(cutter, lrs_base) < TOLERANCE,
+                f"LRS nut trap {index} {feature_name} is obstructed",
+            )
+    trap_center_xs = tuple(
+        trap["nut_pocket"].bounding_box().center().X
+        for trap in lrs_details["nut_traps"]
+    )
+    _require(
+        all(
+            abs(actual - expected) < TOLERANCE
+            for actual, expected in zip(
+                trap_center_xs,
+                (-117.0, -117.0, 132.0, 132.0),
+            )
+        ),
+        "LRS -X fasteners moved or +X fasteners did not follow the extended wall",
+    )
+    _require(
+        abs(M3_NUT_TRAP_ACROSS_FLATS - 5.8) < TOLERANCE
+        and abs(M3_NUT_TRAP_HEIGHT - 2.8) < TOLERANCE
+        and abs(M3_NUT_NOMINAL_ACROSS_FLATS - 5.5) < TOLERANCE
+        and abs(M3_NUT_NOMINAL_THICKNESS - 2.4) < TOLERANCE,
+        "LRS captive-nut allowance changed",
+    )
+    _require(
+        abs(M3_BUTTON_HEAD_RECESS_DIAMETER - 6.2) < TOLERANCE
+        and abs(M3_BUTTON_HEAD_RECESS_DEPTH - 1.65) < TOLERANCE
+        and abs(M3_BUTTON_HEAD_RECESS_DEPTH - M3_BUTTON_HEAD_NOMINAL_HEIGHT)
+        < TOLERANCE
+        and abs(2.0 * M3_BUTTON_HEAD_RECESS_DEPTH - LRS_LID_TOP)
+        < TOLERANCE
+        and M3_BUTTON_HEAD_RECESS_DIAMETER
+        > M3_BUTTON_HEAD_NOMINAL_DIAMETER,
+        "LRS lid button head is not flush in a half-thickness recess",
+    )
+    for index, (nut, fastener) in enumerate(
+        zip(lrs_nut_references, lrs_fastener_probes),
+        start=1,
+    ):
+        _require(
+            _intersection_volume(nut, lrs_base) < TOLERANCE,
+            f"LRS nominal M3 nut {index} does not clear its trap",
+        )
+        _require(
+            _intersection_volume(fastener, lrs_base) < TOLERANCE
+            and _intersection_volume(fastener, lrs_lid_installed) < TOLERANCE,
+            f"LRS M3 x 16 button-head screw {index} is obstructed",
+        )
+        _require(
+            abs(
+                fastener.bounding_box().max.Z
+                - LRS_BASE_HEIGHT
+                - LRS_LID_TOP
+            )
+            < TOLERANCE,
+            f"LRS button-head screw {index} is not flush with the lid top",
+        )
+    lrs_coupon_bounds = lrs_nut_trap_fit_coupon.bounding_box()
+    _require(
+        abs(lrs_coupon_bounds.size.X - LRS_NUT_TRAP_FIT_COUPON_X) < TOLERANCE
+        and abs(lrs_coupon_bounds.size.Y - LRS_NUT_TRAP_FIT_COUPON_Y)
+        < TOLERANCE
+        and abs(lrs_coupon_bounds.size.Z - LRS_NUT_TRAP_FIT_COUPON_HEIGHT)
+        < TOLERANCE
+        and abs(LRS_NUT_TRAP_FIT_COUPON_BOTTOM - 3.0) < TOLERANCE,
+        "LRS captive-nut fit coupon dimensions are incorrect",
     )
 
     _require(
@@ -266,6 +568,14 @@ def validate():
         _intersection_volume(sab_fan_guard_installed, sab_reference)
         < TOLERANCE,
         "SAB fan guard interferes with the fan or board reference",
+    )
+    _require(
+        _intersection_volume(
+            sab_fan_guard_installed,
+            sab_fan_guard_standoff_probe,
+        )
+        < TOLERANCE,
+        "SAB fan-guard spoke field is not 2 mm above the lid",
     )
     for index, (cap, post) in enumerate(
         zip(sab_caps_installed, sab_details["retaining_posts"]),
@@ -392,7 +702,7 @@ def validate():
     )
     _require(
         abs(SAB_FRONT_CONNECTOR_JOINED_OPENING_WIDTH - 49.7) < TOLERANCE
-        and abs(SAB_FRONT_CONNECTOR_JOINED_OPENING_CENTER_X - 36.75)
+        and abs(SAB_FRONT_CONNECTOR_JOINED_OPENING_CENTER_X + 36.75)
         < TOLERANCE,
         "SAB joined J012/DC roof-opening span changed",
     )
@@ -405,7 +715,7 @@ def validate():
         "SAB J012/DC roof opening still contains a divider",
     )
     _require(
-        SAB_FRONT_CONNECTOR_OPENING_CENTER_XS == (-44.0, 29.5, 55.0)
+        SAB_FRONT_CONNECTOR_OPENING_CENTER_XS == (44.0, -29.5, -55.0)
         and abs(SAB_FRONT_CONNECTOR_OPENING_CENTER_Y + 50.5) < TOLERANCE,
         "SAB front connector roof-opening centers changed",
     )
@@ -831,10 +1141,27 @@ def validate():
         and abs(
             guard_bounds.size.Z
             - SAB_FAN_GUARD_THICKNESS
+            - SAB_FAN_GUARD_STANDOFF_HEIGHT
             - SAB_FAN_GUARD_SKIRT_DEPTH
         )
         < TOLERANCE,
         "SAB removable fan guard external dimensions are incorrect",
+    )
+    _require(
+        guard_bounds.min.Z >= -TOLERANCE,
+        "SAB removable fan guard print orientation is below Z=0",
+    )
+    installed_guard_bounds = sab_fan_guard_installed.bounding_box()
+    _require(
+        abs(SAB_FAN_GUARD_STANDOFF_HEIGHT - 2.0) < TOLERANCE
+        and abs(
+            installed_guard_bounds.max.Z
+            - SAB_LID_EXTERIOR_TOP_Z
+            - SAB_FAN_GUARD_STANDOFF_HEIGHT
+            - SAB_FAN_GUARD_THICKNESS
+        )
+        < TOLERANCE,
+        "SAB fan guard is not lifted 2 mm above the lid",
     )
     _require(
         abs(
@@ -847,7 +1174,9 @@ def validate():
     )
     _require(
         SAB_FAN_GUARD_SKIRT_OUTER_SIZE < SAB_FAN_OPENING_SIZE
-        and SAB_FAN_GUARD_SKIRT_INNER_SIZE > SAB_FAN_FRAME_SIZE_USER_MEASURED,
+        and SAB_FAN_GUARD_SKIRT_INNER_SIZE > SAB_FAN_FRAME_SIZE_USER_MEASURED
+        and SAB_FAN_GUARD_RISER_INNER_SIZE
+        >= SAB_FAN_GUARD_SKIRT_INNER_SIZE,
         "SAB fan-guard skirt does not clear the lid opening and fan frame",
     )
     coupon_bounds = sab_fit_coupon.bounding_box()
@@ -912,11 +1241,13 @@ def validate():
         "LRS Y mounting spacing changed",
     )
 
+    lrs_print_extras = build_lrs_print_extras()
     lrs_layout = print_layout(
         lrs_base,
         lrs_lid_print,
         LRS_OUTER_Y,
         "lrs_validation_layout",
+        extra_print_objects=lrs_print_extras,
     )
     sab_print_extras = build_sab_print_extras()
     sab_layout = print_layout(
@@ -932,6 +1263,27 @@ def validate():
         _require(size.X <= 350.0, f"{name} print layout exceeds 350 mm X")
         _require(size.Y <= 320.0, f"{name} print layout exceeds 320 mm Y")
         _require(layout.bounding_box().min.Z >= -TOLERANCE, f"{name} is below Z=0")
+    _require(
+        len(lrs_layout.children) == 3,
+        "LRS print layout must contain three independently printable objects",
+    )
+    lrs_layout_solids = list(lrs_layout.solids())
+    _require(
+        len(lrs_layout_solids) == 3,
+        "LRS print layout must export three separate printable solids",
+    )
+    for first_index, second_index in combinations(range(3), 2):
+        _require(
+            _intersection_volume(
+                lrs_layout_solids[first_index],
+                lrs_layout_solids[second_index],
+            )
+            < TOLERANCE,
+            (
+                "LRS print objects "
+                f"{first_index + 1} and {second_index + 1} overlap"
+            ),
+        )
     _require(
         len(sab_layout.children) == 9,
         "SAB print layout must contain nine independently printable objects",
@@ -987,9 +1339,16 @@ def validate():
         "SAB fit-check reference Y offset changed",
     )
 
-    print("PASS: eleven printable enclosure solids are valid and positive-volume")
+    print("PASS: twelve printable enclosure solids are valid and positive-volume")
     print("PASS: both documented component envelopes clear bases and installed lids")
+    print("PASS: LRS +X side extends 15 mm while the PSU and mounts remain fixed")
+    print("PASS: LRS clearances are 4 mm at -X and 19 mm at +X")
+    print("PASS: the extended LRS lid aligns with both base fastener rows")
+    print("PASS: 1.65 mm button heads sit flush in half of the 3.30 mm LRS lid")
     print("PASS: LRS terminal bay and SAB USB-C window are unobstructed")
+    print("PASS: LRS rear windows are replaced by unobstructed 8 mm and 5 mm ports")
+    print("PASS: both LRS long walls are closed with no rectangular windows")
+    print("PASS: LRS port centers are 20 mm and 60 mm from the exterior-view right edge")
     print("PASS: both SAB long walls, including the former five-window bank, are closed")
     print("PASS: SAB lid serves 35.2, 35.2, and 13.2 mm front plug zones")
     print("PASS: J012 and DC share one continuous 49.7 x 16 mm roof opening")
@@ -1012,11 +1371,18 @@ def validate():
     print("PASS: cap lock starts at 5 mm with at least 0.20 mm interference")
     print("PASS: post and cap openings carry 0.4 mm insertion/bed-face chamfers")
     print("PASS: a removable six-spoke fan guard locates in the 62.1 mm opening")
+    print("PASS: the fan-guard spoke field is supported 2 mm above the lid")
     print("PASS: the separate post-and-cap coupon reproduces the production fit")
     print("PASS: the lid-pin coupon reproduces the pin used by the printed base")
     print("PASS: SAB standoffs match the reported 142 x 104 mm mounting pattern")
     print("PASS: LRS bottom mounts match the official 150 x 50 mm pattern")
+    print("PASS: all four LRS base towers and four lid ears have broad-root 45-degree gussets")
+    print("PASS: six low LRS floor ribs preserve 0.5 mm clearance below the PSU")
+    print("PASS: four side-loading M3 nut traps fit nominal 5.5 x 2.4 mm nuts")
+    print("PASS: M3 x 16 button-head screws clear the lid and fully engage the nuts")
+    print("PASS: the LRS coupon reproduces the production captive-nut fit")
     print("PASS: both print sets fit within a 350 x 320 mm bed")
+    print("PASS: LRS print set contains three non-overlapping printable objects")
     print("PASS: SAB print set contains nine non-overlapping printable objects")
     print("PASS: caps and both fit coupons nest inside the lid fan opening")
     print("PASS: fit-check assembly contains eleven labeled occurrences")

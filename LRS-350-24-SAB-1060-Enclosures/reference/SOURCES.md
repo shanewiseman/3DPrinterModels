@@ -24,12 +24,14 @@
     fan power, control header, sync switch, and status LEDs.
   - The embedded orthogonal top-view image is also used to estimate the front
     plug centers. Scaling its connector centers from the reported 142 mm
-    mounting-hole span gives provisional enclosure X centers of -44.0 mm for
-    J013, +29.5 mm for J012, and +55.0 mm for DC input. The original opening
-    dimensions were user-specified at 32 x 16, 32 x 16, and 10 x 16 mm. The
-    widths are now 35.2, 35.2, and 13.2 mm to add 1.6 mm photo-placement
-    clearance per side; the user-directed 16 mm depth remains unchanged. The
-    J012 and DC zones share one continuous 49.7 x 16 mm opening with no divider.
+    mounting-hole span initially gave the opposite side mapping. The user's
+    physical-layout correction mirrors those X locations: +44.0 mm for J013,
+    -29.5 mm for the J012 14-pin header, and -55.0 mm for the four-pin DC input.
+    The original opening dimensions were user-specified at 32 x 16, 32 x 16,
+    and 10 x 16 mm. The widths are now 35.2, 35.2, and 13.2 mm to add 1.6 mm
+    photo-placement clearance per side; the user-directed 16 mm depth remains
+    unchanged. J012 and DC share one continuous 49.7 x 16 mm opening with no
+    divider.
 
 ## Provisional measurement requiring physical verification
 
@@ -80,9 +82,20 @@
 
 ## Print-driven dimensions
 
+- The LRS lid thickness is 3.30 mm because the user requested its modeled
+  1.65 mm-high M3 button heads to sit in recesses exactly half that thickness
+  and finish flush with the exterior. The nut-trap Z position follows the
+  resulting screw-seat datum to preserve the modeled M3 x 16 engagement.
+- The 15 mm LRS extension toward global +X is user-directed cable-service
+  clearance, not a manufacturer datum. The PSU envelope, terminal-side -X
+  wall, and official 150 x 50 mm mounting-hole coordinates remain fixed. The
+  extension changes only the +X clearance from 4 mm to 19 mm and moves the +X
+  wall, circular ports, corner fasteners, and matching lid outward together.
 - The 6.8 mm mushroom-cap body, three 0.5 x 6 mm relief slots, 0.4 mm lead-ins,
   2.0 x 1.75 mm floor ribs, six-spoke guard, and fit coupon are design choices
   for FDM printability and serviceability; they are not manufacturer datums.
+  The guard's integral 2 mm perimeter riser is user-directed physical-fit data
+  added to keep the spoke field clear of the fan top.
 - The male lid-pin coupon reproduces the existing parametric pin exactly so its
   0.10 mm diametral-clearance receiver fit can be checked before printing the
   raised lid.

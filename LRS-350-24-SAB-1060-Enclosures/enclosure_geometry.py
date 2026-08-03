@@ -9,7 +9,7 @@ Coordinate convention:
 
 from __future__ import annotations
 
-from math import sqrt
+from math import cos, radians, sin, sqrt
 
 from build123d import (
     Align,
@@ -34,6 +34,7 @@ BOOLEAN_OVERSHOOT = 0.5
 # Shared print and hardware choices.
 WALL = 3.0
 FLOOR = 3.0
+# Default/SAB roof thickness. The LRS lid has its own hardware-driven value.
 LID_TOP = 3.0
 LID_PLUG_DEPTH = 3.0
 LID_PLUG_WALL = 2.2
@@ -49,28 +50,86 @@ CORNER_GUSSET_WALL_RUN = (
 )
 CORNER_GUSSET_TANGENT_RETAINED_FRACTION = 0.50
 M3_LID_CLEARANCE_DIAMETER = 3.4
-M3_INSERT_POCKET_DIAMETER = 4.6
-M3_INSERT_POCKET_DEPTH = 6.0
+M3_NUT_NOMINAL_ACROSS_FLATS = 5.5
+M3_NUT_NOMINAL_THICKNESS = 2.4
+M3_NUT_TRAP_ACROSS_FLATS = 5.8
+M3_NUT_TRAP_HEIGHT = 2.8
+M3_NUT_INSERTION_SLOT_WIDTH = 5.8
+M3_NUT_INSERTION_SLOT_HEIGHT = 3.0
+M3_BUTTON_HEAD_NOMINAL_DIAMETER = 5.7
+M3_BUTTON_HEAD_NOMINAL_HEIGHT = 1.65
+M3_BUTTON_HEAD_RECESS_DIAMETER = 6.2
+M3_BUTTON_HEAD_RECESS_DEPTH = M3_BUTTON_HEAD_NOMINAL_HEIGHT
+LRS_LID_TOP = 2.0 * M3_BUTTON_HEAD_RECESS_DEPTH
+M3_SELECTED_SCREW_LENGTH = 16.0
+M3_SCREW_TIP_PROTRUSION = 0.4
 
 # Manufacturer LRS-350 family outline.
 LRS_LENGTH = 215.0
 LRS_WIDTH = 115.0
 LRS_HEIGHT = 30.0
 LRS_XY_CLEARANCE_PER_SIDE = 4.0
-LRS_INNER_X = LRS_LENGTH + 2.0 * LRS_XY_CLEARANCE_PER_SIDE
+LRS_POSITIVE_X_EXTENSION = 15.0
+LRS_ORIGINAL_INNER_X = LRS_LENGTH + 2.0 * LRS_XY_CLEARANCE_PER_SIDE
+LRS_INNER_X = LRS_ORIGINAL_INNER_X + LRS_POSITIVE_X_EXTENSION
 LRS_INNER_Y = LRS_WIDTH + 2.0 * LRS_XY_CLEARANCE_PER_SIDE
 LRS_OUTER_X = LRS_INNER_X + 2.0 * WALL
 LRS_OUTER_Y = LRS_INNER_Y + 2.0 * WALL
+LRS_ENCLOSURE_CENTER_X = LRS_POSITIVE_X_EXTENSION / 2.0
+LRS_INNER_MIN_X = -LRS_ORIGINAL_INNER_X / 2.0
+LRS_INNER_MAX_X = (
+    LRS_ORIGINAL_INNER_X / 2.0 + LRS_POSITIVE_X_EXTENSION
+)
+LRS_OUTER_MIN_X = LRS_INNER_MIN_X - WALL
+LRS_OUTER_MAX_X = LRS_INNER_MAX_X + WALL
 LRS_BASE_HEIGHT = 38.0
 LRS_COMPONENT_Z = 4.0
+LRS_NUT_TRAP_BOTTOM_Z = (
+    LRS_BASE_HEIGHT
+    + LRS_LID_TOP
+    - M3_BUTTON_HEAD_RECESS_DEPTH
+    - M3_SELECTED_SCREW_LENGTH
+    + M3_SCREW_TIP_PROTRUSION
+    - (M3_NUT_TRAP_HEIGHT - M3_NUT_NOMINAL_THICKNESS) / 2.0
+)
+LRS_NUT_TRAP_CENTER_Z = LRS_NUT_TRAP_BOTTOM_Z + M3_NUT_TRAP_HEIGHT / 2.0
 LRS_MOUNT_SPACING_X = 150.0
 LRS_MOUNT_SPACING_Y = 50.0
 LRS_MOUNT_CLEARANCE_DIAMETER = 4.5
 LRS_SUPPORT_PAD_RADIUS = 7.0
 LRS_SUPPORT_PAD_HEIGHT = LRS_COMPONENT_Z - FLOOR
+LRS_FLOOR_RIB_WIDTH = 3.0
+LRS_FLOOR_RIB_HEIGHT = 0.5
 LRS_TERMINAL_WINDOW_Y = 111.0
 LRS_TERMINAL_WINDOW_BOTTOM = 5.0
 LRS_TERMINAL_WINDOW_HEIGHT = 29.0
+# Two cable ports replace the former four rectangular windows on the +X short
+# end. When that wall is viewed from outside, screen-right maps to global +Y;
+# the user dimensions are interpreted as wall-edge-to-port-center distances.
+LRS_REAR_PORT_DIAMETERS = (8.0, 5.0)
+LRS_REAR_PORT_RIGHT_EDGE_OFFSETS = (20.0, 60.0)
+LRS_REAR_PORT_CENTER_YS = tuple(
+    LRS_OUTER_Y / 2.0 - offset
+    for offset in LRS_REAR_PORT_RIGHT_EDGE_OFFSETS
+)
+LRS_REAR_PORT_CENTER_Z = 20.0
+LRS_LID_VENT_X_POSITIONS = (
+    -84.0,
+    -60.0,
+    -36.0,
+    -12.0,
+    12.0,
+    36.0,
+    60.0,
+    84.0,
+    108.0,
+)
+LRS_LID_VENT_Y_POSITIONS = (-42.0, -21.0, 0.0, 21.0, 42.0)
+LRS_NUT_TRAP_FIT_COUPON_X = 14.0
+LRS_NUT_TRAP_FIT_COUPON_Y = 14.0
+LRS_NUT_TRAP_FIT_COUPON_HEIGHT = 10.0
+LRS_NUT_TRAP_FIT_COUPON_BOTTOM = 3.0
+LRS_NUT_TRAP_FIT_COUPON_PRINT_GAP = 8.0
 
 # Dayton SAB-1060 official outline plus measured and provisional fit datums.
 SAB_LENGTH = 152.4
@@ -169,9 +228,11 @@ SAB_FAN_GUARD_FRAME_WIDTH = 2.0
 SAB_FAN_GUARD_THICKNESS = 1.6
 SAB_FAN_GUARD_SPOKE_WIDTH = 2.0
 SAB_FAN_GUARD_HUB_DIAMETER = 12.0
+SAB_FAN_GUARD_STANDOFF_HEIGHT = 2.0
 SAB_FAN_GUARD_SKIRT_DEPTH = 1.2
 SAB_FAN_GUARD_SKIRT_OUTER_SIZE = SAB_FAN_OPENING_SIZE - 0.4
 SAB_FAN_GUARD_SKIRT_INNER_SIZE = SAB_FAN_FRAME_SIZE_USER_MEASURED + 0.6
+SAB_FAN_GUARD_RISER_INNER_SIZE = SAB_FAN_GUARD_SKIRT_INNER_SIZE
 SAB_PRINT_GUARD_GAP = 8.0
 SAB_FIT_COUPON_X = 14.0
 SAB_FIT_COUPON_Y = 10.0
@@ -188,22 +249,25 @@ SAB_LID_INTERIOR_ROOF_Z = SAB_BASE_HEIGHT + SAB_LID_RISER_HEIGHT
 SAB_LID_EXTERIOR_TOP_Z = SAB_LID_INTERIOR_ROOF_Z + LID_TOP
 SAB_NEAR_WALL_COMPONENT_OFFSET = 5.0
 # Roof access above the three front (-Y) Mini-Fit Jr. plug groups. X centers
-# are scaled from Dayton's official top-view wiring-guide image using the
-# reported 142 mm mounting-hole spacing. The original user-supplied widths
-# were 32, 32, and 10 mm. Each side now carries 1.6 mm of extra X clearance
-# for the photo-derived center uncertainty; the 16 mm Y depth is unchanged.
+# began as estimates scaled from Dayton's official top-view wiring-guide image
+# using the reported 142 mm mounting-hole spacing. The user's physical-layout
+# correction mirrors that estimate: the J012 14-pin header and four-pin DC
+# input occupy the negative-X side, while J013 occupies the positive-X side.
+# The original user-supplied widths were 32, 32, and 10 mm. Each side carries
+# 1.6 mm of extra X clearance for the photo-derived center uncertainty; the
+# 16 mm Y depth is unchanged.
 SAB_FRONT_CONNECTOR_OPENING_COUNT = 3
-SAB_FRONT_CONNECTOR_OPENING_CENTER_XS = (-44.0, 29.5, 55.0)
+SAB_FRONT_CONNECTOR_OPENING_CENTER_XS = (44.0, -29.5, -55.0)
 SAB_FRONT_CONNECTOR_OPENING_WIDTHS = (35.2, 35.2, 13.2)
 SAB_FRONT_CONNECTOR_OPENING_DEPTH = 16.0
 SAB_FRONT_CONNECTOR_OPENING_CENTER_Y = -50.5
 SAB_FRONT_CONNECTOR_JOINED_OPENING_MIN_X = (
-    SAB_FRONT_CONNECTOR_OPENING_CENTER_XS[1]
-    - SAB_FRONT_CONNECTOR_OPENING_WIDTHS[1] / 2.0
+    SAB_FRONT_CONNECTOR_OPENING_CENTER_XS[2]
+    - SAB_FRONT_CONNECTOR_OPENING_WIDTHS[2] / 2.0
 )
 SAB_FRONT_CONNECTOR_JOINED_OPENING_MAX_X = (
-    SAB_FRONT_CONNECTOR_OPENING_CENTER_XS[2]
-    + SAB_FRONT_CONNECTOR_OPENING_WIDTHS[2] / 2.0
+    SAB_FRONT_CONNECTOR_OPENING_CENTER_XS[1]
+    + SAB_FRONT_CONNECTOR_OPENING_WIDTHS[1] / 2.0
 )
 SAB_FRONT_CONNECTOR_JOINED_OPENING_WIDTH = (
     SAB_FRONT_CONNECTOR_JOINED_OPENING_MAX_X
@@ -260,6 +324,35 @@ def _box(x: float, y: float, z: float):
         z,
         align=(Align.CENTER, Align.CENTER, Align.MIN),
     )
+
+
+def _hex_prism_z(
+    across_flats: float,
+    height: float,
+    center_x: float,
+    center_y: float,
+    bottom_z: float,
+    rotation_degrees: float = 30.0,
+):
+    """Create a regular hex prism with its axis parallel to global Z."""
+    circumradius = across_flats / sqrt(3.0)
+    points = tuple(
+        (
+            center_x
+            + circumradius
+            * cos(radians(rotation_degrees + 60.0 * index)),
+            center_y
+            + circumradius
+            * sin(radians(rotation_degrees + 60.0 * index)),
+        )
+        for index in range(6)
+    )
+    with BuildSketch(Plane.XY) as profile:
+        Polygon(*points)
+    prism = extrude(profile.sketch, amount=height).moved(
+        Location((0.0, 0.0, bottom_z))
+    )
+    return _single_solid(prism, "hexagonal Z prism")
 
 
 def _rounded_rect_prism_x(
@@ -324,10 +417,20 @@ def _cut_all(blank, cutters, feature_name: str):
     return _single_solid(result, feature_name)
 
 
-def _tower_centers(outer_x: float, outer_y: float):
-    x = outer_x / 2.0 + CORNER_TOWER_OUTSET
+def _tower_centers(
+    outer_x: float,
+    outer_y: float,
+    enclosure_center_x: float = 0.0,
+):
+    negative_x = enclosure_center_x - outer_x / 2.0 - CORNER_TOWER_OUTSET
+    positive_x = enclosure_center_x + outer_x / 2.0 + CORNER_TOWER_OUTSET
     y = outer_y / 2.0 + CORNER_TOWER_OUTSET
-    return ((-x, -y), (-x, y), (x, -y), (x, y))
+    return (
+        (negative_x, -y),
+        (negative_x, y),
+        (positive_x, -y),
+        (positive_x, y),
+    )
 
 
 def _sab_standoff_centers():
@@ -447,13 +550,44 @@ def _sab_floor_ribs():
     return tuple(ribs)
 
 
-def _corner_tower_gussets(outer_x: float, outer_y: float, height: float):
+def _lrs_floor_ribs():
+    """Low pad-to-pad ribs that stiffen the broad LRS enclosure floor."""
+    rib_bottom = FLOOR - 0.20
+    rib_height = LRS_FLOOR_RIB_HEIGHT + 0.20
+    ribs = []
+    for y in (-LRS_MOUNT_SPACING_Y / 2.0, 0.0,
+              LRS_MOUNT_SPACING_Y / 2.0):
+        ribs.append(
+            _box(
+                LRS_MOUNT_SPACING_X,
+                LRS_FLOOR_RIB_WIDTH,
+                rib_height,
+            ).moved(Location((0.0, y, rib_bottom)))
+        )
+    for x in (-LRS_MOUNT_SPACING_X / 2.0, 0.0,
+              LRS_MOUNT_SPACING_X / 2.0):
+        ribs.append(
+            _box(
+                LRS_FLOOR_RIB_WIDTH,
+                LRS_MOUNT_SPACING_Y,
+                rib_height,
+            ).moved(Location((x, 0.0, rib_bottom)))
+        )
+    return tuple(ribs)
+
+
+def _corner_tower_gussets(
+    outer_x: float,
+    outer_y: float,
+    height: float,
+    enclosure_center_x: float = 0.0,
+):
     """Broad-root gussets that retain a 45-degree tangent at each tower."""
     tangent_offset = CORNER_TOWER_RADIUS / sqrt(2.0)
     gussets = []
     for sign_x in (-1.0, 1.0):
         for sign_y in (-1.0, 1.0):
-            corner_x = sign_x * outer_x / 2.0
+            corner_x = enclosure_center_x + sign_x * outer_x / 2.0
             corner_y = sign_y * outer_y / 2.0
 
             horizontal_wall_point = (
@@ -535,13 +669,16 @@ def _base_blank(
     outer_y: float,
     height: float,
     reinforce_corner_towers: bool = False,
+    enclosure_center_x: float = 0.0,
 ):
-    outer = _box(outer_x, outer_y, height)
+    outer = _box(outer_x, outer_y, height).moved(
+        Location((enclosure_center_x, 0.0, 0.0))
+    )
     cavity = _box(
         outer_x - 2.0 * WALL,
         outer_y - 2.0 * WALL,
         height - FLOOR + BOOLEAN_OVERSHOOT,
-    ).moved(Location((0.0, 0.0, FLOOR)))
+    ).moved(Location((enclosure_center_x, 0.0, FLOOR)))
     shell = _single_solid(outer.cut(cavity), "base shell")
     towers = [
         Cylinder(
@@ -549,36 +686,117 @@ def _base_blank(
             height=height,
             align=(Align.CENTER, Align.CENTER, Align.MIN),
         ).moved(Location((x, y, 0.0)))
-        for x, y in _tower_centers(outer_x, outer_y)
+        for x, y in _tower_centers(
+            outer_x,
+            outer_y,
+            enclosure_center_x,
+        )
     ]
     gussets = (
-        _corner_tower_gussets(outer_x, outer_y, height)
+        _corner_tower_gussets(
+            outer_x,
+            outer_y,
+            height,
+            enclosure_center_x,
+        )
         if reinforce_corner_towers
         else ()
     )
     return _fuse_all((shell, *towers, *gussets), "base with corner towers")
 
 
-def _cut_base_insert_pockets(blank, outer_x: float, outer_y: float, height: float):
-    cutters = [
-        Cylinder(
-            radius=M3_INSERT_POCKET_DIAMETER / 2.0,
-            height=M3_INSERT_POCKET_DEPTH + BOOLEAN_OVERSHOOT,
-            align=(Align.CENTER, Align.CENTER, Align.MIN),
-        ).moved(Location((x, y, height - M3_INSERT_POCKET_DEPTH)))
-        for x, y in _tower_centers(outer_x, outer_y)
-    ]
-    return _cut_all(blank, cutters, "base insert pockets")
+def _m3_nut_trap_cutters(
+    center_x: float,
+    center_y: float,
+    bottom_z: float,
+    bore_top_z: float,
+    slot_sign_y: float,
+    slot_outward_run: float,
+):
+    """Build a vertical screw bore, flat nut pocket, and side-loading slot."""
+    nut_pocket = _hex_prism_z(
+        M3_NUT_TRAP_ACROSS_FLATS,
+        M3_NUT_TRAP_HEIGHT,
+        center_x,
+        center_y,
+        bottom_z,
+    )
+
+    slot_inward_overlap = 0.20
+    slot_length = slot_outward_run + slot_inward_overlap
+    slot_center_y = center_y + slot_sign_y * (
+        slot_length / 2.0 - slot_inward_overlap
+    )
+    slot_bottom_z = bottom_z - (
+        M3_NUT_INSERTION_SLOT_HEIGHT - M3_NUT_TRAP_HEIGHT
+    ) / 2.0
+    insertion_slot = _box(
+        M3_NUT_INSERTION_SLOT_WIDTH,
+        slot_length,
+        M3_NUT_INSERTION_SLOT_HEIGHT,
+    ).moved(Location((center_x, slot_center_y, slot_bottom_z)))
+
+    bore_bottom_z = bottom_z - BOOLEAN_OVERSHOOT
+    screw_bore = Cylinder(
+        radius=M3_LID_CLEARANCE_DIAMETER / 2.0,
+        height=bore_top_z - bore_bottom_z + BOOLEAN_OVERSHOOT,
+        align=(Align.CENTER, Align.CENTER, Align.MIN),
+    ).moved(Location((center_x, center_y, bore_bottom_z)))
+    return {
+        "screw_bore": screw_bore,
+        "nut_pocket": nut_pocket,
+        "insertion_slot": insertion_slot,
+    }
 
 
-def _cut_base_pin_receivers(blank, outer_x: float, outer_y: float, height: float):
+def _cut_base_nut_traps(
+    blank,
+    outer_x: float,
+    outer_y: float,
+    height: float,
+    enclosure_center_x: float = 0.0,
+):
+    trap_details = []
+    cutters = []
+    for center_x, center_y in _tower_centers(
+        outer_x,
+        outer_y,
+        enclosure_center_x,
+    ):
+        trap = _m3_nut_trap_cutters(
+            center_x,
+            center_y,
+            LRS_NUT_TRAP_BOTTOM_Z,
+            height,
+            1.0 if center_y > 0.0 else -1.0,
+            CORNER_TOWER_RADIUS + BOOLEAN_OVERSHOOT,
+        )
+        trap_details.append(trap)
+        cutters.extend(trap.values())
+    return (
+        _cut_all(blank, cutters, "base side-loading captive nut traps"),
+        tuple(trap_details),
+    )
+
+
+def _cut_base_pin_receivers(
+    blank,
+    outer_x: float,
+    outer_y: float,
+    height: float,
+    enclosure_center_x: float = 0.0,
+):
     cutters = [
         Cylinder(
             radius=SAB_BASE_PIN_RECEIVER_DIAMETER / 2.0,
             height=SAB_BASE_PIN_RECEIVER_DEPTH + BOOLEAN_OVERSHOOT,
             align=(Align.CENTER, Align.CENTER, Align.MIN),
         ).moved(Location((x, y, height - SAB_BASE_PIN_RECEIVER_DEPTH)))
-        for x, y in _tower_centers(outer_x, outer_y)
+        for x, y in _tower_centers(
+            outer_x,
+            outer_y,
+            enclosure_center_x,
+        )
     ]
     return _cut_all(blank, cutters, "base blind pin receivers")
 
@@ -603,10 +821,15 @@ def _lid_corner_pins(
     outer_x: float,
     outer_y: float,
     pin_base_z: float,
+    enclosure_center_x: float = 0.0,
 ):
     return tuple(
         _lid_pin(x, y, pin_base_z)
-        for x, y in _tower_centers(outer_x, outer_y)
+        for x, y in _tower_centers(
+            outer_x,
+            outer_y,
+            enclosure_center_x,
+        )
     )
 
 
@@ -636,30 +859,48 @@ def _build_lid_print(
     label: str,
     reinforce_corner_towers: bool = False,
     use_corner_pins: bool = False,
+    use_button_head_counterbores: bool = False,
     lid_riser_height: float = 0.0,
+    enclosure_center_x: float = 0.0,
+    lid_top_thickness: float = LID_TOP,
 ):
-    plate_parts = [_box(outer_x, outer_y, LID_TOP)]
+    plate_parts = [
+        _box(outer_x, outer_y, lid_top_thickness).moved(
+            Location((enclosure_center_x, 0.0, 0.0))
+        )
+    ]
     plate_parts.extend(
         Cylinder(
             radius=CORNER_TOWER_RADIUS,
-            height=LID_TOP,
+            height=lid_top_thickness,
             align=(Align.CENTER, Align.CENTER, Align.MIN),
         ).moved(Location((x, y, 0.0)))
-        for x, y in _tower_centers(outer_x, outer_y)
+        for x, y in _tower_centers(
+            outer_x,
+            outer_y,
+            enclosure_center_x,
+        )
     )
     if reinforce_corner_towers:
-        plate_parts.extend(_corner_tower_gussets(outer_x, outer_y, LID_TOP))
+        plate_parts.extend(
+            _corner_tower_gussets(
+                outer_x,
+                outer_y,
+                lid_top_thickness,
+                enclosure_center_x,
+            )
+        )
     plate = _fuse_all(plate_parts, f"{label} lid plate and ears")
 
     lid_parts = [plate]
-    mating_plane_z = LID_TOP + lid_riser_height
+    mating_plane_z = lid_top_thickness + lid_riser_height
     if lid_riser_height > 0.0:
-        riser_bottom_z = LID_TOP - 0.20
+        riser_bottom_z = lid_top_thickness - 0.20
         riser_outer = _box(
             outer_x,
             outer_y,
             lid_riser_height + 0.20,
-        ).moved(Location((0.0, 0.0, riser_bottom_z)))
+        ).moved(Location((enclosure_center_x, 0.0, riser_bottom_z)))
         riser_inner = _box(
             outer_x - 2.0 * WALL,
             outer_y - 2.0 * WALL,
@@ -667,7 +908,7 @@ def _build_lid_print(
         ).moved(
             Location(
                 (
-                    0.0,
+                    enclosure_center_x,
                     0.0,
                     riser_bottom_z - BOOLEAN_OVERSHOOT,
                 )
@@ -683,7 +924,11 @@ def _build_lid_print(
                 height=lid_riser_height + 0.20,
                 align=(Align.CENTER, Align.CENTER, Align.MIN),
             ).moved(Location((x, y, riser_bottom_z)))
-            for x, y in _tower_centers(outer_x, outer_y)
+            for x, y in _tower_centers(
+                outer_x,
+                outer_y,
+                enclosure_center_x,
+            )
         )
         riser_gussets = (
             tuple(
@@ -692,6 +937,7 @@ def _build_lid_print(
                     outer_x,
                     outer_y,
                     lid_riser_height + 0.20,
+                    enclosure_center_x,
                 )
             )
             if reinforce_corner_towers
@@ -711,7 +957,7 @@ def _build_lid_print(
         ).moved(
             Location(
                 (
-                    0.0,
+                    enclosure_center_x,
                     0.0,
                     mating_plane_z - LID_RISER_SEAT_BRIDGE_HEIGHT,
                 )
@@ -724,7 +970,7 @@ def _build_lid_print(
         ).moved(
             Location(
                 (
-                    0.0,
+                    enclosure_center_x,
                     0.0,
                     mating_plane_z
                     - LID_RISER_SEAT_BRIDGE_HEIGHT
@@ -741,12 +987,16 @@ def _build_lid_print(
         plug_outer_x,
         plug_outer_y,
         LID_PLUG_DEPTH + 0.20,
-    ).moved(Location((0.0, 0.0, mating_plane_z - 0.20)))
+    ).moved(
+        Location((enclosure_center_x, 0.0, mating_plane_z - 0.20))
+    )
     plug_inner = _box(
         plug_inner_x,
         plug_inner_y,
         LID_PLUG_DEPTH + 2.0 * BOOLEAN_OVERSHOOT,
-    ).moved(Location((0.0, 0.0, mating_plane_z - 0.20)))
+    ).moved(
+        Location((enclosure_center_x, 0.0, mating_plane_z - 0.20))
+    )
     plug_frame = _single_solid(plug_outer.cut(plug_inner), f"{label} lid plug")
     lid_parts.append(plug_frame)
     lid = _fuse_all(lid_parts, f"{label} complete lid")
@@ -756,17 +1006,34 @@ def _build_lid_print(
         vent_y_positions,
         slot_x,
         slot_y,
-        LID_TOP,
+        lid_top_thickness,
     )
     if not use_corner_pins:
         cutters.extend(
             Cylinder(
                 radius=M3_LID_CLEARANCE_DIAMETER / 2.0,
-                height=LID_TOP + 2.0 * BOOLEAN_OVERSHOOT,
+                height=lid_top_thickness + 2.0 * BOOLEAN_OVERSHOOT,
                 align=(Align.CENTER, Align.CENTER, Align.MIN),
             ).moved(Location((x, y, -BOOLEAN_OVERSHOOT)))
-            for x, y in _tower_centers(outer_x, outer_y)
+            for x, y in _tower_centers(
+                outer_x,
+                outer_y,
+                enclosure_center_x,
+            )
         )
+        if use_button_head_counterbores:
+            cutters.extend(
+                Cylinder(
+                    radius=M3_BUTTON_HEAD_RECESS_DIAMETER / 2.0,
+                    height=M3_BUTTON_HEAD_RECESS_DEPTH + BOOLEAN_OVERSHOOT,
+                    align=(Align.CENTER, Align.CENTER, Align.MIN),
+                ).moved(Location((x, y, -BOOLEAN_OVERSHOOT)))
+                for x, y in _tower_centers(
+                    outer_x,
+                    outer_y,
+                    enclosure_center_x,
+                )
+            )
     lid = _cut_all(lid, cutters, f"{label} ventilated lid")
     if use_corner_pins:
         lid = _fuse_all(
@@ -776,6 +1043,7 @@ def _build_lid_print(
                     outer_x,
                     outer_y,
                     mating_plane_z,
+                    enclosure_center_x,
                 ),
             ),
             f"{label} lid with integral locating pins",
@@ -789,6 +1057,7 @@ def assembled_lid(
     lid_print,
     base_height: float,
     lid_riser_height: float = 0.0,
+    lid_top_thickness: float = LID_TOP,
 ):
     """Flip a print-oriented lid into its installed pose above the base."""
     return lid_print.rotate(Axis.X, 180.0).moved(
@@ -796,14 +1065,20 @@ def assembled_lid(
             (
                 0.0,
                 0.0,
-                base_height + LID_TOP + lid_riser_height,
+                base_height + lid_top_thickness + lid_riser_height,
             )
         )
     )
 
 
 def build_lrs_base_details():
-    blank = _base_blank(LRS_OUTER_X, LRS_OUTER_Y, LRS_BASE_HEIGHT)
+    blank = _base_blank(
+        LRS_OUTER_X,
+        LRS_OUTER_Y,
+        LRS_BASE_HEIGHT,
+        reinforce_corner_towers=True,
+        enclosure_center_x=LRS_ENCLOSURE_CENTER_X,
+    )
 
     terminal_window = _box(
         2.0 * WALL + 2.0 * BOOLEAN_OVERSHOOT,
@@ -812,33 +1087,36 @@ def build_lrs_base_details():
     ).moved(
         Location(
             (
-                -LRS_OUTER_X / 2.0 - WALL,
+                LRS_OUTER_MIN_X - WALL,
                 0.0,
                 LRS_TERMINAL_WINDOW_BOTTOM,
             )
         )
     )
 
-    side_vents = []
-    for y in (-LRS_OUTER_Y / 2.0 - WALL, LRS_OUTER_Y / 2.0):
-        for x in (-76.0, -50.0, -24.0, 2.0, 28.0, 54.0, 80.0):
-            side_vents.append(
-                _box(18.0, 2.0 * WALL + 2.0, 16.0).moved(
-                    Location((x, y, 12.0))
-                )
-            )
+    # Keep both long walls closed. The former seven rectangular vents per
+    # wall are intentionally removed; airflow remains available through the
+    # ventilated lid and the two circular ports on the +X short end.
+    side_vents = ()
 
-    rear_vents = [
-        _box(2.0 * WALL + 2.0, 15.0, 16.0).moved(
-            Location((LRS_OUTER_X / 2.0, y, 12.0))
+    rear_port_specs = tuple(
+        zip(LRS_REAR_PORT_DIAMETERS, LRS_REAR_PORT_CENTER_YS)
+    )
+    rear_ports = tuple(
+        _circular_prism_x(
+            diameter,
+            2.0 * WALL + 2.0,
+            LRS_OUTER_MAX_X,
+            center_y,
+            LRS_REAR_PORT_CENTER_Z,
         )
-        for y in (-36.0, -12.0, 12.0, 36.0)
-    ]
+        for diameter, center_y in rear_port_specs
+    )
 
     base = _cut_all(
         blank,
-        (terminal_window, *side_vents, *rear_vents),
-        "LRS terminal and ventilation openings",
+        (terminal_window, *rear_ports),
+        "LRS terminal and short-end circular ports",
     )
     mount_centers = tuple(
         (x, y)
@@ -853,7 +1131,11 @@ def build_lrs_base_details():
         ).moved(Location((x, y, FLOOR - 0.20)))
         for x, y in mount_centers
     ]
-    base = _fuse_all((base, *support_pads), "LRS base and mounting pads")
+    floor_ribs = _lrs_floor_ribs()
+    base = _fuse_all(
+        (base, *support_pads, *floor_ribs),
+        "LRS base, mounting pads, and floor ribs",
+    )
     mount_holes = [
         Cylinder(
             radius=LRS_MOUNT_CLEARANCE_DIAMETER / 2.0,
@@ -863,11 +1145,12 @@ def build_lrs_base_details():
         for x, y in mount_centers
     ]
     base = _cut_all(base, mount_holes, "LRS M4 bottom mounting holes")
-    base = _cut_base_insert_pockets(
+    base, nut_traps = _cut_base_nut_traps(
         base,
         LRS_OUTER_X,
         LRS_OUTER_Y,
         LRS_BASE_HEIGHT,
+        LRS_ENCLOSURE_CENTER_X,
     )
     base.label = "lrs_350_24_base"
     base.color = ENCLOSURE_COLOR
@@ -879,7 +1162,7 @@ def build_lrs_base_details():
     ).moved(
         Location(
             (
-                -LRS_OUTER_X / 2.0 - 5.0,
+                LRS_OUTER_MIN_X - 5.0,
                 0.0,
                 LRS_TERMINAL_WINDOW_BOTTOM + 0.5,
             )
@@ -889,9 +1172,13 @@ def build_lrs_base_details():
         "base": base,
         "terminal_window_cutter": terminal_window,
         "terminal_access_probe": access_probe,
-        "side_vent_cutters": tuple(side_vents),
-        "rear_vent_cutters": tuple(rear_vents),
+        "side_vent_cutters": side_vents,
+        "rear_vent_cutters": (),
+        "rear_port_specs": rear_port_specs,
+        "rear_port_cutters": rear_ports,
         "mount_centers": mount_centers,
+        "floor_ribs": floor_ribs,
+        "nut_traps": nut_traps,
     }
 
 
@@ -903,12 +1190,41 @@ def build_lrs_lid_print():
     return _build_lid_print(
         LRS_OUTER_X,
         LRS_OUTER_Y,
-        (-84.0, -60.0, -36.0, -12.0, 12.0, 36.0, 60.0, 84.0),
-        (-42.0, -21.0, 0.0, 21.0, 42.0),
+        LRS_LID_VENT_X_POSITIONS,
+        LRS_LID_VENT_Y_POSITIONS,
         16.0,
         6.0,
         "lrs_350_24",
+        reinforce_corner_towers=True,
+        use_button_head_counterbores=True,
+        enclosure_center_x=LRS_ENCLOSURE_CENTER_X,
+        lid_top_thickness=LRS_LID_TOP,
     )
+
+
+def build_lrs_nut_trap_fit_coupon():
+    """Print-first coupon reproducing the production M3 captive-nut fit."""
+    blank = _box(
+        LRS_NUT_TRAP_FIT_COUPON_X,
+        LRS_NUT_TRAP_FIT_COUPON_Y,
+        LRS_NUT_TRAP_FIT_COUPON_HEIGHT,
+    )
+    trap = _m3_nut_trap_cutters(
+        0.0,
+        0.0,
+        LRS_NUT_TRAP_FIT_COUPON_BOTTOM,
+        LRS_NUT_TRAP_FIT_COUPON_HEIGHT,
+        1.0,
+        LRS_NUT_TRAP_FIT_COUPON_Y / 2.0 + BOOLEAN_OVERSHOOT,
+    )
+    coupon = _cut_all(
+        blank,
+        trap.values(),
+        "LRS M3 captive-nut trap fit coupon",
+    )
+    coupon.label = "lrs_350_24_m3_captive_nut_trap_fit_coupon"
+    coupon.color = ENCLOSURE_COLOR
+    return coupon
 
 
 def build_lrs_reference():
@@ -918,6 +1234,68 @@ def build_lrs_reference():
     reference.label = "mean_well_lrs_350_24_reference_envelope"
     reference.color = PSU_COLOR
     return reference
+
+
+def build_lrs_nut_reference_probes_installed():
+    """Build nominal M3 nuts seated in the four production nut traps."""
+    nut_bottom_z = LRS_NUT_TRAP_BOTTOM_Z + (
+        M3_NUT_TRAP_HEIGHT - M3_NUT_NOMINAL_THICKNESS
+    ) / 2.0
+    nuts = []
+    for index, (center_x, center_y) in enumerate(
+        _tower_centers(
+            LRS_OUTER_X,
+            LRS_OUTER_Y,
+            LRS_ENCLOSURE_CENTER_X,
+        ),
+        start=1,
+    ):
+        nut = _hex_prism_z(
+            M3_NUT_NOMINAL_ACROSS_FLATS,
+            M3_NUT_NOMINAL_THICKNESS,
+            center_x,
+            center_y,
+            nut_bottom_z,
+        )
+        nut.label = f"lrs_m3_nut_reference_{index}"
+        nut.color = PSU_COLOR
+        nuts.append(nut)
+    return tuple(nuts)
+
+
+def build_lrs_fastener_clearance_probes_installed():
+    """Build four M3 x 16 button-head screw envelopes in installed pose."""
+    head_seat_z = (
+        LRS_BASE_HEIGHT + LRS_LID_TOP - M3_BUTTON_HEAD_RECESS_DEPTH
+    )
+    screw_tip_z = head_seat_z - M3_SELECTED_SCREW_LENGTH
+    fasteners = []
+    for index, (center_x, center_y) in enumerate(
+        _tower_centers(
+            LRS_OUTER_X,
+            LRS_OUTER_Y,
+            LRS_ENCLOSURE_CENTER_X,
+        ),
+        start=1,
+    ):
+        shaft = Cylinder(
+            radius=3.0 / 2.0,
+            height=M3_SELECTED_SCREW_LENGTH,
+            align=(Align.CENTER, Align.CENTER, Align.MIN),
+        ).moved(Location((center_x, center_y, screw_tip_z)))
+        head = Cylinder(
+            radius=M3_BUTTON_HEAD_NOMINAL_DIAMETER / 2.0,
+            height=M3_BUTTON_HEAD_NOMINAL_HEIGHT,
+            align=(Align.CENTER, Align.CENTER, Align.MIN),
+        ).moved(Location((center_x, center_y, head_seat_z)))
+        fastener = _fuse_all(
+            (shaft, head),
+            f"LRS M3 x 16 button-head screw reference {index}",
+        )
+        fastener.label = f"lrs_m3x16_button_head_reference_{index}"
+        fastener.color = PSU_COLOR
+        fasteners.append(fastener)
+    return tuple(fasteners)
 
 
 def build_sab_base_details():
@@ -1196,18 +1574,26 @@ def build_sab_retaining_caps_print():
 
 
 def build_sab_fan_guard_installed_local():
-    """Build a removable guard with a shallow skirt locating in the lid cutout."""
+    """Build a removable guard with a 2 mm supported gap above the lid."""
     outer = _box(
         SAB_FAN_GUARD_OUTER_SIZE,
         SAB_FAN_GUARD_OUTER_SIZE,
         SAB_FAN_GUARD_THICKNESS,
-    )
+    ).moved(Location((0.0, 0.0, SAB_FAN_GUARD_STANDOFF_HEIGHT)))
     inner_size = SAB_FAN_GUARD_OUTER_SIZE - 2.0 * SAB_FAN_GUARD_FRAME_WIDTH
     inner = _box(
         inner_size,
         inner_size,
         SAB_FAN_GUARD_THICKNESS + 2.0 * BOOLEAN_OVERSHOOT,
-    ).moved(Location((0.0, 0.0, -BOOLEAN_OVERSHOOT)))
+    ).moved(
+        Location(
+            (
+                0.0,
+                0.0,
+                SAB_FAN_GUARD_STANDOFF_HEIGHT - BOOLEAN_OVERSHOOT,
+            )
+        )
+    )
     frame = _single_solid(outer.cut(inner), "SAB fan guard outer frame")
 
     spoke_length = SAB_FAN_GUARD_OUTER_SIZE * 1.5
@@ -1216,14 +1602,16 @@ def build_sab_fan_guard_installed_local():
             spoke_length,
             SAB_FAN_GUARD_SPOKE_WIDTH,
             SAB_FAN_GUARD_THICKNESS,
-        ).rotate(Axis.Z, angle)
+        ).rotate(Axis.Z, angle).moved(
+            Location((0.0, 0.0, SAB_FAN_GUARD_STANDOFF_HEIGHT))
+        )
         for angle in (0.0, 60.0, 120.0)
     )
     hub = Cylinder(
         radius=SAB_FAN_GUARD_HUB_DIAMETER / 2.0,
         height=SAB_FAN_GUARD_THICKNESS,
         align=(Align.CENTER, Align.CENTER, Align.MIN),
-    )
+    ).moved(Location((0.0, 0.0, SAB_FAN_GUARD_STANDOFF_HEIGHT)))
     spoke_field = _fuse_all(
         (*spoke_blanks, hub),
         "SAB fan guard radial spoke field",
@@ -1231,6 +1619,24 @@ def build_sab_fan_guard_installed_local():
     clipped_spokes = _single_solid(
         spoke_field.intersect(outer),
         "SAB fan guard clipped radial spokes",
+    )
+
+    # This square ring seats on the lid and carries the spoke field 2 mm above
+    # it. A 0.2 mm overlap at each end keeps the riser fused to both the upper
+    # frame and the locating skirt while preserving the skirt's fan clearance.
+    riser_outer = _box(
+        SAB_FAN_GUARD_OUTER_SIZE,
+        SAB_FAN_GUARD_OUTER_SIZE,
+        SAB_FAN_GUARD_STANDOFF_HEIGHT + 0.20,
+    )
+    riser_inner = _box(
+        SAB_FAN_GUARD_RISER_INNER_SIZE,
+        SAB_FAN_GUARD_RISER_INNER_SIZE,
+        SAB_FAN_GUARD_STANDOFF_HEIGHT + 0.20 + 2.0 * BOOLEAN_OVERSHOOT,
+    ).moved(Location((0.0, 0.0, -BOOLEAN_OVERSHOOT)))
+    riser = _single_solid(
+        riser_outer.cut(riser_inner),
+        "SAB fan guard 2 mm perimeter riser",
     )
 
     skirt_outer = _box(
@@ -1256,7 +1662,7 @@ def build_sab_fan_guard_installed_local():
         "SAB fan guard locating skirt",
     )
     guard = _fuse_all(
-        (frame, clipped_spokes, skirt),
+        (frame, clipped_spokes, riser, skirt),
         "SAB removable fan guard",
     )
     guard.label = "sab_1060_fan_guard_installed"
@@ -1265,11 +1671,19 @@ def build_sab_fan_guard_installed_local():
 
 
 def build_sab_fan_guard_print():
-    """Orient the guard outer-face-down with the locating skirt upward."""
+    """Orient the guard outer-face-down with its riser and skirt upward."""
     guard = build_sab_fan_guard_installed_local().rotate(
         Axis.X,
         180.0,
-    ).moved(Location((0.0, 0.0, SAB_FAN_GUARD_THICKNESS)))
+    ).moved(
+        Location(
+            (
+                0.0,
+                0.0,
+                SAB_FAN_GUARD_THICKNESS + SAB_FAN_GUARD_STANDOFF_HEIGHT,
+            )
+        )
+    )
     guard.label = "sab_1060_fan_guard_print_outer_face_down"
     guard.color = LID_COLOR
     return guard
@@ -1288,6 +1702,23 @@ def build_sab_fan_guard_installed():
     guard.label = "sab_1060_fan_guard_installed"
     guard.color = LID_COLOR
     return guard
+
+
+def build_sab_fan_guard_standoff_clearance_probe_installed():
+    """Central volume proving the spoke field is 2 mm above the lid."""
+    return _box(
+        SAB_FAN_GUARD_HUB_DIAMETER / 2.0,
+        SAB_FAN_GUARD_HUB_DIAMETER / 2.0,
+        SAB_FAN_GUARD_STANDOFF_HEIGHT,
+    ).moved(
+        Location(
+            (
+                SAB_FAN_CENTER_X_USER_DIRECTED,
+                SAB_FAN_CENTER_Y_USER_OBSERVED,
+                SAB_LID_EXTERIOR_TOP_Z,
+            )
+        )
+    )
 
 
 def build_sab_post_fit_coupon():
@@ -1586,6 +2017,22 @@ def print_layout(
     for shape, label in extra_print_objects:
         assembly.add(shape, label)
     return assembly.build()
+
+
+def build_lrs_print_extras():
+    """Place the captive-nut fit coupon beside the enclosure footprint."""
+    enclosure_footprint_max_x = (
+        LRS_OUTER_MAX_X + CORNER_TOWER_OUTSET + CORNER_TOWER_RADIUS
+    )
+    coupon_center_x = (
+        enclosure_footprint_max_x
+        + LRS_NUT_TRAP_FIT_COUPON_PRINT_GAP
+        + LRS_NUT_TRAP_FIT_COUPON_X / 2.0
+    )
+    coupon = build_lrs_nut_trap_fit_coupon().moved(
+        Location((coupon_center_x, 0.0, 0.0))
+    )
+    return ((coupon, "m3_captive_nut_trap_fit_coupon"),)
 
 
 def build_sab_print_extras():

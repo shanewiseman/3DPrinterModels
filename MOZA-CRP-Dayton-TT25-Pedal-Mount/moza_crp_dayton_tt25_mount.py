@@ -1,8 +1,8 @@
-"""Perpendicular fork mount for a Dayton TT25 on an original MOZA CRP pedal.
+"""Perpendicular fork mount for a Dayton TT25 on a MOZA CRP2 pedal.
 
 Installed coordinate convention:
 - The pedal pivot axis is global X, centered at XYZ=(0, 0, 0).
-- The pedal's broad side plane is YZ; the assumed pedal width is along X.
+- The pedal's broad side plane is YZ; the measured attachment width is along X.
 - The TT25 carrier face is XZ, making it 90 degrees to the pedal side plane.
 - The TT25 center is at XYZ=(0, -26, 65), behind and above the pivot.
 """
@@ -21,6 +21,7 @@ from build123d import (
     Locations,
     Mode,
     Plane,
+    Rectangle,
     RegularPolygon,
     extrude,
     make_hull,
@@ -71,25 +72,47 @@ CABLE_PASS_THROUGH_CENTER_Z = PUCK_CENTER_Z - (
     HOLDER_OUTER_DIAMETER + TT25_RELIEF_DIAMETER
 ) / 4.0
 
-# Two-arm pedal yoke. The 20 mm pedal width remains an explicit first-fit
-# assumption because MOZA does not publish this exposed pivot stack dimension.
-PEDAL_MOUNT_WIDTH_ASSUMED = 20.0
+# Two-arm pedal yoke based on the user's CRP2 measurements. The 0.6 mm total
+# side clearance leaves 0.3 mm per side around the 8.0 mm attachment point.
+CRP2_ATTACHMENT_WIDTH = 8.0
+CRP2_INTERNAL_HEX_AF = 10.0
 PEDAL_SIDE_CLEARANCE = 0.6
-FORK_INNER_SPAN = PEDAL_MOUNT_WIDTH_ASSUMED + PEDAL_SIDE_CLEARANCE
+FORK_INNER_SPAN = CRP2_ATTACHMENT_WIDTH + PEDAL_SIDE_CLEARANCE
 FORK_ARM_THICKNESS = 4.5
 FORK_PIVOT_BOSS_DIAMETER = 33.0
-FORK_LEVER_PAD_DIAMETER = 20.0
-# The lever pads meet only the carrier's front side. Their rear extent reaches
-# PUCK_CENTER_Y but never crosses the puck-facing rear surface.
-FORK_LEVER_JOIN_Y = PUCK_CENTER_Y + FORK_LEVER_PAD_DIAMETER / 2.0
-FORK_LEVER_JOIN_Z = 20.0
-PEDAL_PIVOT_CLEARANCE_DIAMETER = 8.6
+# The user's side-view measurements place the pedal's rear clearance plane
+# approximately 10 mm toward +Y from the attachment center. Flatten the pivot
+# boss at that datum and keep the opposite pivot-frame face 20 mm away, giving
+# a 20 mm deep D-profile from Y=-10 to Y=+10. The arm then grows rearward
+# toward the puck from the negative-Y flat without moving the bolt axis.
+PEDAL_BACK_PLANE_Y = 10.0
+PEDAL_BACK_TO_PIVOT_FRAME_OUTER = 20.0
+PIVOT_FRAME_OUTER_Y = (
+    PEDAL_BACK_PLANE_Y - PEDAL_BACK_TO_PIVOT_FRAME_OUTER
+)
+FORK_PIVOT_BOSS_Y_DEPTH = (
+    PEDAL_BACK_PLANE_Y - PIVOT_FRAME_OUTER_Y
+)
+# A broad 28 mm lobe replaces the former 20 mm lever pad where each arm joins
+# the carrier. Its rear edge stops 0.75 mm short of the puck-facing carrier
+# surface while spanning most of the 8.5 mm ring thickness for a larger fused
+# contact patch.
+FORK_RING_LOBE_DIAMETER = 28.0
+FORK_RING_LOBE_REAR_CLEARANCE = 0.75
+FORK_RING_LOBE_CENTER_Y = (
+    PUCK_CENTER_Y
+    - HOLDER_THICKNESS / 2.0
+    + FORK_RING_LOBE_REAR_CLEARANCE
+    + FORK_RING_LOBE_DIAMETER / 2.0
+)
+FORK_RING_LOBE_CENTER_Z = 20.0
+PEDAL_PIVOT_CLEARANCE_DIAMETER = 6.6
 
-# Reversible captured-M8 receivers on both arms. Each local boss is thickened
+# Reversible captured-M6 receivers on both arms. Each local boss is thickened
 # so 4.0 mm of printed material remains between its hex pocket and the pedal.
-PIVOT_HEX_NOMINAL_AF = 13.0
-PIVOT_HEX_POCKET_AF = 13.4
-PIVOT_HEX_POCKET_DEPTH = 6.8
+PIVOT_HEX_NOMINAL_AF = 10.0
+PIVOT_HEX_POCKET_AF = 10.4
+PIVOT_HEX_POCKET_DEPTH = 5.2
 PIVOT_NUT_SUPPORT_FLOOR = 4.0
 PIVOT_NUT_BOSS_EXTRA = (
     PIVOT_HEX_POCKET_DEPTH
@@ -189,14 +212,34 @@ def _build_ring_blank():
 def _build_fork_arm(x_min: float):
     with BuildSketch(Plane.YZ) as arm_profile:
         Circle(FORK_PIVOT_BOSS_DIAMETER / 2.0)
-        with Locations((FORK_LEVER_JOIN_Y, FORK_LEVER_JOIN_Z)):
-            Circle(FORK_LEVER_PAD_DIAMETER / 2.0)
+        Rectangle(
+            FORK_PIVOT_BOSS_Y_DEPTH,
+            FORK_PIVOT_BOSS_DIAMETER,
+            mode=Mode.INTERSECT,
+        )
+        with Locations((FORK_RING_LOBE_CENTER_Y, FORK_RING_LOBE_CENTER_Z)):
+            Circle(FORK_RING_LOBE_DIAMETER / 2.0)
         make_hull()
         Circle(PEDAL_PIVOT_CLEARANCE_DIAMETER / 2.0, mode=Mode.SUBTRACT)
     arm = extrude(arm_profile.sketch, amount=FORK_ARM_THICKNESS).moved(
         Location((x_min, 0.0, 0.0))
     )
     return _single_solid(arm, "fork arm")
+
+
+def _build_flat_pivot_receiver_boss(x_min: float, x_max: float):
+    """External receiver boss matching the arm's 20 mm D-shaped pivot."""
+    with BuildSketch(Plane.YZ) as boss_profile:
+        Circle(FORK_PIVOT_BOSS_DIAMETER / 2.0)
+        Rectangle(
+            FORK_PIVOT_BOSS_Y_DEPTH,
+            FORK_PIVOT_BOSS_DIAMETER,
+            mode=Mode.INTERSECT,
+        )
+    boss = extrude(boss_profile.sketch, amount=x_max - x_min).moved(
+        Location((x_min, 0.0, 0.0))
+    )
+    return _single_solid(boss, "flat-sided pivot receiver boss")
 
 
 def build_holder_details():
@@ -214,13 +257,11 @@ def build_holder_details():
     left_outer_x = left_arm_outer_x - PIVOT_NUT_BOSS_EXTRA
     right_outer_x = right_arm_outer_x + PIVOT_NUT_BOSS_EXTRA
 
-    left_receiver_boss = _cylinder_x(
-        FORK_PIVOT_BOSS_DIAMETER / 2.0,
+    left_receiver_boss = _build_flat_pivot_receiver_boss(
         left_outer_x,
         left_arm_outer_x,
     )
-    right_receiver_boss = _cylinder_x(
-        FORK_PIVOT_BOSS_DIAMETER / 2.0,
+    right_receiver_boss = _build_flat_pivot_receiver_boss(
         right_arm_outer_x,
         right_outer_x,
     )
@@ -273,13 +314,36 @@ def build_holder_details():
         ring_back_y + TT25_REAR_COVER_RELIEF_DEPTH,
         z=PUCK_CENTER_Z,
     )
+    # The enlarged arm lobes intentionally overlap farther into the carrier.
+    # Re-cut the production center relief through the complete fused holder so
+    # the added contact cannot intrude into the TT25 body opening.
+    holder_blank_bbox = holder_blank.bounding_box()
+    carrier_center_relief = _cylinder_y(
+        TT25_RELIEF_DIAMETER / 2.0,
+        holder_blank_bbox.min.Y - BOOLEAN_OVERSHOOT,
+        holder_blank_bbox.max.Y + BOOLEAN_OVERSHOOT,
+        z=PUCK_CENTER_Z,
+    )
+    # The measured CRP2 yoke is much narrower than the earlier first-fit
+    # envelope. Re-cut the full cable passage after fusing the arms so the
+    # nearby lever pads receive only the shallow relief needed to preserve the
+    # existing 10 mm wire exit.
+    cable_pass_through = _cylinder_y(
+        CABLE_PASS_THROUGH_DIAMETER / 2.0,
+        holder_blank_bbox.min.Y - BOOLEAN_OVERSHOOT,
+        holder_blank_bbox.max.Y + BOOLEAN_OVERSHOOT,
+        x=CABLE_PASS_THROUGH_CENTER_X,
+        z=CABLE_PASS_THROUGH_CENTER_Z,
+    )
 
     holder = _single_solid(
         holder_blank.cut(pivot_bore)
         .cut(left_hex_pocket)
         .cut(right_hex_pocket)
         .cut(puck_nut_pockets)
-        .cut(rear_cover_relief),
+        .cut(carrier_center_relief)
+        .cut(rear_cover_relief)
+        .cut(cable_pass_through),
         "finished perpendicular yoke holder",
     )
     holder.label = "moza_crp_dayton_tt25_perpendicular_yoke_holder"
@@ -297,13 +361,19 @@ def build_holder_details():
         "left_hex_pocket": left_hex_pocket,
         "right_hex_pocket": right_hex_pocket,
         "puck_nut_pockets": puck_nut_pockets,
+        "carrier_center_relief": carrier_center_relief,
         "rear_cover_relief": rear_cover_relief,
+        "cable_pass_through": cable_pass_through,
         "left_outer_x": left_outer_x,
         "left_arm_outer_x": left_arm_outer_x,
         "left_inner_x": -half_inner_span,
         "right_inner_x": half_inner_span,
         "right_arm_outer_x": right_arm_outer_x,
         "right_outer_x": right_outer_x,
+        "pedal_back_plane_y": PEDAL_BACK_PLANE_Y,
+        "pivot_frame_outer_y": PIVOT_FRAME_OUTER_Y,
+        "ring_lobe_center_y": FORK_RING_LOBE_CENTER_Y,
+        "ring_lobe_center_z": FORK_RING_LOBE_CENTER_Z,
         "ring_front_y": ring_front_y,
         "ring_back_y": ring_back_y,
     }

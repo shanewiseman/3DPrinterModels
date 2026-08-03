@@ -5,6 +5,7 @@ from cadpy.assembly import AssemblyHelper
 
 from enclosure_geometry import (
     LRS_BASE_HEIGHT,
+    LRS_LID_TOP,
     SAB_BASE_HEIGHT,
     SAB_LID_RISER_HEIGHT,
     assembled_lid,
@@ -24,7 +25,11 @@ SAB_ASSEMBLY_OFFSET_Y = 150.0
 
 def build_fit_details():
     lrs_base = build_lrs_base()
-    lrs_lid = assembled_lid(build_lrs_lid_print(), LRS_BASE_HEIGHT)
+    lrs_lid = assembled_lid(
+        build_lrs_lid_print(),
+        LRS_BASE_HEIGHT,
+        lid_top_thickness=LRS_LID_TOP,
+    )
     lrs_reference = build_lrs_reference()
 
     sab_location = Location((0.0, SAB_ASSEMBLY_OFFSET_Y, 0.0))

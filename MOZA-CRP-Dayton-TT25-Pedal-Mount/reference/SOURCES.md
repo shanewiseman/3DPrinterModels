@@ -7,3 +7,10 @@
 - MOZA pedal mounting diagrams: https://support.mozaracing.com/en/support/solutions/articles/70000635191-product-dimensions-installation-diagram
 
 The manufacturer STEP is retained unmodified as `dayton_tt25-8_and-16.step`. The printable holder is independently authored and uses only the documented component envelope and mounting interface.
+
+User-supplied physical-fit datums supersede image scaling at the CRP2 pivot:
+the attachment is 8.0 mm wide with a 10.0 mm internal hex, and the latest
+side-view estimate places the pedal back approximately 10 mm from the mount
+center with approximately 20 mm to the outside pivot frame. The latter two
+dimensions are treated as rough, global-Y datums and require a physical fit
+check before final loading.

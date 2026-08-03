@@ -10,6 +10,9 @@ low-voltage audio board and to keep each print within the target printer bed.
 ## Source dimensions
 
 - LRS-350 family: 215 x 115 x 30 mm, from the Mean Well manufacturer sheet.
+- LRS cable-service allowance: user-directed 15 mm extension of only the +X
+  side; the power-supply envelope and 150 x 50 mm mount pattern remain at
+  their original global coordinates.
 - SAB-1060 with fan: 152.4 x 114.3 x 28.6 mm, from Dayton Audio.
 - SAB-1060 connector identities: Dayton Audio quick-start guide.
 - SAB-1060 mounting pattern: 142 x 104 mm with reported 3.8 mm holes. This is
@@ -31,14 +34,14 @@ low-voltage audio board and to keep each print within the target printer bed.
   inward from the base wall; the replacement lid adds 8 mm of interior height
   while retaining the existing base mating geometry. A later USB-window move
   changes the negative-X base wall and therefore requires a reprinted base.
-- SAB front plug access: one 35.2 x 16 mm roof opening above J013 and one
-  continuous 49.7 x 16 mm opening shared by J012 and the DC input. The joined
-  opening removes the former 1.3 mm divider while preserving 35.2 and 13.2 mm
-  access envelopes. These retain the user-sized 16 mm depth while adding
-  1.6 mm of X clearance on each side beyond the original 32, 32, and 10 mm
-  widths. Provisional X centers -44.0, +29.5, and +55.0 mm are scaled from the
-  official top-view guide using the reported 142 mm mounting-hole spacing; all
-  share installed Y=-50.5 mm and require physical verification.
+- SAB front plug access: one 35.2 x 16 mm roof opening above J013 at
+  X=+44.0 mm and one continuous 49.7 x 16 mm opening centered at X=-36.75 mm
+  for the J012 14-pin header and four-pin DC input. The joined opening removes
+  the former 1.3 mm divider while preserving 35.2 and 13.2 mm access envelopes.
+  These retain the user-sized 16 mm depth while adding 1.6 mm of X clearance
+  on each side beyond the original 32, 32, and 10 mm widths. The user-corrected
+  zone centers +44.0, -29.5, and -55.0 mm mirror the initial top-view estimate;
+  all share installed Y=-50.5 mm and require physical verification.
 
 ## Datums and coordinate convention
 
@@ -49,9 +52,17 @@ low-voltage audio board and to keep each print within the target printer bed.
 
 ## Functional geometry
 
-- 3.0 mm walls, floor, and lid top.
+- 3.0 mm walls and floor. The SAB lid top remains 3.0 mm; the LRS lid top is
+  3.30 mm so its 1.65 mm button-head recess is exactly half the lid thickness.
 - 0.30 mm lid locating clearance per side.
-- The LRS uses four external M3 lid towers with 4.6 mm heat-set-insert pockets.
+- The LRS uses four external M3 lid towers with side-loading captive-nut traps.
+  Standard 5.5 mm-across-flats x 2.4 mm-thick M3 nuts fit 5.8 mm-across-flats
+  x 2.8 mm-high pockets through 5.8 x 3.0 mm outward-facing insertion slots.
+  Their centers are at Z=25.25 mm in the 38 mm base. Four M3 x 16 mm
+  button-head screws pass through 3.4 mm lid/base bores and seat in 6.2 mm
+  diameter x 1.65 mm-deep lid recesses. The modeled 1.65 mm-high heads finish
+  flush with the 3.30 mm-thick lid exterior. A separate 14 x 14 x 10 mm coupon
+  reproduces the production nut fit, insertion slot, and screw bore.
 - The SAB lid uses four integral 4.0 mm tapered locating pins, 5.5 mm long.
   Their 3.2 mm lead-in tips taper to a 4.0 mm straight land in four unchanged
   4.6 mm diameter x 6.0 mm deep blind base receivers. The free-sliding fit has
@@ -62,12 +73,23 @@ low-voltage audio board and to keep each print within the target printer bed.
   retain the original Z=34.6 mm base interface. The full interior region at
   least 5 mm inward from every base wall remains free of lid geometry from the
   plug depth through the raised roof.
-- The four SAB lid/base screw locations use filled, broad-root gussets tied
-  into both adjacent enclosure walls. Their wall contact is twice the original
-  tangent run while the final approach to each circular boss remains 45 degrees.
+- All four LRS and all four SAB lid/base corner locations use filled,
+  broad-root gussets tied into both adjacent enclosure walls. Their wall
+  contact is twice the original tangent run while the final approach to each
+  circular boss remains 45 degrees.
 - LRS internal clearance: 4.0 mm per side; full terminal-end service bay;
-  slotted side, rear, and lid ventilation; four bottom mounting pads and
-  4.5 mm through holes on the official 150 x 50 mm M4 pattern.
+  the +X cable side adds 15 mm, making the final clearances 4.0 mm at -X and
+  19.0 mm at +X. The inner X limits are -111.5 and +126.5 mm, the outer wall
+  limits are -114.5 and +129.5 mm, and the 244 mm-long enclosure body is
+  centered at X=+7.5 mm while the PSU remains centered at X=0. Closed long
+  walls and slotted lid ventilation; four bottom mounting pads and
+  4.5 mm through holes on the official 150 x 50 mm M4 pattern. The four former
+  rectangular windows on the positive-X short end are replaced by 8 mm and
+  5 mm circular ports. Viewed from outside that wall, their centers are 20 mm
+  and 60 mm from the right edge respectively, both at Z=20 mm. Six 3.0 mm-wide
+  x 0.5 mm-high ribs form a pad-to-pad orthogonal grid while preserving 0.5 mm
+  clearance below the modeled power-supply chassis. The matching lid retains
+  its eight original vent columns and adds one at X=+108 mm above the new bay.
 - SAB internal clearance: 3.0 mm per side; both long base walls are closed;
   both short base walls carry 5 mm circular ventilation perforations in a
   seven-column by four-row grid. The positive-X wall retains all 28 holes and
@@ -75,8 +97,8 @@ low-voltage audio board and to keep each print within the target printer bed.
   edges remain at least 1 mm above the interior floor, below the wall top, and
   away from the wall sides;
   two rectangular raised-lid roof openings provide vertical service above the
-  three front plug zones—35.2 x 16 mm at X=-44.0 mm for J013 and a continuous
-  49.7 x 16 mm opening centered at X=+36.75 mm for J012/DC, both centered at
+  three front plug zones—35.2 x 16 mm at X=+44.0 mm for J013 and a continuous
+  49.7 x 16 mm opening centered at X=-36.75 mm for J012/DC, both centered at
   Y=-50.5 mm; one 16 x 10 mm USB-C plug window with
   1.5 mm internal corner radii on the negative-X short wall, centered 29 mm
   toward -Y, raised to a 17.6 mm lower sill and 7 mm upper sill; four raised
@@ -101,19 +123,23 @@ low-voltage audio board and to keep each print within the target printer bed.
   surrounds the user-measured 60.1 mm fan with 1 mm clearance per side at
   X=-0.45 mm and Y=+5.70 mm after the 2 mm rear-view-right shift. The new roof underside is 5 mm above the fan top.
 - A separate 64.1 mm, six-spoke, 1.6 mm-thick fan guard locates in that opening
-  with a 1.2 mm-deep skirt. The installed guard top is 47.2 mm above the base.
+  with a 1.2 mm-deep skirt. An integral perimeter riser supports the spoke
+  field 2 mm above the lid, placing the installed guard top 49.2 mm above the
+  base.
 - A separate 14 x 10 mm fit coupon reproduces the production 3.4 mm post and
   8.0 mm cap engagement so retention can be tuned before the full print.
 - A second 14 x 10 mm coupon carries the exact 4.0 mm x 5.5 mm tapered lid pin
   so it can be tested directly in the already-printed base receiver.
-- The LRS STEP print set contains two spatially separated objects. The SAB STEP
-  print set contains nine: base, raised lid, four top-face-down caps, fan guard,
-  and two fit coupons. The caps and coupons nest in the lid opening; the guard
-  sits beside the enclosure, and no print solids overlap.
+- The LRS STEP print set contains three spatially separated objects: base,
+  lid, and M3 captive-nut-trap fit coupon. The SAB STEP print set contains
+  nine: base, raised lid, four top-face-down caps, fan guard, and two fit
+  coupons. The SAB caps and coupons nest in the lid opening; the guard sits
+  beside the enclosure, and no print solids overlap.
 
 ## Outputs
 
-- `lrs_350_24_print_set.step`: Mean Well base and lid, laid out for printing.
+- `lrs_350_24_print_set.step`: Mean Well base, lid, and M3 captive-nut fit
+  coupon, laid out for printing.
 - `sab_1060_print_set.step`: Dayton base, raised lid, four separate retaining
   caps, fan guard, and two fit coupons laid out for printing.
 - `enclosure_fit_check.step`: both installed-pose enclosures with simplified
@@ -121,29 +147,46 @@ low-voltage audio board and to keep each print within the target printer bed.
 
 ## Acceptance criteria
 
-- All eleven printable enclosure objects are valid, positive-volume single solids.
+- All twelve printable enclosure objects are valid, positive-volume single solids.
 - Reference envelopes do not intersect printed base or installed lid geometry.
 - Terminal/connector access probes remain unobstructed; the three SAB roof
   zones retain 35.2 x 16, 35.2 x 16, and 13.2 x 16 mm access envelopes. One
   continuous 49.7 x 16 mm probe proves no divider remains between J012 and DC.
+- Both LRS long walls and the positive-X short end have no rectangular
+  windows; the short end's unobstructed circular ports are exactly 8 mm and
+  5 mm diameter, with centers 20 mm and 60 mm from the exterior-view right
+  edge.
+- All four LRS mount centers retain side-loading M3 nut traps at Z=25.25 mm;
+  nominal 5.5 x 2.4 mm nuts and M3 x 16 button-head screw envelopes clear the
+  printed base and lid. The 6.2 x 1.65 mm lid recesses fit the modeled 5.7 x
+  1.65 mm button heads, occupy half the 3.30 mm lid thickness, and leave the
+  heads flush with the exterior.
 - The reported SAB hole pattern is represented exactly but documented as a
   measurement that must be verified.
 - The board reference is 1.7 mm thick; all four posts clear its modeled holes,
   and all four installed caps seat on its top surface without solid overlap.
-- Floor ribs remain below the PCB, the fan guard clears both fan and lid, and
-  the coupons duplicate the production post/cap and lid-pin interfaces.
-- The base exterior dimensions and 4.6 x 6.0 mm receiver interface remain
-  unchanged, while the raised USB opening changes the negative-X wall. The lid
-  adds exactly 8 mm above the original mating plane and clears the 5 mm inset
-  component zone.
+- The LRS floor ribs preserve 0.5 mm PSU clearance, the SAB floor ribs remain
+  below the PCB, the fan guard clears both fan and lid, its spoke field is
+  supported 2 mm above the lid, and all coupons duplicate their production
+  interfaces.
+- The SAB base exterior dimensions and 4.6 x 6.0 mm receiver interface remain
+  unchanged, while the raised USB opening changes the negative-X wall. The SAB
+  lid adds exactly 8 mm above the original mating plane and clears the 5 mm
+  inset component zone.
 - The user-measured SAB fan square and user-directed 2 mm rear-view-right
   center shift are represented exactly; its rearward center and provisional height must be physically verified before
   a production print.
 - The user-directed USB-C wall, negative-Y center, and plug clearance must be
   physically verified before a production print.
 - The LRS mounting pattern is represented at the official 150 x 50 mm spacing.
-- Each layout fits within 350 x 320 mm and remains above Z=0; the SAB layout
-  exports exactly nine non-overlapping positive-volume print objects.
+- The LRS -X enclosure wall, PSU envelope, and four PSU mount centers remain
+  fixed while only the +X wall, two +X lid fasteners, ports, and matching lid
+  extend 15 mm.
+- Both enclosures retain broad-root 45-degree reinforcement at every base
+  tower and lid ear.
+- Each layout fits within 350 x 320 mm and remains above Z=0; the LRS layout
+  exports exactly three and the SAB layout exactly nine non-overlapping,
+  positive-volume print objects.
 
 ## Out of scope
 

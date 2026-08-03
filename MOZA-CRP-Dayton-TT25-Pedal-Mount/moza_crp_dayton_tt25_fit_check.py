@@ -7,9 +7,10 @@ from cadpy.assembly import AssemblyHelper
 
 from moza_crp_dayton_tt25_mount import (
     BOOLEAN_OVERSHOOT,
+    CRP2_ATTACHMENT_WIDTH,
+    CRP2_INTERNAL_HEX_AF,
     FORK_INNER_SPAN,
     HOLDER_THICKNESS,
-    PEDAL_MOUNT_WIDTH_ASSUMED,
     PUCK_CENTER_Y,
     PUCK_CENTER_Z,
     PIVOT_HEX_POCKET_AF,
@@ -41,83 +42,83 @@ PUCK_M3_STACK_TO_NUT_OUTER_FACE = (
 )
 PUCK_M3_RECOMMENDED_LENGTH = 18.0
 
-# M8 reference hardware. Threads are omitted from the BREP; the nut has a
+# M6 reference hardware. Threads are omitted from the BREP; the nut has a
 # physical clearance bore so the fit-check contains no false solid overlap.
-M8_BOLT_NOMINAL_DIAMETER = 8.0
-M8_BOLT_CLEARANCE_DIAMETER = 8.2
-M8_BOLT_LENGTH = 40.0
-M8_BOLT_HEAD_DIAMETER = 13.0
-M8_BOLT_HEAD_HEIGHT = 8.0
-M8_BOLT_SOCKET_AF = 6.0
-M8_BOLT_SOCKET_DEPTH = 4.5
-M8_NUT_AF = 13.0
-M8_NUT_THICKNESS = 6.5
+M6_BOLT_NOMINAL_DIAMETER = 6.0
+M6_BOLT_CLEARANCE_DIAMETER = 6.4
+M6_BOLT_LENGTH = 25.0
+M6_BOLT_HEAD_DIAMETER = 10.0
+M6_BOLT_HEAD_HEIGHT = 6.0
+M6_BOLT_SOCKET_AF = 5.0
+M6_BOLT_SOCKET_DEPTH = 3.5
+M6_NUT_AF = 10.0
+M6_NUT_THICKNESS = 5.0
 
 
 def build_pivot_hardware(holder_details):
-    """Build reversible M8 hardware on the yoke's global-X pivot."""
+    """Build reversible M6 hardware on the yoke's global-X pivot."""
     left_outer_x = holder_details["left_outer_x"]
     right_outer_x = holder_details["right_outer_x"]
 
     nut_x_min = left_outer_x + 0.15
-    nut_x_max = nut_x_min + M8_NUT_THICKNESS
-    nut_blank = _hex_prism_x(M8_NUT_AF, nut_x_min, M8_NUT_THICKNESS)
+    nut_x_max = nut_x_min + M6_NUT_THICKNESS
+    nut_blank = _hex_prism_x(M6_NUT_AF, nut_x_min, M6_NUT_THICKNESS)
     nut_bore = _cylinder_x(
-        M8_BOLT_CLEARANCE_DIAMETER / 2.0,
+        M6_BOLT_CLEARANCE_DIAMETER / 2.0,
         nut_x_min - BOOLEAN_OVERSHOOT,
         nut_x_max + BOOLEAN_OVERSHOOT,
     )
     pivot_nut = _single_solid(
         nut_blank.cut(nut_bore),
-        "M8 captured nut",
+        "M6 captured nut",
     )
-    pivot_nut.label = "m8_captured_hex_nut_reference_threads_omitted"
+    pivot_nut.label = "m6_captured_hex_nut_reference_threads_omitted"
     pivot_nut.color = Color(0.62, 0.64, 0.67)
 
     # The socket head nests in the opposite receiver. A second bored reference
     # nut proves that this same pocket can accept the nut if hardware direction
     # is reversed, but is intentionally omitted from the installed assembly.
     right_test_nut_x_max = right_outer_x - 0.15
-    right_test_nut_x_min = right_test_nut_x_max - M8_NUT_THICKNESS
+    right_test_nut_x_min = right_test_nut_x_max - M6_NUT_THICKNESS
     right_test_nut_blank = _hex_prism_x(
-        M8_NUT_AF,
+        M6_NUT_AF,
         right_test_nut_x_min,
-        M8_NUT_THICKNESS,
+        M6_NUT_THICKNESS,
     )
     right_test_nut_bore = _cylinder_x(
-        M8_BOLT_CLEARANCE_DIAMETER / 2.0,
+        M6_BOLT_CLEARANCE_DIAMETER / 2.0,
         right_test_nut_x_min - BOOLEAN_OVERSHOOT,
         right_test_nut_x_max + BOOLEAN_OVERSHOOT,
     )
     right_receiver_test_nut = _single_solid(
         right_test_nut_blank.cut(right_test_nut_bore),
-        "right-receiver M8 test nut",
+        "right-receiver M6 test nut",
     )
-    right_receiver_test_nut.label = "m8_right_receiver_test_nut"
+    right_receiver_test_nut.label = "m6_right_receiver_test_nut"
 
     head_inner_x = right_outer_x - PIVOT_HEX_POCKET_DEPTH
-    head_outer_x = head_inner_x + M8_BOLT_HEAD_HEIGHT
-    shaft_end_x = head_inner_x - M8_BOLT_LENGTH
+    head_outer_x = head_inner_x + M6_BOLT_HEAD_HEIGHT
+    shaft_end_x = head_inner_x - M6_BOLT_LENGTH
     bolt_shaft = _cylinder_x(
-        M8_BOLT_NOMINAL_DIAMETER / 2.0,
+        M6_BOLT_NOMINAL_DIAMETER / 2.0,
         shaft_end_x,
         head_inner_x + BOOLEAN_OVERSHOOT,
     )
     bolt_head = _cylinder_x(
-        M8_BOLT_HEAD_DIAMETER / 2.0,
+        M6_BOLT_HEAD_DIAMETER / 2.0,
         head_inner_x,
         head_outer_x,
     )
     socket = _hex_prism_x(
-        M8_BOLT_SOCKET_AF,
-        head_outer_x - M8_BOLT_SOCKET_DEPTH,
-        M8_BOLT_SOCKET_DEPTH + BOOLEAN_OVERSHOOT,
+        M6_BOLT_SOCKET_AF,
+        head_outer_x - M6_BOLT_SOCKET_DEPTH,
+        M6_BOLT_SOCKET_DEPTH + BOOLEAN_OVERSHOOT,
     )
     pivot_bolt = _single_solid(
         bolt_head.fuse(bolt_shaft).cut(socket),
-        "M8 socket-head pivot bolt",
+        "M6 socket-head pivot bolt",
     )
-    pivot_bolt.label = "m8x40_socket_head_yoke_bolt_reference_threads_omitted"
+    pivot_bolt.label = "m6x25_socket_head_yoke_bolt_reference_threads_omitted"
     pivot_bolt.color = Color(0.34, 0.36, 0.39)
 
     return {
@@ -170,21 +171,22 @@ def build_fit_details():
         color=Color(0.12, 0.14, 0.17),
     )
 
-    # A bored cylindrical envelope represents the CRP pivot stack between the
-    # fork arms. Its width is an explicit first-fit assumption, not MOZA data.
+    # The reference envelope uses the user's measured CRP2 attachment width
+    # and 10 mm across-flats internal hex. The through hex is conservative
+    # until its actual axial depth and center-hole details are measured.
     pedal_reference = _cylinder_x(
         12.0,
-        -PEDAL_MOUNT_WIDTH_ASSUMED / 2.0,
-        PEDAL_MOUNT_WIDTH_ASSUMED / 2.0,
+        -CRP2_ATTACHMENT_WIDTH / 2.0,
+        CRP2_ATTACHMENT_WIDTH / 2.0,
     ).cut(
-        _cylinder_x(
-            M8_BOLT_CLEARANCE_DIAMETER / 2.0,
+        _hex_prism_x(
+            CRP2_INTERNAL_HEX_AF,
             -FORK_INNER_SPAN / 2.0,
-            FORK_INNER_SPAN / 2.0,
+            FORK_INNER_SPAN,
         )
     )
     pedal_reference = _single_solid(pedal_reference, "pedal pivot reference")
-    pedal_reference.label = "assumed_20mm_crp_pivot_stack_reference"
+    pedal_reference.label = "measured_8mm_crp2_hex_attachment_reference"
     pedal_reference.color = Color(0.28, 0.30, 0.34)
 
     hardware = build_pivot_hardware(holder_details)
@@ -195,9 +197,9 @@ def build_fit_details():
     assembly = AssemblyHelper("moza_crp_tt25_perpendicular_yoke_fit_check")
     holder_occurrence = assembly.add(holder, "printed_perpendicular_yoke")
     puck_occurrence = assembly.add(bare_puck, "dayton_tt25_8")
-    pedal_occurrence = assembly.add(pedal_reference, "assumed_crp_pivot_stack")
-    nut_occurrence = assembly.add(pivot_nut, "m8_captured_nut")
-    bolt_occurrence = assembly.add(pivot_bolt, "m8_yoke_bolt")
+    pedal_occurrence = assembly.add(pedal_reference, "measured_crp2_attachment")
+    nut_occurrence = assembly.add(pivot_nut, "m6_captured_nut")
+    bolt_occurrence = assembly.add(pivot_bolt, "m6_yoke_bolt")
     final = assembly.build()
 
     return {
