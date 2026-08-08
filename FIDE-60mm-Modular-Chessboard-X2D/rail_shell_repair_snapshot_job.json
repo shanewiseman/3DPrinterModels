@@ -1,0 +1,26 @@
+{
+  "jobs": [
+    {
+      "input": "rail_left_14.step",
+      "mode": "view",
+      "outputs": [
+        {"path": "snapshots/rail_left_14_repaired_top.png", "camera": "top"},
+        {"path": "snapshots/rail_left_14_repaired_iso.png", "camera": {"direction": [1, -1, 0.7]}}
+      ],
+      "appearance": "workbench",
+      "display": {"mode": "solid", "projection": "orthographic", "edges": {"color": "#263544"}},
+      "render": {"viewLabels": true, "padding": 0.1, "sizeProfile": "diagnostic"}
+    },
+    {
+      "input": "rail_right_14.step",
+      "mode": "view",
+      "outputs": [
+        {"path": "snapshots/rail_right_14_repaired_top.png", "camera": "top"},
+        {"path": "snapshots/rail_right_14_repaired_iso.png", "camera": {"direction": [-1, -1, 0.7]}}
+      ],
+      "appearance": "workbench",
+      "display": {"mode": "solid", "projection": "orthographic", "edges": {"color": "#263544"}},
+      "render": {"viewLabels": true, "padding": 0.1, "sizeProfile": "diagnostic"}
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "jobs": [
+    {
+      "input": "quarter_sw_light_body.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/quarter_sw_fit_iso.png",
+          "camera": {"direction": [1, 1, 0.55]}
+        },
+        {
+          "path": "snapshots/quarter_sw_fit_underside.png",
+          "camera": {"direction": [1, 1, -0.7]}
+        }
+      ],
+      "appearance": "workbench",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {"color": "#24303a"}
+      },
+      "render": {
+        "viewLabels": true,
+        "padding": 0.12,
+        "sizeProfile": "diagnostic"
+      }
+    },
+    {
+      "input": "quarter_ne_light_body.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/quarter_ne_grooves_iso.png",
+          "camera": {"direction": [-1, -1, 0.5]}
+        }
+      ],
+      "appearance": "workbench",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {"color": "#24303a"}
+      },
+      "render": {
+        "viewLabels": true,
+        "padding": 0.12,
+        "sizeProfile": "diagnostic"
+      }
+    },
+    {
+      "input": "rail_bottom_ad_body.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/rail_bottom_ad_lock_iso.png",
+          "camera": {"direction": [-1, 1, 0.65]}
+        },
+        {
+          "path": "snapshots/rail_bottom_ad_lock_top.png",
+          "camera": "top"
+        }
+      ],
+      "appearance": "workbench",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {"color": "#24303a"}
+      },
+      "render": {
+        "viewLabels": true,
+        "padding": 0.12,
+        "sizeProfile": "diagnostic"
+      }
+    },
+    {
+      "input": "corner_cap.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/corner_cap_lock_iso.png",
+          "camera": {"direction": [1, -1, 0.65]}
+        },
+        {
+          "path": "snapshots/corner_cap_lock_underside.png",
+          "camera": {"direction": [1, -1, -0.65]}
+        }
+      ],
+      "appearance": "workbench",
+      "display": {
+        "mode": "solid",
+        "projection": "orthographic",
+        "edges": {"color": "#24303a"}
+      },
+      "render": {
+        "viewLabels": true,
+        "padding": 0.12,
+        "sizeProfile": "diagnostic"
+      }
+    }
+  ]
+}

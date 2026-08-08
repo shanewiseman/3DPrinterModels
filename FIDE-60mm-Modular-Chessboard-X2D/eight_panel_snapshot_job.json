@@ -1,0 +1,99 @@
+{
+  "jobs": [
+    {
+      "input": "eight_panel_chessboard_assembly.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/eight_panel_assembly_iso.png", "camera": "iso" },
+        {
+          "path": "snapshots/eight_panel_assembly_iso_opposite.png",
+          "camera": { "direction": [-1, 1, -0.8] }
+        },
+        { "path": "snapshots/eight_panel_assembly_top.png", "camera": "top" },
+        { "path": "snapshots/eight_panel_assembly_front.png", "camera": "front" }
+      ],
+      "render": {
+        "viewLabels": true,
+        "padding": 0.08,
+        "sizeProfile": "assembly-large"
+      }
+    },
+    {
+      "input": "eight_panel_print_kit.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/eight_panel_print_kit_iso.png", "camera": "iso" },
+        { "path": "snapshots/eight_panel_print_kit_top.png", "camera": "top" }
+      ],
+      "render": {
+        "viewLabels": true,
+        "padding": 0.04,
+        "sizeProfile": "assembly-large"
+      }
+    },
+    {
+      "input": "panel_south_ab_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_south_ab_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_south_cd_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_south_cd_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_south_ef_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_south_ef_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_south_gh_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_south_gh_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_north_ab_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_north_ab_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_north_cd_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_north_cd_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_north_ef_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_north_ef_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    },
+    {
+      "input": "panel_north_gh_light_body.step",
+      "mode": "view",
+      "outputs": [
+        { "path": "snapshots/panel_north_gh_iso.png", "camera": "iso" }
+      ],
+      "render": { "viewLabels": true, "padding": 0.1, "sizeProfile": "simple" }
+    }
+  ]
+}

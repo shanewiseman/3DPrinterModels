@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="560" viewBox="0 0 1500 560">
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#dc3b3b"/></marker>
+    <style>
+      .panel{fill:#fff;stroke:#cbd5e1;stroke-width:3}.rail{fill:#20262e;stroke:#0f172a;stroke-width:3}
+      .cap{fill:#343b45;stroke:#0f172a;stroke-width:3}.nut{fill:#8b97a4;stroke:#334155;stroke-width:3}
+      .steel{fill:#7b8794;stroke:#334155;stroke-width:3}.move{fill:none;stroke:#dc3b3b;stroke-width:7;marker-end:url(#arrow)}
+      .title{font:700 28px Arial;fill:#172033}.head{font:700 24px Arial;fill:#172033}.label{font:700 19px Arial;fill:#233044}
+      .text{font:17px Arial;fill:#526174}.badge{fill:#2563eb}.badgeText{font:700 20px Arial;fill:#fff;text-anchor:middle}
+      .ok{fill:#eaf8ef;stroke:#41a467;stroke-width:3}.cut{fill:#eef3f8;stroke:#64748b;stroke-width:3}
+    </style>
+  </defs>
+  <rect width="1500" height="560" rx="20" fill="#eef3f8"/>
+  <text x="35" y="44" class="title">Corner-cap lock — captured nut, downward cap motion, cross-screw retention</text>
+
+  <rect x="30" y="70" width="455" height="455" rx="16" class="panel"/>
+  <circle cx="67" cy="108" r="22" class="badge"/><text x="67" y="115" class="badgeText">1</text>
+  <text x="102" y="116" class="head">Drop in the M2 nut</text>
+  <path d="M100 365 V210 H245 V365 Z" class="rail"/>
+  <path d="M245 365 V285 H420 V365 Z" class="rail"/>
+  <rect x="156" y="235" width="54" height="96" rx="5" class="cut"/>
+  <polygon points="163,173 183,161 203,173 203,197 183,209 163,197" class="nut"/>
+  <path d="M183 215 V236" class="move"/>
+  <text x="100" y="397" class="label">Use the named locking rib</text>
+  <text x="100" y="426" class="text">SW bottom_ad • SE right_14</text>
+  <text x="100" y="451" class="text">NE top_eh • NW left_58</text>
+  <text x="100" y="489" class="text">Nut must lie flat and cannot rotate.</text>
+
+  <rect x="520" y="70" width="455" height="455" rx="16" class="panel"/>
+  <circle cx="557" cy="108" r="22" class="badge"/><text x="557" y="115" class="badgeText">2</text>
+  <text x="592" y="116" class="head">Slide the cap downward</text>
+  <path d="M585 365 V235 H720 V365 Z" class="rail"/>
+  <path d="M720 365 V285 H895 V365 Z" class="rail"/>
+  <path d="M592 165 H880 V210 H850 V330 H805 V215 H665 V330 H620 V210 H592 Z" class="cap"/>
+  <path d="M735 220 V271" class="move"/>
+  <text x="585" y="397" class="label">Cap slots capture both adjacent ribs</text>
+  <text x="585" y="426" class="text">Keep the cap level so both ribs enter together.</text>
+  <text x="585" y="455" class="text">Rotate the recessed side hole toward the</text>
+  <text x="585" y="479" class="text">selected rib before sliding the cap down.</text>
+
+  <rect x="1010" y="70" width="460" height="455" rx="16" class="panel"/>
+  <circle cx="1047" cy="108" r="22" class="badge"/><text x="1047" y="115" class="badgeText">3</text>
+  <text x="1082" y="116" class="head">Install the cross-screw</text>
+  <rect x="1055" y="205" width="365" height="185" rx="12" class="cap"/>
+  <rect x="1165" y="225" width="165" height="145" class="rail"/>
+  <polygon points="1280,272 1300,260 1320,272 1320,296 1300,308 1280,296" class="nut"/>
+  <rect x="1088" y="276" width="202" height="18" rx="8" class="steel"/>
+  <circle cx="1098" cy="285" r="19" class="steel"/>
+  <path d="M1028 285 H1073" class="move"/>
+  <rect x="1048" y="412" width="380" height="72" rx="12" class="ok"/>
+  <text x="1068" y="441" class="label">Locked state</text>
+  <text x="1068" y="467" class="text">M2×12 prevents the cap lifting off.</text>
+  <text x="1055" y="182" class="label">Screw crosses cap wall and rail rib</text>
+  <text x="1200" y="338" class="text">Captured nut</text>
+  <text x="1055" y="508" class="text">Tighten only until the cap is retained.</text>
+</svg>

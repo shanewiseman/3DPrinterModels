@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="560" viewBox="0 0 1500 560">
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#dc3b3b"/>
+    </marker>
+    <style>
+      .panel{fill:#fff;stroke:#cbd5e1;stroke-width:3}.cream{fill:#e8dcc0;stroke:#5f5145;stroke-width:3}
+      .edge{fill:#c9b78f;stroke:#5f5145;stroke-width:3}.key{fill:#22a55b;stroke:#126a38;stroke-width:3}
+      .void{fill:#eef3f8;stroke:#64748b;stroke-width:3}.move{fill:none;stroke:#dc3b3b;stroke-width:7;marker-end:url(#arrow)}
+      .seam{stroke:#1f2937;stroke-width:4}.title{font:700 28px Arial;fill:#172033}.head{font:700 24px Arial;fill:#172033}
+      .label{font:700 19px Arial;fill:#233044}.text{font:17px Arial;fill:#526174}.badge{fill:#2563eb}
+      .badgeText{font:700 20px Arial;fill:#fff;text-anchor:middle}.ok{fill:#eaf8ef;stroke:#41a467;stroke-width:3}
+    </style>
+  </defs>
+  <rect width="1500" height="560" rx="20" fill="#eef3f8"/>
+  <text x="35" y="44" class="title">Quarter joint — align, slide, and verify the playing faces</text>
+
+  <rect x="30" y="70" width="455" height="455" rx="16" class="panel"/>
+  <circle cx="67" cy="108" r="22" class="badge"/><text x="67" y="115" class="badgeText">1</text>
+  <text x="102" y="116" class="head">Align the profiles</text>
+  <path d="M70 235 H255 V265 H300 L330 285 L300 305 H255 V370 H70 Z" class="cream"/>
+  <rect x="250" y="210" width="66" height="25" rx="4" class="key"/>
+  <path d="M365 235 H445 V370 H365 V312 L337 292 L365 272 Z" class="cream"/>
+  <path d="M365 205 H445 V235 H365 V230 L329 218 L365 206 Z" class="cream"/>
+  <path d="M324 288 H346" class="move"/>
+  <text x="70" y="405" class="label">Long lower tongue</text>
+  <text x="70" y="431" class="text">carries shear load</text>
+  <text x="262" y="183" class="label">Upper key</text>
+  <text x="295" y="458" class="label">Matching grooves</text>
+  <text x="70" y="493" class="text">Keep both quarters fully supported and level.</text>
+
+  <rect x="520" y="70" width="455" height="455" rx="16" class="panel"/>
+  <circle cx="557" cy="108" r="22" class="badge"/><text x="557" y="115" class="badgeText">2</text>
+  <text x="592" y="116" class="head">Slide straight together</text>
+  <rect x="565" y="212" width="365" height="160" class="cream"/>
+  <line x1="747" y1="212" x2="747" y2="372" class="seam"/>
+  <path d="M692 305 H800 V338 H692 Z" class="edge"/>
+  <path d="M708 245 H790 V270 H708 L694 258 Z" class="key"/>
+  <path d="M650 182 H840" class="move"/>
+  <text x="565" y="410" class="label">Do not twist or pull with screws</text>
+  <text x="565" y="439" class="text">The 0.5 mm lead-ins start the fit; the</text>
+  <text x="565" y="463" class="text">0.25 mm nominal clearance permits sliding.</text>
+  <text x="565" y="493" class="text">Stop and clean debris if the joint binds.</text>
+
+  <rect x="1010" y="70" width="460" height="455" rx="16" class="panel"/>
+  <circle cx="1047" cy="108" r="22" class="badge"/><text x="1047" y="115" class="badgeText">3</text>
+  <text x="1082" y="116" class="head">Verify the locked alignment</text>
+  <rect x="1055" y="185" width="370" height="190" rx="8" class="ok"/>
+  <rect x="1075" y="205" width="165" height="150" class="cream"/>
+  <rect x="1240" y="205" width="165" height="150" class="cream"/>
+  <line x1="1240" y1="205" x2="1240" y2="355" class="seam"/>
+  <line x1="1095" y1="245" x2="1385" y2="245" stroke="#5f5145" stroke-width="3"/>
+  <line x1="1095" y1="285" x2="1385" y2="285" stroke="#5f5145" stroke-width="3"/>
+  <line x1="1095" y1="325" x2="1385" y2="325" stroke="#5f5145" stroke-width="3"/>
+  <path d="M1110 166 H1370" stroke="#22a55b" stroke-width="7"/>
+  <text x="1128" y="157" class="label">Continuous, flush playing plane</text>
+  <text x="1055" y="415" class="label">Upper keys prevent a visible lip</text>
+  <text x="1055" y="444" class="text">The underside bridges installed next provide</text>
+  <text x="1055" y="468" class="text">the final clamping and bending stiffness.</text>
+  <text x="1055" y="498" class="text">No raised square edges should be visible.</text>
+</svg>

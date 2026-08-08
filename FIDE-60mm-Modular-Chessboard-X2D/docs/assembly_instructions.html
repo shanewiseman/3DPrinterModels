@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FIDE 60 mm Modular Chessboard — Installation and Assembly</title>
+  <style>
+    :root {
+      --ink: #142033;
+      --muted: #526174;
+      --line: #cbd5e1;
+      --paper: #ffffff;
+      --soft: #f1f5f9;
+      --cream: #e8dcc0;
+      --brown: #6f5947;
+      --rail: #22272e;
+      --blue: #2563eb;
+      --green: #16854c;
+      --amber: #b45309;
+      --red: #c93838;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #d9e0e8; color: var(--ink); }
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 10.2pt; line-height: 1.35; }
+
+    @page { size: Letter; margin: 0; }
+    .page {
+      position: relative;
+      width: 8.5in;
+      height: 11in;
+      margin: 0 auto;
+      padding: 0.42in 0.52in 0.42in;
+      overflow: hidden;
+      background: var(--paper);
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 0.12in; font-size: 29pt; line-height: 1.02; letter-spacing: -0.4px; }
+    h2 { margin-bottom: 0.16in; font-size: 20pt; line-height: 1.08; }
+    h3 { margin-bottom: 0.07in; font-size: 12.5pt; }
+    p { margin-bottom: 0.09in; }
+
+    .kicker {
+      margin-bottom: 0.09in;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 10pt;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+    .subtitle { color: var(--muted); font-size: 13pt; max-width: 6.9in; }
+    .muted { color: var(--muted); }
+    .small { font-size: 8.8pt; }
+    .tiny { font-size: 7.9pt; }
+    .strong { font-weight: 700; }
+    .nowrap { white-space: nowrap; }
+
+    .hero {
+      width: 100%;
+      height: 5.05in;
+      margin: 0.12in 0 0.16in;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #eef3f8;
+    }
+    .photo {
+      width: 100%;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #eef3f8;
+    }
+    .photo.fit { height: 2.02in; }
+    .photo.medium { height: 2.03in; }
+    .photo.tall { height: 2.23in; }
+    .diagram {
+      width: 100%;
+      height: 2.72in;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #eef3f8;
+    }
+    .diagram.rail { height: 2.35in; }
+    .rail-map.compact-map { width: 2.58in; height: 2.58in; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.16in; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.12in; }
+    .card {
+      padding: 0.13in 0.15in;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+    }
+    .card.soft { background: var(--soft); }
+    .card.blue { border-left: 5px solid var(--blue); }
+    .card.green { border-left: 5px solid var(--green); }
+    .card.amber { border-left: 5px solid var(--amber); }
+    .card.red { border-left: 5px solid var(--red); }
+
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.1in;
+      margin-top: 0.12in;
+    }
+    .spec {
+      padding: 0.11in;
+      text-align: center;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--rail);
+    }
+    .spec b { display: block; font-size: 15pt; }
+    .spec span { display: block; margin-top: 2px; font-size: 7.8pt; color: #d7dee7; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.06in 0.07in; border-bottom: 1px solid #dde3ea; text-align: left; vertical-align: top; }
+    th { color: #334155; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.5px; background: var(--soft); }
+    td.qty { width: 0.58in; text-align: center; font-weight: 700; }
+    td.file { color: #39485c; font-family: "Courier New", monospace; font-size: 8pt; }
+
+    .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+    .steps > li {
+      position: relative;
+      min-height: 0.35in;
+      margin-bottom: 0.09in;
+      padding: 0.02in 0 0.02in 0.44in;
+      counter-increment: step;
+    }
+    .steps > li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0.31in;
+      height: 0.31in;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--blue);
+      font-size: 10pt;
+      font-weight: 700;
+      line-height: 0.31in;
+      text-align: center;
+    }
+    .steps.compact > li { margin-bottom: 0.055in; }
+
+    ul.clean { margin: 0; padding-left: 0.18in; }
+    ul.clean li { margin-bottom: 0.045in; }
+
+    .warning, .note {
+      margin: 0.12in 0;
+      padding: 0.11in 0.14in;
+      border-radius: 8px;
+    }
+    .warning { color: #6b2d08; background: #fff4df; border: 1px solid #f2c071; }
+    .note { color: #16406f; background: #eaf3ff; border: 1px solid #9bc5f7; }
+
+    .orientation {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.1in;
+      margin: 0.1in 0;
+    }
+    .rail-map {
+      position: relative;
+      width: 3.18in;
+      height: 3.18in;
+      margin: 0.04in auto 0.1in;
+      border: 0.22in solid var(--rail);
+      background:
+        conic-gradient(from 90deg, var(--cream) 0 25%, var(--brown) 0 50%, var(--cream) 0 75%, var(--brown) 0) 0 0 / 0.74in 0.74in;
+      box-shadow: inset 0 0 0 1px #8b98a6;
+    }
+    .rail-map span { position: absolute; padding: 2px 5px; color: #fff; background: #111827; border-radius: 4px; font-size: 7.4pt; font-weight: 700; }
+    .rail-map .bottom1 { bottom: -0.2in; left: 0.15in; }
+    .rail-map .bottom2 { bottom: -0.2in; right: 0.15in; }
+    .rail-map .top1 { top: -0.2in; left: 0.15in; }
+    .rail-map .top2 { top: -0.2in; right: 0.15in; }
+    .rail-map .left1 { left: -0.25in; bottom: 0.48in; transform: rotate(-90deg); }
+    .rail-map .left2 { left: -0.25in; top: 0.48in; transform: rotate(-90deg); }
+    .rail-map .right1 { right: -0.25in; bottom: 0.48in; transform: rotate(90deg); }
+    .rail-map .right2 { right: -0.25in; top: 0.48in; transform: rotate(90deg); }
+
+    .lock-flow {
+      display: grid;
+      grid-template-columns: 1fr 0.18in 1fr 0.18in 1fr;
+      align-items: center;
+      gap: 0.04in;
+      margin-top: 0.1in;
+    }
+    .lock-flow .arrow { color: var(--red); font-size: 18pt; font-weight: 700; text-align: center; }
+    .lock-flow .mini { min-height: 0.9in; padding: 0.08in; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); }
+
+    .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 0.08in 0.18in; }
+    .check { position: relative; padding-left: 0.24in; }
+    .check::before { content: ""; position: absolute; left: 0; top: 0.02in; width: 0.14in; height: 0.14in; border: 1.5px solid #64748b; border-radius: 2px; }
+
+    .footer {
+      position: absolute;
+      left: 0.52in;
+      right: 0.52in;
+      bottom: 0.17in;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 0.05in;
+      border-top: 1px solid #d8dee7;
+      color: #6b7788;
+      font-size: 7.5pt;
+    }
+    .page-no { font-weight: 700; color: #334155; }
+
+    .cover-band {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0.2in;
+      background: linear-gradient(90deg, var(--cream) 0 25%, var(--brown) 25% 50%, var(--rail) 50% 75%, var(--blue) 75%);
+    }
+  </style>
+</head>
+<body>
+
+  <section class="page">
+    <div class="kicker">Installation and assembly manual</div>
+    <h1>60 mm Modular Chessboard</h1>
+    <p class="subtitle">Four-quarter, full-size board for the Bambu Lab X2D, with raised perimeter, contrasting algebraic notation, concealed seam registration, and screw-retained corner caps.</p>
+
+    <img class="hero" src="../snapshots/assembly_iso_20260806T000745Z.png" alt="Completed chessboard assembly">
+
+    <div class="specs">
+      <div class="spec"><b>60 mm</b><span>square size</span></div>
+      <div class="spec"><b>480 mm</b><span>playing area</span></div>
+      <div class="spec"><b>520 mm</b><span>overall size</span></div>
+      <div class="spec"><b>10 mm</b><span>perimeter rise</span></div>
+    </div>
+
+    <div class="note"><b>Read before assembly.</b> Several nuts become inaccessible after adjoining parts are installed. Follow the order in this manual and complete every “load nut first” step before closing a seam or adding a corner cap.</div>
+
+    <p class="small muted">Designed for PLA Matte. Hardware: M3×12 and M2×12 screws with standard hex nuts. No heat-set inserts are required.</p>
+    <div class="footer"><span>FIDE 60 mm Modular Chessboard • Rev. 4 • 2026-08-05</span><span class="page-no">1 / 7</span></div>
+    <div class="cover-band"></div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">Before you begin</div>
+    <h2>Parts, hardware, and preparation</h2>
+
+    <div class="grid-2">
+      <div>
+        <h3>Printed parts</h3>
+        <table>
+          <thead><tr><th>Part</th><th class="qty">Qty.</th></tr></thead>
+          <tbody>
+            <tr><td>Single-color playing-quarter bodies</td><td class="qty">4</td></tr>
+            <tr><td>Named perimeter rails</td><td class="qty">8</td></tr>
+            <tr><td>Underside seam bridges</td><td class="qty">8</td></tr>
+            <tr><td>Corner caps</td><td class="qty">4</td></tr>
+            <tr><td>Glue-in dark-square inlays</td><td class="qty">32</td></tr>
+            <tr><td>Notation insert set, separate-print route</td><td class="qty">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Hardware</h3>
+        <table>
+          <thead><tr><th>Hardware</th><th class="qty">Qty.</th></tr></thead>
+          <tbody>
+            <tr><td>M3×12 screws</td><td class="qty">32</td></tr>
+            <tr><td>Standard M3 hex nuts</td><td class="qty">32</td></tr>
+            <tr><td>M2×12 screws</td><td class="qty">4</td></tr>
+            <tr><td>Standard M2 hex nuts</td><td class="qty">4</td></tr>
+            <tr><td>Adhesive felt/rubber pads</td><td class="qty">12</td></tr>
+          </tbody>
+        </table>
+        <p class="tiny muted" style="margin-top:0.08in">Nominal nuts: M3 = 5.5 mm across flats × 2.4 mm thick; M2 = 4.0 mm across flats × 1.6 mm thick.</p>
+      </div>
+    </div>
+
+    <div class="orientation">
+      <div class="card soft">
+        <h3>Useful tools</h3>
+        <ul class="clean small">
+          <li>Drivers matching your M3 and M2 screw heads</li>
+          <li>Tweezers or needle-nose pliers for nut placement</li>
+          <li>Deburring tool, hobby knife, or small flat file</li>
+          <li>Protected, flat work surface and soft cloth</li>
+          <li>PLA-compatible adhesive for separate inlays</li>
+        </ul>
+      </div>
+      <div class="card soft">
+        <h3>Identify the faces</h3>
+        <ul class="clean small">
+          <li><b>Playing side:</b> checker pattern and raised border</li>
+          <li><b>Underside:</b> screw recesses, nut entrances, bridges</li>
+          <li><b>Internal edges:</b> long lower tongue/groove plus short upper keys</li>
+          <li><b>Outer edges:</b> grooves that receive rail tongues</li>
+        </ul>
+      </div>
+    </div>
+
+    <img class="photo medium" src="../snapshots/quarter_sw_fit_underside_20260806T000746Z.png" alt="Underside of a playing quarter">
+
+    <div class="grid-2" style="margin-top:0.1in">
+      <div class="card green">
+        <h3>Color parts</h3>
+        <p class="small">Print each <b>playing_surface_body</b> in the chosen light color. Print the 32 <b>dark_square_inlay</b> parts on the two dedicated dark-color plates. Dry-fit every square, then apply a thin, even layer of PLA-compatible adhesive and press it fully into its recess until flush. Keep each rail as one object and assign its inset notation a contrasting filament.</p>
+      </div>
+      <div class="card amber">
+        <h3>Clean fit surfaces</h3>
+        <p class="small">Remove brim material, strings, and burrs. Preserve the 0.5 mm lead-ins and 0.4 mm first-layer relief. Never force a connector that has visible debris.</p>
+      </div>
+    </div>
+
+    <div class="warning"><b>Hardware trial:</b> Test one M3 nut and one M2 nut before loading all pockets. A nut should slide into its channel, settle into the hex pocket, and remain unable to rotate.</div>
+    <div class="footer"><span>Preparation • Parts and hardware</span><span class="page-no">2 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">Stage 1A</div>
+    <h2>Join the four playing quarters</h2>
+
+    <img class="diagram" src="quarter_joint_action.svg" alt="Illustrated quarter tongue, groove, and upper-key assembly sequence">
+    <p class="tiny muted" style="text-align:center; margin-top:0.04in">The long lower tongue carries shear; the two short upper keys register the playing faces flush.</p>
+
+    <ol class="steps compact">
+      <li><b>Work face-down.</b> Place all four quarters on a clean, padded, flat surface in their SW, SE, NW, and NE positions.</li>
+      <li><b>Load all M3 nuts before joining.</b> Each quarter has eight side-loading nut entrances—two per edge. Slide one standard M3 nut into every entrance until it seats in the internal hex pocket over the vertical screw passage.</li>
+      <li><b>Join the south row.</b> Slide the southwest quarter’s east tongues and upper keys into the southeast quarter’s west grooves. Keep the faces supported and move the parts straight together.</li>
+      <li><b>Join the north row.</b> Slide northwest into northeast using the same method.</li>
+      <li><b>Join the two rows.</b> Slide the completed north row southward onto the north-facing tongues of the south row. The two short upper keys on each edge register the playing faces while the long lower tongue carries shear load.</li>
+      <li><b>Check the top seam.</b> Sight across the playing face while supporting the full assembly. The quarter faces should be level with no trapped filament or visible step.</li>
+    </ol>
+
+    <div class="note"><b>Designed clearance:</b> the lower tongue/groove and concealed upper keys use 0.25 mm nominal depth clearance. A smooth sliding fit is expected; a press fit is not.</div>
+    <div class="warning"><b>Do not force the joint.</b> If the quarters stop before the seam closes, separate them and remove brim, stringing, or debris from both profiles.</div>
+    <div class="footer"><span>Stage 1A • Playing-quarter alignment</span><span class="page-no">3 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">Stage 1B</div>
+    <h2>Lock the quarter seams from below</h2>
+
+    <img class="diagram" src="seam_bridge_action.svg" alt="Illustrated underside seam bridge and M3 captured-nut locking action">
+
+    <div class="grid-2" style="margin-top:0.12in">
+      <div class="card soft">
+        <p class="strong small">Vertical center seam</p>
+        <p class="small">Install four bridges centered at Y = −180, −60, 60, and 180 mm.</p>
+      </div>
+      <div class="card soft">
+        <p class="strong small">Horizontal center seam</p>
+        <p class="small">Install four bridges centered at X = −180, −60, 60, and 180 mm.</p>
+      </div>
+    </div>
+
+    <ol class="steps compact" style="margin-top:0.14in">
+      <li><b>Keep the board face-down and fully supported.</b> Confirm the correct M3 nuts were loaded before the seams were closed.</li>
+      <li>Place each bridge across its seam with the two recessed screw-head seats facing outward/downward.</li>
+      <li>Insert two M3×12 screws through the bridge and into the captured nuts. Turn each screw only a few threads at first.</li>
+      <li>Alternate between the two screws until the bridge sits flat. Repeat for all eight bridge locations.</li>
+      <li>Sight across the playing side after supporting the full board. Loosen and reseat any bridge associated with a visible seam lip.</li>
+    </ol>
+
+    <div class="note"><b>How the bridge locks:</b> each screw pulls against a nut captured inside the quarter edge. The bridge spans both panels, clamps the seam closed, and resists bending without any exposed hardware on the playing side.</div>
+    <div class="warning"><b>Stop when seated.</b> Excess preload can bow the 240 mm panels, crush printed layers, or cause long-term PLA creep.</div>
+    <div class="footer"><span>Stage 1B • Underside seam locks</span><span class="page-no">4 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">Stage 2</div>
+    <h2>Install the raised perimeter rails</h2>
+
+    <div class="grid-2">
+      <div>
+        <div class="rail-map compact-map" aria-label="Perimeter rail placement map">
+          <span class="bottom1">bottom_ad</span><span class="bottom2">bottom_eh</span>
+          <span class="top1">top_ad</span><span class="top2">top_eh</span>
+          <span class="left1">left_14</span><span class="left2">left_58</span>
+          <span class="right1">right_14</span><span class="right2">right_58</span>
+        </div>
+        <p class="tiny muted" style="text-align:center">White sits at the bottom a–h side. The a1 square must be dark.</p>
+      </div>
+      <div>
+        <h3>Rail positions</h3>
+        <table class="small">
+          <tbody>
+            <tr><td><b>White side</b></td><td><span class="nowrap">bottom_ad</span>, <span class="nowrap">bottom_eh</span></td></tr>
+            <tr><td><b>Opposite side</b></td><td><span class="nowrap">top_ad</span>, <span class="nowrap">top_eh</span></td></tr>
+            <tr><td><b>Left from White</b></td><td><span class="nowrap">left_14</span>, <span class="nowrap">left_58</span></td></tr>
+            <tr><td><b>Right from White</b></td><td><span class="nowrap">right_14</span>, <span class="nowrap">right_58</span></td></tr>
+          </tbody>
+        </table>
+        <div class="card blue" style="margin-top:0.13in">
+          <h3>Notation check</h3>
+          <p class="small">Letters and numbers should be upright when viewed from their nearby player position. Adjacent rail segments meet under a separate corner cap.</p>
+        </div>
+      </div>
+    </div>
+
+    <ol class="steps compact">
+      <li>With the board still face-down, place each rail beside its matching quarter edge.</li>
+      <li>Align the rail’s long tongue with the quarter’s outer groove. Start at one end and slide the rail straight into place; keep the screw passages aligned.</li>
+      <li>Install two M3×12 screws from the underside of each rail into the previously loaded M3 nuts. Start both screws before tightening.</li>
+      <li>Repeat for all eight rails. Leave the four corner caps off until the M2 lock nuts are loaded in the next stage.</li>
+    </ol>
+
+    <img class="diagram rail" src="rail_attachment_action.svg" alt="Illustrated perimeter rail tongue and M3 captured-nut fastening action">
+
+    <div class="grid-2" style="margin-top:0.1in">
+      <div class="card green">
+        <h3>Correct fit</h3>
+        <p class="small">The rail tongue seats fully, the 20 mm border is continuous, and the perimeter top remains 10 mm above the playing surface.</p>
+      </div>
+      <div class="card red">
+        <h3>If a rail stops early</h3>
+        <p class="small">Remove it, inspect the entrance and tongue, then trim only obvious brim or stringing. Do not draw a misaligned rail home with the screws.</p>
+      </div>
+    </div>
+
+    <div class="warning"><b>Maximum printed length:</b> each rail is 247.05 mm long. If reprinting, position a 3–4 mm brim carefully inside the X2D’s 256 mm main-nozzle area.</div>
+    <div class="footer"><span>Stage 2 • Raised perimeter</span><span class="page-no">5 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">Stage 3</div>
+    <h2>Lock the four corner caps</h2>
+
+    <img class="diagram" src="corner_lock_action.svg" alt="Illustrated M2 nut loading, corner-cap insertion, and cross-screw locking action">
+
+    <h3>Load one M2 nut at each corner</h3>
+    <table>
+      <thead><tr><th>Corner</th><th>Rail rib that receives the nut</th><th>Cap screw direction</th></tr></thead>
+      <tbody>
+        <tr><td>Southwest</td><td class="file">bottom_ad</td><td>From the nearby outside face</td></tr>
+        <tr><td>Southeast</td><td class="file">right_14</td><td>From the nearby outside face</td></tr>
+        <tr><td>Northeast</td><td class="file">top_eh</td><td>From the nearby outside face</td></tr>
+        <tr><td>Northwest</td><td class="file">left_58</td><td>From the nearby outside face</td></tr>
+      </tbody>
+    </table>
+
+    <ol class="steps compact" style="margin-top:0.12in">
+      <li>Confirm the M2 nut lies flat in the hex pocket and its threaded hole aligns with the horizontal passage through the rail rib.</li>
+      <li>Rotate the identical corner cap so its recessed cross-hole faces the selected rib and is accessible from the nearby outside edge.</li>
+      <li>Slide the cap down over both ribs. The shallow slot lead-ins help both ribs enter together; keep the cap level.</li>
+      <li>Insert one M2×12 screw through the cap wall and rail rib, then thread it into the captured nut.</li>
+      <li>Tighten only until the screw head sits in the 4.5 mm diameter × 2.2 mm deep recess and the cap cannot lift.</li>
+      <li>Repeat at all four corners.</li>
+    </ol>
+
+    <div class="note"><b>How the lock works:</b> the M2 nut is captured against rotation in the rail rib. After the cap is installed, the cap roof also prevents the nut from escaping upward. The cross-screw positively prevents the cap from lifting off.</div>
+    <div class="warning"><b>Do not substitute a longer screw without checking.</b> M2×12 is the validated length. A longer screw may bottom out or damage the printed pocket.</div>
+    <div class="footer"><span>Stage 3 • Positive corner retention</span><span class="page-no">6 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="kicker">Stage 4</div>
+    <h2>Final setup, inspection, and care</h2>
+
+    <img class="photo medium" src="../snapshots/assembly_top_20260806T000745Z.png" alt="Top view of complete chessboard">
+
+    <h3 style="margin-top:0.13in">Final checklist</h3>
+    <div class="checklist">
+      <div class="check">All 8 seam bridges installed with 16 M3 screws</div>
+      <div class="check">All 8 rails installed with 16 M3 screws</div>
+      <div class="check">All 4 caps locked with M2×12 screws</div>
+      <div class="check">No screw head protrudes below a recessed seat</div>
+      <div class="check">Playing-surface seams are flush</div>
+      <div class="check">a1 is dark and notation is correctly oriented</div>
+      <div class="check">Rails are fully seated and border joints are even</div>
+      <div class="check">No loose nuts rattle inside the assembly</div>
+    </div>
+
+    <ol class="steps compact" style="margin-top:0.16in">
+      <li>Apply eight felt/rubber pads to the rail recesses and four to the corner-cap recesses.</li>
+      <li>With assistance if needed, support the full 520 mm board and turn it playing-side up. Do not lift it by a single rail or corner cap.</li>
+      <li>Place it on a flat surface and check for rocking. If needed, verify pad thickness and loosen/reseat a bridge before retightening evenly.</li>
+      <li>After the first several uses, check that the screws remain snug. PLA does not benefit from high fastener preload.</li>
+    </ol>
+
+    <div class="grid-2" style="margin-top:0.12in">
+      <div class="card amber">
+        <h3>Tight connector</h3>
+        <p class="small">Remove the part, clean the entrance, and lightly deburr only the interfering edge. Do not hammer the quarters, rails, or caps together. If consistently tight after reprinting, use small slicer XY-hole/contour compensation.</p>
+      </div>
+      <div class="card blue">
+        <h3>Visible seam lip</h3>
+        <p class="small">Check for debris in the upper-key grooves, verify the assembly is on a flat surface, and tighten opposing bridge screws gradually. The keys register height; the bridges establish final stiffness.</p>
+      </div>
+      <div class="card red">
+        <h3>Cap screw will not start</h3>
+        <p class="small">Remove the cap and confirm it was rotated toward the selected locking rib. Reseat the M2 nut flat in its top-loaded hex pocket and try again without forcing the thread.</p>
+      </div>
+      <div class="card green">
+        <h3>Routine care</h3>
+        <p class="small">Clean with a dry or lightly damp cloth. Avoid hot cars, heaters, direct prolonged sun, solvents, and soaking. Store the large panels supported flat to minimize PLA creep.</p>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:0.14in"><b>Design reference:</b> STEP/STL files and the latest validation report are in the project folder. The generated assembly measures 520 × 520 × 27.6 mm and contains 60 mm squares over a 480 × 480 mm playing area.</div>
+
+    <p class="small muted" style="text-align:center; margin-top:0.2in">Assembly complete. Tighten only enough to keep seams closed and the board flat.</p>
+    <div class="footer"><span>Stage 4 • Final inspection and care</span><span class="page-no">7 / 7</span></div>
+  </section>
+
+</body>
+</html>

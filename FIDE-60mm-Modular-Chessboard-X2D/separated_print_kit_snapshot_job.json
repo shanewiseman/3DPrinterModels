@@ -1,0 +1,29 @@
+{
+  "input": "separated_print_kit.step",
+  "mode": "view",
+  "outputs": [
+    {
+      "path": "snapshots/separated_print_kit_top.png",
+      "camera": "top"
+    },
+    {
+      "path": "snapshots/separated_print_kit_iso.png",
+      "camera": {"direction": [1, -1, 0.75]}
+    },
+    {
+      "path": "snapshots/separated_print_kit_iso_opposite.png",
+      "camera": {"direction": [-1, 1, -0.6]}
+    }
+  ],
+  "appearance": "workbench",
+  "display": {
+    "mode": "solid",
+    "projection": "orthographic",
+    "edges": {"color": "#263544"}
+  },
+  "render": {
+    "viewLabels": true,
+    "padding": 0.06,
+    "sizeProfile": "assembly-large"
+  }
+}

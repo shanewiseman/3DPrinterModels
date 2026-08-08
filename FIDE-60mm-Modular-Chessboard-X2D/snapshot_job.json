@@ -1,0 +1,34 @@
+{
+  "input": "chessboard_assembly.step",
+  "mode": "view",
+  "outputs": [
+    {
+      "path": "snapshots/assembly_iso.png",
+      "camera": "iso"
+    },
+    {
+      "path": "snapshots/assembly_iso_opposite.png",
+      "camera": {
+        "direction": [-1, 1, -0.8]
+      }
+    },
+    {
+      "path": "snapshots/assembly_top.png",
+      "camera": "top"
+    },
+    {
+      "path": "snapshots/assembly_front.png",
+      "camera": "front"
+    }
+  ],
+  "appearance": "workbench",
+  "display": {
+    "mode": "solid",
+    "projection": "orthographic"
+  },
+  "render": {
+    "viewLabels": true,
+    "padding": 0.08,
+    "sizeProfile": "assembly-large"
+  }
+}

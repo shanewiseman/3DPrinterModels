@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="560" viewBox="0 0 1500 560">
+  <defs>
+    <marker id="up" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#dc3b3b"/></marker>
+    <style>
+      .panel{fill:#fff;stroke:#cbd5e1;stroke-width:3}.board{fill:#e8dcc0;stroke:#5f5145;stroke-width:3}
+      .bridge{fill:#20262e;stroke:#0f172a;stroke-width:3}.steel{fill:#7b8794;stroke:#334155;stroke-width:3}
+      .nut{fill:#8b97a4;stroke:#334155;stroke-width:3}.move{stroke:#dc3b3b;stroke-width:7;fill:none;marker-end:url(#up)}
+      .axis{stroke:#dc3b3b;stroke-width:3;stroke-dasharray:9 7}.title{font:700 28px Arial;fill:#172033}
+      .head{font:700 24px Arial;fill:#172033}.label{font:700 19px Arial;fill:#233044}.text{font:17px Arial;fill:#526174}
+      .badge{fill:#2563eb}.badgeText{font:700 20px Arial;fill:#fff;text-anchor:middle}.ok{fill:#eaf8ef;stroke:#41a467;stroke-width:3}
+    </style>
+  </defs>
+  <rect width="1500" height="560" rx="20" fill="#eef3f8"/>
+  <text x="35" y="44" class="title">Underside seam bridge — both screws pull against captured M3 nuts</text>
+
+  <rect x="30" y="70" width="700" height="455" rx="16" class="panel"/>
+  <circle cx="67" cy="108" r="22" class="badge"/><text x="67" y="115" class="badgeText">1</text>
+  <text x="102" y="116" class="head">Place the bridge across the seam</text>
+  <rect x="75" y="175" width="610" height="110" class="board"/>
+  <line x1="380" y1="175" x2="380" y2="285" stroke="#172033" stroke-width="5"/>
+  <polygon points="205,214 225,202 245,214 245,238 225,250 205,238" class="nut"/>
+  <polygon points="515,214 535,202 555,214 555,238 535,250 515,238" class="nut"/>
+  <rect x="145" y="336" width="470" height="68" rx="8" class="bridge"/>
+  <circle cx="225" cy="370" r="19" fill="#eef3f8" stroke="#64748b" stroke-width="3"/>
+  <circle cx="535" cy="370" r="19" fill="#eef3f8" stroke="#64748b" stroke-width="3"/>
+  <path d="M225 330 V260" class="move"/><path d="M535 330 V260" class="move"/>
+  <text x="75" y="150" class="label">Preloaded M3 nuts in the quarter edges</text>
+  <text x="145" y="438" class="label">Recessed screw-head face points outward/down</text>
+  <text x="145" y="466" class="text">Center the bridge over the seam and align both holes.</text>
+  <text x="145" y="494" class="text">Start both M3×12 screws before tightening either.</text>
+
+  <rect x="765" y="70" width="705" height="455" rx="16" class="panel"/>
+  <circle cx="802" cy="108" r="22" class="badge"/><text x="802" y="115" class="badgeText">2</text>
+  <text x="837" y="116" class="head">Alternate until seated — then stop</text>
+  <rect x="810" y="175" width="615" height="110" class="board"/>
+  <line x1="1118" y1="175" x2="1118" y2="285" stroke="#172033" stroke-width="5"/>
+  <polygon points="943,214 963,202 983,214 983,238 963,250 943,238" class="nut"/>
+  <polygon points="1253,214 1273,202 1293,214 1293,238 1273,250 1253,238" class="nut"/>
+  <rect x="883" y="285" width="470" height="68" rx="8" class="bridge"/>
+  <rect x="954" y="235" width="18" height="101" rx="8" class="steel"/>
+  <circle cx="963" cy="334" r="18" class="steel"/>
+  <rect x="1264" y="235" width="18" height="101" rx="8" class="steel"/>
+  <circle cx="1273" cy="334" r="18" class="steel"/>
+  <rect x="835" y="386" width="565" height="84" rx="12" class="ok"/>
+  <text x="858" y="419" class="label">Locked state</text>
+  <text x="858" y="446" class="text">Bridge sits flat; screw heads remain recessed; seam is closed.</text>
+  <text x="858" y="494" class="text">Tighten left → right → left only until the board is flat.</text>
+  <text x="1160" y="159" class="label">Quarter seam</text>
+</svg>
