@@ -1,0 +1,16 @@
+{
+  "input": "x2d_dual_ams_mount_assembly.step",
+  "mode": "view",
+  "outputs": [
+    { "path": "snapshots/assembly_iso.png", "camera": "iso" },
+    { "path": "snapshots/assembly_iso_opposite.png", "camera": { "direction": [-1, 1, -0.8] } },
+    { "path": "snapshots/assembly_top.png", "camera": "top" },
+    { "path": "snapshots/assembly_front.png", "camera": "front" }
+  ],
+  "render": {
+    "viewLabels": true,
+    "padding": 0.12,
+    "sizeProfile": "assembly-large"
+  },
+  "display": { "mode": "solid", "projection": "orthographic" }
+}

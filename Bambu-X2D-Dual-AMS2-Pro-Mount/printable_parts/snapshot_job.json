@@ -1,0 +1,20 @@
+{
+  "jobs": [
+    { "input": "left_shelf.step", "mode": "view", "outputs": [{ "path": "snapshots/left_shelf.png", "camera": "iso" }] },
+    { "input": "right_shelf.step", "mode": "view", "outputs": [{ "path": "snapshots/right_shelf.png", "camera": "iso" }] },
+    { "input": "left_front_bracket.step", "mode": "view", "outputs": [{ "path": "snapshots/left_front_bracket.png", "camera": "iso" }] },
+    { "input": "left_rear_bracket.step", "mode": "view", "outputs": [{ "path": "snapshots/left_rear_bracket.png", "camera": "iso" }] },
+    { "input": "right_front_bracket.step", "mode": "view", "outputs": [{ "path": "snapshots/right_front_bracket.png", "camera": "iso" }] },
+    { "input": "right_rear_bracket.step", "mode": "view", "outputs": [{ "path": "snapshots/right_rear_bracket.png", "camera": "iso" }] },
+    { "input": "front_tie_left_half.step", "mode": "view", "outputs": [{ "path": "snapshots/front_tie_left_half.png", "camera": "iso" }] },
+    { "input": "front_tie_right_half.step", "mode": "view", "outputs": [{ "path": "snapshots/front_tie_right_half.png", "camera": "iso" }] },
+    { "input": "rear_tie_left_half.step", "mode": "view", "outputs": [{ "path": "snapshots/rear_tie_left_half.png", "camera": "iso" }] },
+    { "input": "rear_tie_right_half.step", "mode": "view", "outputs": [{ "path": "snapshots/rear_tie_right_half.png", "camera": "iso" }] },
+    { "input": "left_front_side_pad.step", "mode": "view", "outputs": [{ "path": "snapshots/left_front_side_pad.png", "camera": "iso" }] },
+    { "input": "left_rear_side_pad.step", "mode": "view", "outputs": [{ "path": "snapshots/left_rear_side_pad.png", "camera": "iso" }] },
+    { "input": "right_front_side_pad.step", "mode": "view", "outputs": [{ "path": "snapshots/right_front_side_pad.png", "camera": "iso" }] },
+    { "input": "right_rear_side_pad.step", "mode": "view", "outputs": [{ "path": "snapshots/right_rear_side_pad.png", "camera": "iso" }] }
+  ],
+  "render": { "viewLabels": true, "padding": 0.12, "sizeProfile": "diagnostic" },
+  "display": { "mode": "solid", "projection": "orthographic" }
+}

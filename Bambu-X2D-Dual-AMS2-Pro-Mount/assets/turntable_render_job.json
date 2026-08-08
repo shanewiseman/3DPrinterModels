@@ -1,0 +1,26 @@
+{
+  "input": "x2d_dual_ams_mount_assembly.step",
+  "mode": "orbit",
+  "outputs": [
+    {
+      "path": "assets/x2d_dual_ams_mount_turntable.gif",
+      "width": 800,
+      "height": 600
+    }
+  ],
+  "orbit": {
+    "fps": 5,
+    "durationSeconds": 20,
+    "startAzimuth": -45,
+    "elevation": 35,
+    "turns": 1
+  },
+  "render": {
+    "padding": 0.1,
+    "sizeProfile": "orbit"
+  },
+  "display": {
+    "mode": "solid",
+    "projection": "orthographic"
+  }
+}

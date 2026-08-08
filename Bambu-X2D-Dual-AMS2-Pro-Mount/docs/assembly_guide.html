@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bambu X2D Dual AMS 2 Pro Mount — Assembly &amp; Fit-Check Guide</title>
+  <style>
+    @page { size: Letter; margin: 0.42in 0.48in 0.55in; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: #172033;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10.2pt;
+      line-height: 1.34;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: 27pt; line-height: 1.06; letter-spacing: -0.6px; }
+    h2 { font-size: 18pt; line-height: 1.12; margin-bottom: 9px; }
+    h3 { font-size: 11.5pt; margin-bottom: 5px; color: #243452; }
+    ul, ol { margin-top: 4px; padding-left: 20px; }
+    li { margin-bottom: 4px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { vertical-align: top; }
+    code { font-family: "Courier New", monospace; font-size: 8.8pt; }
+    .page { page-break-after: always; min-height: 9.55in; position: relative; }
+    .page:last-child { page-break-after: auto; }
+    .eyebrow {
+      color: #2a5b8f;
+      font-size: 9pt;
+      font-weight: bold;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+    .cover {
+      background: #f3f6fa;
+      border-top: 12px solid #123e6c;
+      padding: 0.42in 0.45in;
+    }
+    .cover img { width: 100%; max-height: 5.4in; object-fit: contain; margin: 0.12in 0; }
+    .subtitle { color: #48576e; font-size: 14pt; }
+    .revision { color: #65738a; font-size: 9pt; }
+    .prototype-banner {
+      background: #8f1d20;
+      color: white;
+      font-weight: bold;
+      padding: 9px 12px;
+      margin-top: 12px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    .header {
+      border-bottom: 3px solid #123e6c;
+      padding-bottom: 7px;
+      margin-bottom: 13px;
+    }
+    .callout {
+      border-left: 5px solid #c77700;
+      background: #fff5df;
+      padding: 9px 11px;
+      margin: 9px 0;
+    }
+    .danger { border-left-color: #a72024; background: #fdebec; }
+    .good { border-left-color: #26734d; background: #eaf6ef; }
+    .info { border-left-color: #2a5b8f; background: #edf4fb; }
+    .definition-table th, .definition-table td,
+    .bom th, .bom td {
+      border: 1px solid #bdc7d5;
+      padding: 6px 7px;
+    }
+    .definition-table th, .bom th { background: #e8edf4; text-align: left; }
+    .bom .qty { width: 0.65in; text-align: center; }
+    .step-head {
+      width: 100%;
+      border-bottom: 4px solid #123e6c;
+      margin-bottom: 10px;
+    }
+    .step-number {
+      width: 0.72in;
+      height: 0.72in;
+      background: #123e6c;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 24pt;
+      vertical-align: middle;
+    }
+    .step-title { padding-left: 12px; vertical-align: middle; }
+    .step-title h2 { margin: 0 0 2px; }
+    .filename { color: #5b687c; font-size: 9pt; }
+    .step-layout td { width: 50%; padding: 5px 8px; }
+    .step-layout td:first-child { padding-left: 0; }
+    .step-layout td:last-child { padding-right: 0; }
+    .part-image {
+      width: 100%;
+      height: 3.7in;
+      object-fit: contain;
+      background: #f5f7fa;
+      border: 1px solid #cbd3df;
+    }
+    .tag {
+      display: inline-block;
+      padding: 3px 7px;
+      color: white;
+      font-size: 8pt;
+      font-weight: bold;
+      border-radius: 3px;
+      margin: 0 4px 6px 0;
+    }
+    .shelf { background: #243a78; }
+    .bracket { background: #c33b20; }
+    .tie { background: #277046; }
+    .pad { background: #67438d; }
+    .hardware { background: #5f6773; }
+    .check {
+      background: #edf4fb;
+      border: 1px solid #b5cade;
+      padding: 7px 9px;
+      margin-top: 7px;
+    }
+    .assembly-context {
+      width: 100%;
+      max-height: 3.15in;
+      object-fit: contain;
+      border: 1px solid #cbd3df;
+      background: #f5f7fa;
+    }
+    .two-up td { width: 50%; padding: 5px; }
+    .small { font-size: 8.8pt; color: #566276; }
+    .footer-note {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      color: #69758a;
+      font-size: 8pt;
+      border-top: 1px solid #d4dbe5;
+      padding-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<section class="page cover">
+  <div class="eyebrow">Assembly &amp; Fit-Check Guide · Revision A2</div>
+  <h1>Bambu X2D<br>Dual AMS 2 Pro Mount</h1>
+  <p class="subtitle">Fully printed ASA structure · 14 printable objects · centered 25.4 mm AMS gap</p>
+  <img src="../snapshots/assembly_iso_20260808T131824Z.png" alt="Assembled X2D dual AMS mount">
+  <div class="prototype-banner">FIT-REVIEW PROTOTYPE — VERIFY PHYSICAL INTERFACES BEFORE LOADING OR INSTALLATION</div>
+  <p class="revision">Prepared from the validated parametric STEP assembly. Units: millimeters. Global front is the X2D front-door side; left and right are viewed while facing the printer.</p>
+</section>
+
+<section class="page">
+  <div class="header">
+    <div class="eyebrow">Read before assembly</div>
+    <h2>Safety, scope, and orientation</h2>
+  </div>
+  <div class="callout danger">
+    <strong>This is not a production-certified or load-rated mount.</strong> The X2D top rim, glass bearing surface, side contact zones, door envelope, AMS feet, and AMS underside clearances still use provisional geometry. Do not place loaded AMS units on the mount until those interfaces are measured and the structure is proof-tested away from the printer.
+  </div>
+  <table class="definition-table">
+    <tr><th>Direction</th><th>Meaning in this guide</th></tr>
+    <tr><td><strong>Front</strong></td><td>The side with the X2D front door. In model coordinates this is negative Y.</td></tr>
+    <tr><td><strong>Left / right</strong></td><td>Viewed while standing in front of and facing the printer.</td></tr>
+    <tr><td><strong>Shelf root</strong></td><td>The inboard shelf edge beside the printer. The shelf extends outward from this edge.</td></tr>
+    <tr><td><strong>Top datum</strong></td><td>Z=0: shelf support surface, provisional X2D top surface, and AMS foot bottoms.</td></tr>
+  </table>
+  <h3 style="margin-top:12px;">Required physical checks</h3>
+  <ul>
+    <li>Measure the real AMS foot centers, foot size, foot height, and underside clearance.</li>
+    <li>Confirm the X2D rim/glass load path and whether any printed tie may contact the glass.</li>
+    <li>Confirm all four side-pad bearing zones avoid seams, vents, doors, and removable panels.</li>
+    <li>Cycle the front door through its full physical swing with the unloaded mount dry-fitted.</li>
+    <li>Determine M4 screw lengths from printed coupons and actual hardware; lengths are not finalized in the CAD.</li>
+  </ul>
+  <div class="callout info">
+    No aluminum or metal structural beams are used. M4 screws and standard hex nuts remain purchased assembly hardware. Add a separate retention tether for each AMS before operational use.
+  </div>
+  <p class="footer-note">Use hand tools only during fit-up. Do not clamp against the glass or torque printed ASA interfaces until the physical contact geometry is approved.</p>
+</section>
+
+<section class="page">
+  <div class="header">
+    <div class="eyebrow">Parts and hardware</div>
+    <h2>Bill of materials</h2>
+  </div>
+  <table class="bom">
+    <tr><th class="qty">Qty.</th><th>Printed ASA object</th><th>Saved print bounds</th></tr>
+    <tr><td class="qty">2</td><td>Left and right shelves</td><td>211.1 × 252 × 12</td></tr>
+    <tr><td class="qty">4</td><td>Left/right, front/rear triangular brackets</td><td>211.1 × 246 × 12</td></tr>
+    <tr><td class="qty">4</td><td>Front/rear low-profile tie halves</td><td>249 × 50 × 25.4</td></tr>
+    <tr><td class="qty">4</td><td>Side contact pads</td><td>120 × 30 × 3</td></tr>
+  </table>
+  <h3 style="margin-top:12px;">Modeled M4 hardware</h3>
+  <table class="bom">
+    <tr><th class="qty">Qty.</th><th>Use</th><th>Installation</th></tr>
+    <tr><td class="qty">16</td><td>Bracket-to-shelf screws + 16 nuts</td><td>Four vertical fasteners per bracket; heads at shelf top, nuts in bracket top-chord pockets.</td></tr>
+    <tr><td class="qty">12</td><td>Tie-to-shelf screws + 12 nuts</td><td>Three vertical fasteners per 50 mm overlap; recessed heads at tie top, nuts in shelf underside pockets.</td></tr>
+    <tr><td class="qty">6</td><td>Center-boss screws + 6 nuts</td><td>Three transverse fasteners per front/rear joint; heads on left, nuts in right-half pockets.</td></tr>
+    <tr><td class="qty"><strong>34</strong></td><td><strong>Total M4 screws + 34 standard hex nuts</strong></td><td>Screw lengths must be selected after coupon and physical fit checks.</td></tr>
+  </table>
+  <h3 style="margin-top:12px;">Preparation</h3>
+  <ul>
+    <li>Print brackets on their broad truss faces, ties and shelves flat, and pads on their largest faces—the individual STEP files are already saved this way.</li>
+    <li>Deburr holes and pocket entrances without enlarging load-bearing walls.</li>
+    <li>Test one M4 nut trap, one tie button-head recess, one tie overlap, and one center-boss joint before full-size printing.</li>
+    <li>Keep left/right and front/rear brackets labeled; their side-entry nut-pocket orientations differ.</li>
+    <li>Keep tie halves labeled: left halves carry center screw-head recesses; right halves carry center nut pockets.</li>
+  </ul>
+  <div class="callout good"><strong>Assembly order:</strong> build the left and right shelf/bracket modules on a protected bench, dry-fit the four pads and modules to verified printer contact zones, then install the front and rear ties while the AMS units are removed.</div>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">1</td><td class="step-title"><h2>Stage the left shelf</h2><div class="filename">left_shelf.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/left_shelf_plain_m4_20260808T131835Z.png" alt="Left shelf with plain M4 holes"></td>
+    <td>
+      <span class="tag shelf">SHELF</span><span class="tag hardware">NO HARDWARE YET</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the shelf top face upward on padded blocks so the underside and bracket lands remain accessible.</li>
+        <li>Identify the inboard root edge that will sit beside the left printer side and the outboard edge that will extend 25.4 mm beyond the left AMS body.</li>
+        <li>Confirm the four-hole rows for the front and rear brackets and the two staggered three-hole tie-overlap patterns are clear.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The part lies flat without rocking. Do not interchange it with the right shelf; the tie-hole patterns are mirrored.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">2</td><td class="step-title"><h2>Attach the left front bracket</h2><div class="filename">left_front_bracket.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/left_front_bracket_20260808T022338Z.png" alt="Left front bracket"></td>
+    <td>
+      <span class="tag bracket">BRACKET</span><span class="tag hardware">4× M4 + 4 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Load four M4 nuts into the side-entry pockets in the bracket’s 25.4 mm top chord.</li>
+        <li>Hold the top chord beneath the left shelf’s front row, with the vertical chord at the shelf root beside the future printer side.</li>
+        <li>Insert four button-head screws through the plain shelf holes and start every nut before tightening; the heads remain proud of the shelf top.</li>
+        <li>Snug in an alternating pattern; leave final torque for the unloaded fit check.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The front bracket is square to the shelf and the broad truss face points front/rear—not inward toward the printer.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">3</td><td class="step-title"><h2>Attach the left rear bracket</h2><div class="filename">left_rear_bracket.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/left_rear_bracket_20260808T022338Z.png" alt="Left rear bracket"></td>
+    <td>
+      <span class="tag bracket">BRACKET</span><span class="tag hardware">4× M4 + 4 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Load four nuts into the rear bracket’s side-entry top-chord pockets.</li>
+        <li>Align the bracket beneath the left shelf’s rear four-hole row with its vertical chord at the root.</li>
+        <li>Insert four button-head screws through the plain shelf holes, engage all nuts, and snug in an alternating pattern; the heads remain proud.</li>
+        <li>Compare front and rear bracket spacing and parallelism.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> Both bracket vertical chords share the same left-side contact plane and neither bracket is twisted.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">4</td><td class="step-title"><h2>Dry-fit the left front side pad</h2><div class="filename">left_front_side_pad.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/left_front_side_pad_20260808T022338Z.png" alt="Left front side pad"></td>
+    <td>
+      <span class="tag pad">SIDE PAD</span><span class="tag hardware">NO MODELED FASTENER</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the 3 mm pad between the left front bracket’s vertical chord and the verified left-front printer bearing zone.</li>
+        <li>Align its 120 mm dimension vertically and its 30 mm dimension front-to-back in the installed orientation.</li>
+        <li>Use only a temporary removable locator during dry fit if required.</li>
+      </ol>
+      <div class="callout danger"><strong>Provisional interface:</strong> The CAD defines no permanent pad fastener. Do not glue or clamp this pad until the physical side geometry and service-panel clearance are verified.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">5</td><td class="step-title"><h2>Dry-fit the left rear side pad</h2><div class="filename">left_rear_side_pad.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/left_rear_side_pad_20260808T022338Z.png" alt="Left rear side pad"></td>
+    <td>
+      <span class="tag pad">SIDE PAD</span><span class="tag hardware">NO MODELED FASTENER</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the pad between the left rear vertical chord and the verified left-rear printer bearing zone.</li>
+        <li>Keep the pad fully on a structural, non-removable surface and clear of seams, vents, and fasteners.</li>
+        <li>Confirm the front and rear pads create a common contact plane without forcing the brackets apart.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The unloaded left module sits level at the modeled top datum without pressing on the glass edge.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">6</td><td class="step-title"><h2>Stage the right shelf</h2><div class="filename">right_shelf.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/right_shelf_plain_m4_20260808T131843Z.png" alt="Right shelf with plain M4 holes"></td>
+    <td>
+      <span class="tag shelf">SHELF</span><span class="tag hardware">NO HARDWARE YET</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the right shelf top face upward on padded blocks.</li>
+        <li>Identify its inboard root edge beside the right printer side and the outboard edge that will extend 25.4 mm beyond the right AMS body.</li>
+        <li>Confirm all bracket and tie holes are open and that underside nut pockets accept the coupon-tested M4 nuts.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> Compare left and right shelves side-by-side: they must be mirrored, not stacked in the same orientation.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">7</td><td class="step-title"><h2>Attach the right front bracket</h2><div class="filename">right_front_bracket.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/right_front_bracket_20260808T022338Z.png" alt="Right front bracket"></td>
+    <td>
+      <span class="tag bracket">BRACKET</span><span class="tag hardware">4× M4 + 4 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Load four nuts into the right front bracket’s top-chord pockets.</li>
+        <li>Align it beneath the right shelf’s front hole row with the vertical chord at the shelf root.</li>
+        <li>Insert four button-head screws through the plain shelf holes from above, engage all nuts, and snug evenly; the heads remain proud.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The bracket mirrors the left-front bracket and its nut-pocket entries remain accessible for service.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">8</td><td class="step-title"><h2>Attach the right rear bracket</h2><div class="filename">right_rear_bracket.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/right_rear_bracket_20260808T022338Z.png" alt="Right rear bracket"></td>
+    <td>
+      <span class="tag bracket">BRACKET</span><span class="tag hardware">4× M4 + 4 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Load four nuts into the right rear bracket’s top-chord pockets.</li>
+        <li>Align it beneath the rear row and insert four button-head screws through the plain shelf holes; the heads remain proud.</li>
+        <li>Snug evenly and compare front/rear bracket parallelism.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> Both right-side vertical chords share one contact plane and the shelf remains flat.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">9</td><td class="step-title"><h2>Dry-fit the right front side pad</h2><div class="filename">right_front_side_pad.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/right_front_side_pad_20260808T022338Z.png" alt="Right front side pad"></td>
+    <td>
+      <span class="tag pad">SIDE PAD</span><span class="tag hardware">NO MODELED FASTENER</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the pad between the right front vertical chord and the verified right-front printer bearing zone.</li>
+        <li>Align it vertically, keep it clear of seams and removable panels, and use only a temporary locator if needed.</li>
+      </ol>
+      <div class="callout danger"><strong>Do not preload the panel.</strong> The pad spreads contact; it is not permission to clamp an unverified sheet-metal or glass interface.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">10</td><td class="step-title"><h2>Dry-fit the right rear side pad</h2><div class="filename">right_rear_side_pad.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/right_rear_side_pad_20260808T022338Z.png" alt="Right rear side pad"></td>
+    <td>
+      <span class="tag pad">SIDE PAD</span><span class="tag hardware">NO MODELED FASTENER</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the fourth pad at the verified right-rear bearing zone.</li>
+        <li>Confirm the two right pads form one plane and the right shelf matches the left shelf’s support height.</li>
+        <li>With a helper and no AMS load, position both shelf/bracket modules on the printer-side dry-fit locations.</li>
+      </ol>
+      <div class="check"><strong>Transition check:</strong> Both shelves must be level at Z=0, the front door must cycle freely, and neither module may contact glass edges or service panels before ties are added.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">11</td><td class="step-title"><h2>Install the front tie — left half</h2><div class="filename">front_tie_left_half.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/front_tie_left_half_20260808T022338Z.png" alt="Front tie left half"></td>
+    <td>
+      <span class="tag tie">LOW TIE</span><span class="tag hardware">3× M4 + 3 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the half at the front tie station, modeled at Y=-70 mm, with its 50 mm solid land overlapping the left shelf top.</li>
+        <li>Keep the 3 mm truss span toward the printer center and the 25.4 mm boss at the center gap.</li>
+        <li>Insert three vertical screws through the recessed tie holes; capture three nuts in the shelf underside pockets and snug.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The tie rests on the approved top/rim datum, not an unverified glass surface, and remains below the provisional AMS body underside.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">12</td><td class="step-title"><h2>Install the front tie — right half</h2><div class="filename">front_tie_right_half.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/front_tie_right_half_20260808T022338Z.png" alt="Front tie right half"></td>
+    <td>
+      <span class="tag tie">LOW TIE</span><span class="tag hardware">6× M4 + 6 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Fasten the right 50 mm overlap to the right shelf using three recessed vertical screws and three underside nuts.</li>
+        <li>Bring the two center bosses together without overlap or force.</li>
+        <li>Insert three transverse M4 screws from the left boss head recesses into three nuts captured in the right boss.</li>
+        <li>Snug the six fasteners involved in this step evenly.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The assembled front tie is straight, its boss stays entirely inside the 25.4 mm AMS gap, and the full physical door sweep remains unobstructed.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">13</td><td class="step-title"><h2>Install the rear tie — left half</h2><div class="filename">rear_tie_left_half.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/rear_tie_left_half_20260808T022338Z.png" alt="Rear tie left half"></td>
+    <td>
+      <span class="tag tie">LOW TIE</span><span class="tag hardware">3× M4 + 3 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Place the left half at the rear tie station, modeled at Y=+70 mm.</li>
+        <li>Overlap its solid land 50 mm onto the left shelf and keep the boss toward the center gap.</li>
+        <li>Install three recessed vertical screws and three shelf-underside nuts; leave the center joint accessible.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> The rear tie clears the measured AMS underside, vents, PTFE routes, rear modules, and glass-service path.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <table class="step-head"><tr><td class="step-number">14</td><td class="step-title"><h2>Install the rear tie — right half</h2><div class="filename">rear_tie_right_half.step</div></td></tr></table>
+  <table class="step-layout"><tr>
+    <td><img class="part-image" src="../printable_parts/snapshots/rear_tie_right_half_20260808T022338Z.png" alt="Rear tie right half"></td>
+    <td>
+      <span class="tag tie">LOW TIE</span><span class="tag hardware">6× M4 + 6 NUTS</span>
+      <h3>Action</h3>
+      <ol>
+        <li>Fasten the right overlap with three vertical screws and three underside nuts.</li>
+        <li>Align the rear center bosses and insert three transverse screws from left to right into the right-half nut pockets.</li>
+        <li>Snug the rear joint, then recheck all front/rear tie and bracket fasteners by hand.</li>
+      </ol>
+      <div class="check"><strong>Check:</strong> Both ties are parallel, the shelf tops remain coplanar, and the assembly is stable without forcing the printer sides or top.</div>
+    </td>
+  </tr></table>
+</section>
+
+<section class="page">
+  <div class="header">
+    <div class="eyebrow">Final unloaded fit check</div>
+    <h2>Verify geometry before placing either AMS</h2>
+  </div>
+  <table class="two-up"><tr>
+    <td><img class="assembly-context" src="../snapshots/assembly_top_20260808T131824Z.png" alt="Assembly top view"></td>
+    <td><img class="assembly-context" src="../snapshots/assembly_front_20260808T131824Z.png" alt="Assembly front view"></td>
+  </tr></table>
+  <ul>
+    <li><strong>Centered pair:</strong> AMS bodies face forward, centers are X=±198.7 mm, and the body-to-body gap is 25.4 mm.</li>
+    <li><strong>Outer margin:</strong> AMS outer faces are X=±384.7 mm; shelf edges are X=±410.1 mm—exactly 25.4 mm beyond each AMS.</li>
+    <li><strong>Foot support:</strong> inner foot rows land on the verified X2D top; outer foot rows land fully on shelves; every foot bottom remains at the same Z=0 datum.</li>
+    <li><strong>Tie clearance:</strong> both 3 mm truss spans stay between the measured foot rows and below the real AMS underside; center bosses remain in the middle gap.</li>
+    <li><strong>Door/service:</strong> cycle the door fully, check screen and rear access, verify top-glass service strategy, and confirm no part blocks vents, purge hardware, PTFE tubes, cables, or AMS lids.</li>
+    <li><strong>Fasteners:</strong> all 34 screws are engaged with nuts; the 16 bracket screw heads sit proud on the shelves, while tie screw heads remain seated in their recesses. No screw may protrude into a keep-out or foot-support zone.</li>
+  </ul>
+  <div class="callout danger">
+    <strong>Before operational use:</strong> remove the mount and proof-test the printed modules/joins away from the printer with a distributed dead load and sustained warm-load period. Inspect ASA parts for whitening, cracking, permanent set, loose nuts, and layer separation. Add one independent retention tether per AMS.
+  </div>
+  <div class="callout info">
+    Top-glass service requires removal or loosening of the low ties after the AMS units are removed. Never attempt to lift the glass through the installed tie pair.
+  </div>
+  <p class="small">Design status: geometry-validated fit-review prototype. This guide documents the modeled assembly; physical interface verification remains mandatory.</p>
+</section>
+
+</body>
+</html>
