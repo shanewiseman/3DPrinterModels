@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FIDE 60 mm Modular Chessboard — Installation and Assembly</title>
+  <title>FIDE 60 mm Eight-Panel Modular Chessboard — Installation and Assembly</title>
   <style>
     :root {
       --ink: #142033;
@@ -86,6 +86,8 @@
       background: #eef3f8;
     }
     .diagram.rail { height: 2.35in; }
+    .diagram.short { height: 1.48in; }
+    .diagram.bridge-plan { height: 2.52in; }
     .rail-map.compact-map { width: 2.58in; height: 2.58in; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.16in; }
@@ -229,9 +231,9 @@
   <section class="page">
     <div class="kicker">Installation and assembly manual</div>
     <h1>60 mm Modular Chessboard</h1>
-    <p class="subtitle">Four-quarter, full-size board for the Bambu Lab X2D, with raised perimeter, contrasting algebraic notation, concealed seam registration, and screw-retained corner caps.</p>
+    <p class="subtitle">Eight-panel, full-size board for the Bambu Lab X2D, with raised perimeter, contrasting algebraic notation, concealed seam registration, and screw-retained corner caps.</p>
 
-    <img class="hero" src="../snapshots/assembly_iso_20260806T000745Z.png" alt="Completed chessboard assembly">
+    <img class="hero" src="../snapshots/eight_panel_assembly_iso_20260807T212352Z.png" alt="Completed eight-panel chessboard assembly">
 
     <div class="specs">
       <div class="spec"><b>60 mm</b><span>square size</span></div>
@@ -243,7 +245,7 @@
     <div class="note"><b>Read before assembly.</b> Several nuts become inaccessible after adjoining parts are installed. Follow the order in this manual and complete every “load nut first” step before closing a seam or adding a corner cap.</div>
 
     <p class="small muted">Designed for PLA Matte. Hardware: M3×12 and M2×12 screws with standard hex nuts. No heat-set inserts are required.</p>
-    <div class="footer"><span>FIDE 60 mm Modular Chessboard • Rev. 4 • 2026-08-05</span><span class="page-no">1 / 7</span></div>
+    <div class="footer"><span>FIDE 60 mm Modular Chessboard • Rev. 5 • 2026-08-07</span><span class="page-no">1 / 7</span></div>
     <div class="cover-band"></div>
   </section>
 
@@ -257,9 +259,9 @@
         <table>
           <thead><tr><th>Part</th><th class="qty">Qty.</th></tr></thead>
           <tbody>
-            <tr><td>Single-color playing-quarter bodies</td><td class="qty">4</td></tr>
+            <tr><td>Named 1/8 playing-panel bodies</td><td class="qty">8</td></tr>
             <tr><td>Named perimeter rails</td><td class="qty">8</td></tr>
-            <tr><td>Underside seam bridges</td><td class="qty">8</td></tr>
+            <tr><td>Underside seam bridges</td><td class="qty">16</td></tr>
             <tr><td>Corner caps</td><td class="qty">4</td></tr>
             <tr><td>Glue-in dark-square inlays</td><td class="qty">32</td></tr>
             <tr><td>Notation insert set, separate-print route</td><td class="qty">1</td></tr>
@@ -271,8 +273,8 @@
         <table>
           <thead><tr><th>Hardware</th><th class="qty">Qty.</th></tr></thead>
           <tbody>
-            <tr><td>M3×12 screws</td><td class="qty">32</td></tr>
-            <tr><td>Standard M3 hex nuts</td><td class="qty">32</td></tr>
+            <tr><td>M3×12 screws</td><td class="qty">48</td></tr>
+            <tr><td>Standard M3 hex nuts</td><td class="qty">48</td></tr>
             <tr><td>M2×12 screws</td><td class="qty">4</td></tr>
             <tr><td>Standard M2 hex nuts</td><td class="qty">4</td></tr>
             <tr><td>Adhesive felt/rubber pads</td><td class="qty">12</td></tr>
@@ -298,18 +300,19 @@
         <ul class="clean small">
           <li><b>Playing side:</b> checker pattern and raised border</li>
           <li><b>Underside:</b> screw recesses, nut entrances, bridges</li>
-          <li><b>Internal edges:</b> long lower tongue/groove plus short upper keys</li>
+          <li><b>Internal edges:</b> lower tongue/groove plus upper registration keys</li>
           <li><b>Outer edges:</b> grooves that receive rail tongues</li>
+          <li><b>Panel map:</b> south/north row plus file pair ab, cd, ef, or gh</li>
         </ul>
       </div>
     </div>
 
-    <img class="photo medium" src="../snapshots/quarter_sw_fit_underside_20260806T000746Z.png" alt="Underside of a playing quarter">
+    <img class="photo medium" src="../snapshots/panel_south_ab_iso_20260807T212352Z.png" alt="One named eighth-panel body and its tongue, groove, and upper registration features">
 
     <div class="grid-2" style="margin-top:0.1in">
       <div class="card green">
         <h3>Color parts</h3>
-        <p class="small">Print each <b>playing_surface_body</b> in the chosen light color. Print the 32 <b>dark_square_inlay</b> parts on the two dedicated dark-color plates. Dry-fit every square, then apply a thin, even layer of PLA-compatible adhesive and press it fully into its recess until flush. Keep each rail as one object and assign its inset notation a contrasting filament.</p>
+        <p class="small">Print each <b>panel_*_light_body</b> in the chosen light color. Print the 32 <b>dark_square_inlay</b> parts on the two dedicated dark-color plates. Dry-fit every square, then apply a thin, even layer of PLA-compatible adhesive and press it fully into its recess until flush. Keep each rail as one object and assign its inset notation a contrasting filament.</p>
       </div>
       <div class="card amber">
         <h3>Clean fit surfaces</h3>
@@ -317,45 +320,46 @@
       </div>
     </div>
 
-    <div class="warning"><b>Hardware trial:</b> Test one M3 nut and one M2 nut before loading all pockets. A nut should slide into its channel, settle into the hex pocket, and remain unable to rotate.</div>
+    <div class="warning"><b>Hardware trial:</b> Test one M3 nut and one M2 nut before loading all pockets. On the 1/8 panels, the M3 nut passes through a 6.1 mm entry, seats in a 5.8 mm across-flats pocket, and aligns with a 3.6 mm screw passage.</div>
     <div class="footer"><span>Preparation • Parts and hardware</span><span class="page-no">2 / 7</span></div>
   </section>
 
   <section class="page">
     <div class="kicker">Stage 1A</div>
-    <h2>Join the four playing quarters</h2>
+    <h2>Join the eight playing panels</h2>
 
-    <img class="diagram" src="quarter_joint_action.svg" alt="Illustrated quarter tongue, groove, and upper-key assembly sequence">
-    <p class="tiny muted" style="text-align:center; margin-top:0.04in">The long lower tongue carries shear; the two short upper keys register the playing faces flush.</p>
+    <img class="diagram" src="eight_panel_joint_action.svg" alt="Illustrated map and joining sequence for the eight named playing panels">
+    <p class="tiny muted" style="text-align:center; margin-top:0.04in">Build the two four-panel rows first, then slide the complete north row onto the south row.</p>
 
     <ol class="steps compact">
-      <li><b>Work face-down.</b> Place all four quarters on a clean, padded, flat surface in their SW, SE, NW, and NE positions.</li>
-      <li><b>Load all M3 nuts before joining.</b> Each quarter has eight side-loading nut entrances—two per edge. Slide one standard M3 nut into every entrance until it seats in the internal hex pocket over the vertical screw passage.</li>
-      <li><b>Join the south row.</b> Slide the southwest quarter’s east tongues and upper keys into the southeast quarter’s west grooves. Keep the faces supported and move the parts straight together.</li>
-      <li><b>Join the north row.</b> Slide northwest into northeast using the same method.</li>
-      <li><b>Join the two rows.</b> Slide the completed north row southward onto the north-facing tongues of the south row. The two short upper keys on each edge register the playing faces while the long lower tongue carries shear load.</li>
-      <li><b>Check the top seam.</b> Sight across the playing face while supporting the full assembly. The quarter faces should be level with no trapped filament or visible step.</li>
+      <li><b>Work face-down.</b> Lay out the south row as <b>south_ab, south_cd, south_ef, south_gh</b>; place the matching north row above it. White's a–h side is at the south/bottom.</li>
+      <li><b>Load all M3 nuts before joining.</b> Every panel has six entrances: two on each long edge and one on each short edge. Seat all 48 nuts over their vertical passages and test-thread each location.</li>
+      <li><b>Join the south row.</b> Work left to right: ab → cd → ef → gh. Keep the panels supported and move each female groove straight onto the preceding panel's tongue and upper keys.</li>
+      <li><b>Join the north row.</b> Repeat left to right with north_ab through north_gh.</li>
+      <li><b>Join the two rows.</b> Slide the completed north row southward onto the north-facing tongues of the south row. The upper keys register the playing faces while the lower tongues carry shear.</li>
+      <li><b>Check all seven playing seams.</b> Sight across the playing face while supporting the full assembly. All eight panels should be level with no trapped filament or visible step.</li>
     </ol>
 
     <div class="note"><b>Designed clearance:</b> the lower tongue/groove and concealed upper keys use 0.25 mm nominal depth clearance. A smooth sliding fit is expected; a press fit is not.</div>
-    <div class="warning"><b>Do not force the joint.</b> If the quarters stop before the seam closes, separate them and remove brim, stringing, or debris from both profiles.</div>
-    <div class="footer"><span>Stage 1A • Playing-quarter alignment</span><span class="page-no">3 / 7</span></div>
+    <div class="warning"><b>Do not force the joint.</b> If the panels stop before a seam closes, separate them and remove brim, stringing, or debris from both profiles.</div>
+    <div class="footer"><span>Stage 1A • Eight-panel alignment</span><span class="page-no">3 / 7</span></div>
   </section>
 
   <section class="page">
     <div class="kicker">Stage 1B</div>
-    <h2>Lock the quarter seams from below</h2>
+    <h2>Lock all seven panel seams from below</h2>
 
-    <img class="diagram" src="seam_bridge_action.svg" alt="Illustrated underside seam bridge and M3 captured-nut locking action">
+    <img class="diagram bridge-plan" src="eight_panel_bridge_plan.svg" alt="Underside map showing all sixteen bridge positions on the eight-panel board">
+    <img class="diagram short" src="seam_bridge_action.svg" alt="Illustrated underside seam bridge and M3 captured-nut locking action">
 
     <div class="grid-2" style="margin-top:0.12in">
       <div class="card soft">
-        <p class="strong small">Vertical center seam</p>
-        <p class="small">Install four bridges centered at Y = −180, −60, 60, and 180 mm.</p>
+        <p class="strong small">Three vertical seams</p>
+        <p class="small">Install four bridges on each seam at X = −120, 0, and 120 mm: twelve bridges total.</p>
       </div>
       <div class="card soft">
-        <p class="strong small">Horizontal center seam</p>
-        <p class="small">Install four bridges centered at X = −180, −60, 60, and 180 mm.</p>
+        <p class="strong small">One horizontal center seam</p>
+        <p class="small">Install four bridges at X = −180, −60, 60, and 180 mm, rotated 90°.</p>
       </div>
     </div>
 
@@ -363,11 +367,11 @@
       <li><b>Keep the board face-down and fully supported.</b> Confirm the correct M3 nuts were loaded before the seams were closed.</li>
       <li>Place each bridge across its seam with the two recessed screw-head seats facing outward/downward.</li>
       <li>Insert two M3×12 screws through the bridge and into the captured nuts. Turn each screw only a few threads at first.</li>
-      <li>Alternate between the two screws until the bridge sits flat. Repeat for all eight bridge locations.</li>
+      <li>Alternate between the two screws until the bridge sits flat. Repeat for all sixteen bridge locations.</li>
       <li>Sight across the playing side after supporting the full board. Loosen and reseat any bridge associated with a visible seam lip.</li>
     </ol>
 
-    <div class="note"><b>How the bridge locks:</b> each screw pulls against a nut captured inside the quarter edge. The bridge spans both panels, clamps the seam closed, and resists bending without any exposed hardware on the playing side.</div>
+    <div class="note"><b>How the bridge locks:</b> each screw pulls against a nut captured inside one of the two adjacent panel edges. The bridge clamps the seam closed and resists bending without exposed playing-side hardware.</div>
     <div class="warning"><b>Stop when seated.</b> Excess preload can bow the 240 mm panels, crush printed layers, or cause long-term PLA creep.</div>
     <div class="footer"><span>Stage 1B • Underside seam locks</span><span class="page-no">4 / 7</span></div>
   </section>
@@ -404,8 +408,8 @@
     </div>
 
     <ol class="steps compact">
-      <li>With the board still face-down, place each rail beside its matching quarter edge.</li>
-      <li>Align the rail’s long tongue with the quarter’s outer groove. Start at one end and slide the rail straight into place; keep the screw passages aligned.</li>
+      <li>With the board still face-down, place each rail beside its matching outer panel edge.</li>
+      <li>Align the rail’s long tongue with the outer panel groove or grooves. Start at one end and slide the rail straight into place; keep the screw passages aligned.</li>
       <li>Install two M3×12 screws from the underside of each rail into the previously loaded M3 nuts. Start both screws before tightening.</li>
       <li>Repeat for all eight rails. Leave the four corner caps off until the M2 lock nuts are loaded in the next stage.</li>
     </ol>
@@ -462,11 +466,11 @@
     <div class="kicker">Stage 4</div>
     <h2>Final setup, inspection, and care</h2>
 
-    <img class="photo medium" src="../snapshots/assembly_top_20260806T000745Z.png" alt="Top view of complete chessboard">
+    <img class="photo medium" src="../snapshots/eight_panel_assembly_top_20260807T212352Z.png" alt="Top view of complete eight-panel chessboard">
 
     <h3 style="margin-top:0.13in">Final checklist</h3>
     <div class="checklist">
-      <div class="check">All 8 seam bridges installed with 16 M3 screws</div>
+      <div class="check">All 16 seam bridges installed with 32 M3 screws</div>
       <div class="check">All 8 rails installed with 16 M3 screws</div>
       <div class="check">All 4 caps locked with M2×12 screws</div>
       <div class="check">No screw head protrudes below a recessed seat</div>
@@ -486,7 +490,7 @@
     <div class="grid-2" style="margin-top:0.12in">
       <div class="card amber">
         <h3>Tight connector</h3>
-        <p class="small">Remove the part, clean the entrance, and lightly deburr only the interfering edge. Do not hammer the quarters, rails, or caps together. If consistently tight after reprinting, use small slicer XY-hole/contour compensation.</p>
+        <p class="small">Remove the part, clean the entrance, and lightly deburr only the interfering edge. Do not hammer the panels, rails, or caps together. If consistently tight after reprinting, use small slicer XY-hole/contour compensation.</p>
       </div>
       <div class="card blue">
         <h3>Visible seam lip</h3>
@@ -498,13 +502,12 @@
       </div>
       <div class="card green">
         <h3>Routine care</h3>
-        <p class="small">Clean with a dry or lightly damp cloth. Avoid hot cars, heaters, direct prolonged sun, solvents, and soaking. Store the large panels supported flat to minimize PLA creep.</p>
+        <p class="small">Clean with a dry or lightly damp cloth. Avoid hot cars, heaters, direct prolonged sun, solvents, and soaking. Store the eight playing panels supported flat to minimize PLA creep.</p>
       </div>
     </div>
 
-    <div class="note" style="margin-top:0.14in"><b>Design reference:</b> STEP/STL files and the latest validation report are in the project folder. The generated assembly measures 520 × 520 × 27.6 mm and contains 60 mm squares over a 480 × 480 mm playing area.</div>
+    <div class="note" style="margin-top:0.14in"><b>Design reference:</b> STEP/STL files and the latest validation report are in the project folder. The generated assembly measures 520 × 520 × 27.6 mm and contains eight playing panels, sixteen seam bridges, and 60 mm squares over a 480 × 480 mm playing area.</div>
 
-    <p class="small muted" style="text-align:center; margin-top:0.2in">Assembly complete. Tighten only enough to keep seams closed and the board flat.</p>
     <div class="footer"><span>Stage 4 • Final inspection and care</span><span class="page-no">7 / 7</span></div>
   </section>
 

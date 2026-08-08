@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="560" viewBox="0 0 1500 560">
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .stage{fill:#fff;stroke:#cbd5e1;stroke-width:3}.panel{fill:#e8dcc0;stroke:#5f5145;stroke-width:3}
+      .north{fill:#dbeafe}.south{fill:#fef3c7}.title{font:700 27px Arial;fill:#142033}
+      .label{font:700 20px Arial;fill:#142033}.small{font:18px Arial;fill:#526174}
+      .tiny{font:700 15px Arial;fill:#334155}.move{fill:none;stroke:#2563eb;stroke-width:7;marker-end:url(#arrow)}
+      .seam{stroke:#16854c;stroke-width:5;stroke-dasharray:12 8}.ok{fill:#dcfce7;stroke:#16854c;stroke-width:4}
+    </style>
+  </defs>
+  <rect width="1500" height="560" rx="20" fill="#eef3f8"/>
+
+  <rect x="30" y="35" width="455" height="490" rx="16" class="stage"/>
+  <text x="55" y="76" class="title">1  Identify all eight panels</text>
+  <g transform="translate(95 112)">
+    <rect x="0" y="0" width="320" height="320" rx="6" fill="#fff" stroke="#142033" stroke-width="5"/>
+    <g class="north">
+      <rect x="0" y="0" width="80" height="160"/>
+      <rect x="80" y="0" width="80" height="160"/>
+      <rect x="160" y="0" width="80" height="160"/>
+      <rect x="240" y="0" width="80" height="160"/>
+    </g>
+    <g class="south">
+      <rect x="0" y="160" width="80" height="160"/>
+      <rect x="80" y="160" width="80" height="160"/>
+      <rect x="160" y="160" width="80" height="160"/>
+      <rect x="240" y="160" width="80" height="160"/>
+    </g>
+    <g fill="none" stroke="#5f5145" stroke-width="3">
+      <path d="M80 0V320M160 0V320M240 0V320M0 160H320"/>
+    </g>
+    <g class="tiny" text-anchor="middle">
+      <text x="40" y="78">north_ab</text><text x="120" y="78">north_cd</text>
+      <text x="200" y="78">north_ef</text><text x="280" y="78">north_gh</text>
+      <text x="40" y="242">south_ab</text><text x="120" y="242">south_cd</text>
+      <text x="200" y="242">south_ef</text><text x="280" y="242">south_gh</text>
+    </g>
+  </g>
+  <text x="255" y="462" class="label" text-anchor="middle">WHITE / a–h SIDE</text>
+  <text x="55" y="494" class="small">Work face-down, but preserve this orientation.</text>
+
+  <rect x="520" y="35" width="455" height="490" rx="16" class="stage"/>
+  <text x="545" y="76" class="title">2  Build two four-panel rows</text>
+  <g transform="translate(560 133)">
+    <text x="0" y="-20" class="label">North row</text>
+    <rect x="0" y="0" width="82" height="112" rx="6" class="panel north"/>
+    <rect x="94" y="0" width="82" height="112" rx="6" class="panel north"/>
+    <rect x="188" y="0" width="82" height="112" rx="6" class="panel north"/>
+    <rect x="282" y="0" width="82" height="112" rx="6" class="panel north"/>
+    <g class="tiny" text-anchor="middle"><text x="41" y="60">ab</text><text x="135" y="60">cd</text><text x="229" y="60">ef</text><text x="323" y="60">gh</text></g>
+    <path d="M20 130H344" class="move"/>
+  </g>
+  <g transform="translate(560 330)">
+    <text x="0" y="-20" class="label">South row</text>
+    <rect x="0" y="0" width="82" height="112" rx="6" class="panel south"/>
+    <rect x="94" y="0" width="82" height="112" rx="6" class="panel south"/>
+    <rect x="188" y="0" width="82" height="112" rx="6" class="panel south"/>
+    <rect x="282" y="0" width="82" height="112" rx="6" class="panel south"/>
+    <g class="tiny" text-anchor="middle"><text x="41" y="60">ab</text><text x="135" y="60">cd</text><text x="229" y="60">ef</text><text x="323" y="60">gh</text></g>
+    <path d="M20 130H344" class="move"/>
+  </g>
+  <text x="545" y="500" class="small">Join left to right: ab → cd → ef → gh.</text>
+
+  <rect x="1010" y="35" width="460" height="490" rx="16" class="stage"/>
+  <text x="1035" y="76" class="title">3  Join north row to south row</text>
+  <g transform="translate(1075 110)">
+    <rect x="0" y="0" width="330" height="130" rx="8" class="panel north"/>
+    <text x="165" y="70" class="label" text-anchor="middle">complete north row</text>
+    <path d="M165 148V210" class="move"/>
+    <rect x="0" y="230" width="330" height="130" rx="8" class="panel south"/>
+    <text x="165" y="300" class="label" text-anchor="middle">complete south row</text>
+    <path d="M0 230H330" class="seam"/>
+  </g>
+  <rect x="1045" y="438" width="390" height="55" rx="9" class="ok"/>
+  <text x="1240" y="472" class="label" text-anchor="middle">All seven playing seams closed and flush</text>
+  <text x="1035" y="515" class="small">Slide straight together; do not bend or twist a row.</text>
+</svg>

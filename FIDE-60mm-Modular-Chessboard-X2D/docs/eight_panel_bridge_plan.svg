@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="560" viewBox="0 0 1500 560">
+  <defs>
+    <style>
+      .title{font:700 28px Arial;fill:#142033}.label{font:700 20px Arial;fill:#142033}
+      .small{font:18px Arial;fill:#526174}.tiny{font:700 15px Arial;fill:#334155}
+      .board{fill:#e8dcc0;stroke:#142033;stroke-width:5}.grid{stroke:#b8aa91;stroke-width:2}
+      .panel-seam{stroke:#2563eb;stroke-width:7}.center-seam{stroke:#16854c;stroke-width:7}
+      .vertical-bridge{fill:#f59e0b;stroke:#92400e;stroke-width:3}.horizontal-bridge{fill:#22c55e;stroke:#166534;stroke-width:3}
+      .card{fill:#fff;stroke:#cbd5e1;stroke-width:3}.number{font:700 36px Arial;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1500" height="560" rx="20" fill="#eef3f8"/>
+
+  <text x="45" y="52" class="title">Underside bridge plan — 16 bridges total</text>
+  <g transform="translate(65 70)">
+    <rect x="0" y="0" width="430" height="430" class="board"/>
+    <g class="grid">
+      <path d="M53.75 0V430M107.5 0V430M161.25 0V430M215 0V430M268.75 0V430M322.5 0V430M376.25 0V430"/>
+      <path d="M0 53.75H430M0 107.5H430M0 161.25H430M0 215H430M0 268.75H430M0 322.5H430M0 376.25H430"/>
+    </g>
+    <path d="M107.5 0V430M215 0V430M322.5 0V430" class="panel-seam"/>
+    <path d="M0 215H430" class="center-seam"/>
+
+    <g class="vertical-bridge">
+      <rect x="77.5" y="47" width="60" height="14" rx="5"/><rect x="77.5" y="154.5" width="60" height="14" rx="5"/>
+      <rect x="77.5" y="262" width="60" height="14" rx="5"/><rect x="77.5" y="369.5" width="60" height="14" rx="5"/>
+      <rect x="185" y="47" width="60" height="14" rx="5"/><rect x="185" y="154.5" width="60" height="14" rx="5"/>
+      <rect x="185" y="262" width="60" height="14" rx="5"/><rect x="185" y="369.5" width="60" height="14" rx="5"/>
+      <rect x="292.5" y="47" width="60" height="14" rx="5"/><rect x="292.5" y="154.5" width="60" height="14" rx="5"/>
+      <rect x="292.5" y="262" width="60" height="14" rx="5"/><rect x="292.5" y="369.5" width="60" height="14" rx="5"/>
+    </g>
+    <g class="horizontal-bridge">
+      <rect x="47" y="185" width="14" height="60" rx="5"/><rect x="154.5" y="185" width="14" height="60" rx="5"/>
+      <rect x="262" y="185" width="14" height="60" rx="5"/><rect x="369.5" y="185" width="14" height="60" rx="5"/>
+    </g>
+    <text x="215" y="456" class="label" text-anchor="middle">WHITE / a–h SIDE</text>
+  </g>
+
+  <g transform="translate(550 82)">
+    <rect x="0" y="0" width="900" height="128" rx="14" class="card"/>
+    <circle cx="65" cy="64" r="40" fill="#f59e0b"/><text x="65" y="77" class="number" text-anchor="middle">12</text>
+    <text x="125" y="48" class="label">Across the three vertical panel seams</text>
+    <text x="125" y="78" class="small">Four bridges per seam at Y = −180, −60, 60, and 180 mm.</text>
+    <text x="125" y="105" class="small">Bridge bodies run horizontally, crossing each blue seam.</text>
+  </g>
+
+  <g transform="translate(550 230)">
+    <rect x="0" y="0" width="900" height="128" rx="14" class="card"/>
+    <circle cx="65" cy="64" r="40" fill="#22c55e"/><text x="65" y="77" class="number" text-anchor="middle">4</text>
+    <text x="125" y="48" class="label">Across the horizontal center seam</text>
+    <text x="125" y="78" class="small">One bridge at X = −180, −60, 60, and 180 mm.</text>
+    <text x="125" y="105" class="small">Rotate these bridge bodies 90° so they cross the green seam.</text>
+  </g>
+
+  <g transform="translate(550 378)">
+    <rect x="0" y="0" width="900" height="128" rx="14" class="card"/>
+    <text x="28" y="39" class="label">Install while the board is face-down and fully supported.</text>
+    <text x="28" y="72" class="small">Each bridge uses two M3×12 screws: one into the captured nut on each side of its seam.</text>
+    <text x="28" y="101" class="small">Start both screws, alternate tightening, and stop as soon as the bridge sits flat.</text>
+  </g>
+</svg>

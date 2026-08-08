@@ -24,7 +24,7 @@
   <circle cx="225" cy="370" r="19" fill="#eef3f8" stroke="#64748b" stroke-width="3"/>
   <circle cx="535" cy="370" r="19" fill="#eef3f8" stroke="#64748b" stroke-width="3"/>
   <path d="M225 330 V260" class="move"/><path d="M535 330 V260" class="move"/>
-  <text x="75" y="150" class="label">Preloaded M3 nuts in the quarter edges</text>
+  <text x="75" y="150" class="label">Preloaded M3 nuts in the adjacent panel edges</text>
   <text x="145" y="438" class="label">Recessed screw-head face points outward/down</text>
   <text x="145" y="466" class="text">Center the bridge over the seam and align both holes.</text>
   <text x="145" y="494" class="text">Start both M3×12 screws before tightening either.</text>
@@ -45,5 +45,5 @@
   <text x="858" y="419" class="label">Locked state</text>
   <text x="858" y="446" class="text">Bridge sits flat; screw heads remain recessed; seam is closed.</text>
   <text x="858" y="494" class="text">Tighten left → right → left only until the board is flat.</text>
-  <text x="1160" y="159" class="label">Quarter seam</text>
+  <text x="1160" y="159" class="label">Panel seam</text>
 </svg>

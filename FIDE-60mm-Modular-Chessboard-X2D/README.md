@@ -1,8 +1,9 @@
 # 60 mm Modular Chessboard for Bambu Lab X2D
 
-STEP-first, four-quarter chessboard with a raised contrasting perimeter,
-algebraic notation, captured-nut assembly hardware, and print-ready STL
-sidecars.
+STEP-first, eight-panel chessboard with a raised contrasting perimeter,
+algebraic notation, captured-nut assembly hardware, and print-ready STEP/STL
+files sized for the Bambu Lab X2D. A legacy four-quarter layout remains in the
+project as an alternate build path.
 
 ![Assembled chessboard rotating around its center Z axis and then its center X axis](docs/chessboard_rotation.gif)
 
@@ -17,14 +18,15 @@ playing face, raised perimeter, and underside seam bridges.
 - Perimeter edge treatment: 2 mm comfort fillets on all exposed top edges;
   mating seams remain square for a continuous assembled surface.
 - Assembled footprint: 520 x 520 mm.
-- Playing sections: four nominal 240 x 240 mm quarters.
-- Two concealed upper registration keys per internal quarter edge keep the
+- Playing sections: eight named two-file-by-four-rank panels, nominally
+  120 x 240 mm before joinery.
+- Concealed upper registration keys at every internal panel edge keep the
   playing surfaces flush.
 - Fit-critical interfaces use 0.5 mm lead-ins and 0.4 mm first-layer relief.
 - Each corner cap has a hidden M2 x 12 positive-retention cross-screw.
-- Largest printable envelope: 247.05 x 35 mm for a rail and 244 x 244 mm for
-  a quarter, within the X2D's
-  256 x 256 mm main-nozzle area.
+- Largest playing-panel envelope: 124 x 244 mm. The longest perimeter rail is
+  247.05 x 35 mm. Both fit the X2D's 256 x 256 mm main-nozzle area, while the
+  narrower panels reserve room for supports and a prime tower.
 - Material: PLA Matte.
 - Recommended color intent: ivory/light, dark brown, black perimeter, ivory
   notation.
@@ -40,34 +42,8 @@ design, not FIDE endorsement or tournament certification.
 ## Primary files
 
 - `chessboard_geometry.py` - shared parametric build123d geometry.
-- `chessboard_assembly.py` / `chessboard_assembly.step` - complete labeled
-  assembly in its final pose.
-- `quarter_sw.step`, `quarter_se.step`, `quarter_nw.step`, `quarter_ne.step` -
-  slicer-ready, two-color quarter assemblies with exact 60 mm dark-square
-  bodies.
-- `rail_*.step` - two-color perimeter rail assemblies containing the black
-  rail and ivory notation bodies.
-- `meshes/` - individual structural and loose-inlay STL files.
-- `validate_chessboard.py` - deterministic dimensions, interference, fit, and
-  hardware-stack checks.
-- `validate_exported_step.py` - re-imports the separated STEP and verifies all
-  four playing-surface bodies, 32 glue-in dark squares, and eight perimeter
-  bodies remain valid closed solids for slicer use.
-- `validate_stl_watertightness.py` - verifies two-triangle manifold edges on
-  every perimeter-rail STL mesh.
-- `cad_brief.md` - design assumptions and validation intent.
-- `snapshots/` - rendered inspection packet.
-- `docs/chessboard_rotation.gif` - looping assembled-board animation used at
-  the top of this README; regenerate it with `generate_readme_animation.py`.
-- `docs/FIDE_60mm_Modular_Chessboard_Assembly_Instructions.pdf` - printable
-  seven-page installation and assembly manual with illustrated joint,
-  underside-bridge, perimeter-rail, and corner-lock sequences.
-- `separated_print_kit.step` - 56 printable objects containing 88 colored
-  leaf solids, grouped into nine suggested X2D plate layouts. Each quarter is
-  one single-color playing-surface body. The 32 glue-in dark squares occupy
-  two dedicated plates; each rail contains its black body and four inset ivory
-  glyphs.
-- `eight_panel_chessboard_assembly.step` - complete assembled review model
+- `eight_panel_chessboard_assembly.py` /
+  `eight_panel_chessboard_assembly.step` - complete assembled review model
   using eight 120 x 240 mm playing panels and sixteen underside bridges.
 - `eight_panel_print_kit.step` - recommended support/prime-tower layout: 68
   printable objects containing 100 colored leaf solids in thirteen labeled
@@ -77,37 +53,46 @@ design, not FIDE endorsement or tournament certification.
   maximum envelope is 124 x 244 mm. Each STEP's top-level product label
   matches its filename stem so Bambu Studio retains the panel identity.
 - `eight_panel_geometry.py`, `eight_panel_print_kit.py`, and
-  `validate_eight_panel.py` - parametric source, plate layout, and fit checks
-  for the eight-panel variant.
+  `validate_eight_panel.py` - parametric source, plate layout, fit, mesh, and
+  exported-name checks for the eight-panel design.
+- `rail_*.step` - two-color perimeter rail assemblies containing the black
+  rail and ivory notation bodies.
+- `meshes/` - individual structural and loose-inlay STL files.
+- `validate_eight_panel_export.py` - re-imports the eight-panel STEP and checks
+  the separated playing panels and other print objects.
+- `validate_stl_watertightness.py` - verifies two-triangle manifold edges on
+  every perimeter-rail STL mesh.
+- `cad_brief.md` - design assumptions and validation intent.
+- `snapshots/` - rendered inspection packet.
+- `docs/chessboard_rotation.gif` - looping assembled-board animation used at
+  the top of this README; regenerate it with `generate_readme_animation.py`.
+- `docs/FIDE_60mm_Modular_Chessboard_Assembly_Instructions.pdf` - printable
+  seven-page installation and assembly manual for the eight named panels,
+  sixteen underside bridges, perimeter rails, and positive-retention corners.
+- `chessboard_assembly.step`, `separated_print_kit.step`, and `quarter_*.step`
+  - legacy four-quarter review and print files.
 
 ## Printed parts and quantities
 
 | Part | File | Quantity |
 | --- | --- | ---: |
-| Southwest quarter body | `meshes/quarter_sw_light_body.stl` | 1 |
-| Southeast quarter body | `meshes/quarter_se_light_body.stl` | 1 |
-| Northwest quarter body | `meshes/quarter_nw_light_body.stl` | 1 |
-| Northeast quarter body | `meshes/quarter_ne_light_body.stl` | 1 |
+| Named 1/8 playing panels | `meshes/panel_*_light_body.stl` | 1 each / 8 total |
 | Named perimeter rail bodies | `meshes/rail_*_body.stl` | 1 each / 8 total |
-| Seam bridge | `meshes/seam_bridge.stl` | 8 |
+| Seam bridge | `meshes/seam_bridge.stl` | 16 |
 | Corner cap | `meshes/corner_cap.stl` | 4 |
 | Loose dark-square inlay | `meshes/loose_dark_square_inlay.stl` | 32 |
 | Complete notation inlay set | `meshes/notation_insert_set.stl` | 1 set |
 
 The notation set contains two copies of `a-h` and two copies of `1-8`.
 
-### Eight-panel quantities
-
-The eight-panel variant replaces the four quarter bodies with eight named
-120 x 240 mm bodies and increases the seam-bridge quantity from 8 to 16. It
-uses 48 M3 x 12 screws and 48 standard M3 nuts in total: 32 for the sixteen
-bridges and 16 for the unchanged perimeter rails. Dark inlays, rails, corner
-caps, M2 corner hardware, and pads retain their listed quantities.
+Each playing panel contains two files by four ranks and six M3 nut traps: two
+on each long edge and one on each short edge. Across all eight panels, those
+48 captured nuts receive 32 bridge screws and 16 rail screws.
 
 ## Hardware
 
-- 32 x M3 x 12 mm screws.
-- 32 x standard M3 hex nuts, nominally 5.5 mm across flats and 2.4 mm thick.
+- 48 x M3 x 12 mm screws.
+- 48 x standard M3 hex nuts, nominally 5.5 mm across flats and 2.4 mm thick.
 - 4 x M2 x 12 mm screws.
 - 4 x standard M2 hex nuts, nominally 4.0 mm across flats and 1.6 mm thick.
 - 12 adhesive felt or rubber pads sized to fit the rail/corner recesses.
@@ -116,10 +101,9 @@ caps, M2 corner hardware, and pads retain their listed quantities.
 The recessed M3 screw-head envelope is 6.8 mm diameter x 3.2 mm deep. The M2
 corner-lock head envelope is 4.5 mm diameter x 2.2 mm deep. Check the actual
 heads and nuts before committing to the long prints.
-The M3 nut pockets provide about 0.22 mm across-flats clearance and 0.40 mm
-thickness clearance. The M2 corner-lock pockets provide 0.25 mm across-flats
-clearance and 0.30 mm thickness clearance. Use slicer XY compensation if a
-first nut is too tight.
+The legacy four-quarter M3 pockets provide about 0.22 mm across-flats
+clearance and 0.40 mm thickness clearance. The M2 corner-lock pockets provide
+0.25 mm across-flats clearance and 0.30 mm thickness clearance.
 
 After the PLA Matte fit test, the eight-panel playing bodies use a slightly
 more forgiving panel-only M3 interface: a 6.1 mm side-entry channel, a 5.8 mm
@@ -136,35 +120,13 @@ the 60 mm square pitch and dark-inlay seats unchanged.
 
 ## Color workflows
 
-### Separated all-parts STEP workflow
-
-Import `separated_print_kit.step` into Bambu Studio, preserve separate
-parts/objects during import, then use **Split to Objects** if it arrives as one
-assembly. The file contains nine widely separated modules: four single-color
-quarter plates, two multi-color rail plates, two 16-piece dark-inlay plates,
-and one bridge/corner-cap plate. Every print object is oriented on Z = 0; no
-virtual build-plate solids are present.
-
-After splitting, move each named `plate_XX_*` group to a separate Bambu Studio
-plate or use auto-arrange. Do not scale the master assembly to fit one plate.
-Print every `playing_surface_body:*` entry in the chosen light color. Each is a
-single solid containing the structural panel and all eight light squares. Print
-the 32 `dark_square_inlay:*` entries in the dark color on the two dedicated
-inlay plates, dry-fit them in the quarter recesses, and glue them flush.
-
-Keep every `multicolor_rail:*` entry as one multi-part object; do not split its
-four notation glyphs into separate objects. Within each rail object, assign
-`perimeter_body:*` to black and `notation_inlays:*` to ivory. The notation
-bodies are already seated flush in recessed rail pockets at their final print
-positions.
-
-### Eight-panel support/prime-tower workflow
+### Eight-panel support/prime-tower workflow (recommended)
 
 Use `eight_panel_print_kit.step` as the replacement master when the 244 x
-244 mm quarter panels leave no room for a support prime tower. Its first eight
+244 mm legacy quarter panels leave no room for a support prime tower. Its first eight
 modules are the panels `south_ab`, `south_cd`, `south_ef`, `south_gh`, then
-`north_ab`, `north_cd`, `north_ef`, and `north_gh`. Each contains two files by
-four ranks, so every added seam follows a square boundary.
+`north_ab`, `north_cd`, `north_ef`, and `north_gh`. Each contains two
+chessboard files by four ranks, so every added seam follows a square boundary.
 
 After moving a panel to a new 256 x 256 mm Bambu Studio plate, position its
 center about 60 mm left of plate center. A 124 mm-wide panel then leaves 126 mm
@@ -173,12 +135,20 @@ Use that area for normal/snug supports and the prime tower. Keep the long panel
 axis centered in Y; the 244 mm maximum length leaves 6 mm total plate margin
 before any brim.
 
-The master also contains the unchanged eight rail objects, two dark-inlay
-plates, sixteen seam bridges, and four caps. Individual
+The master also contains the eight rail objects, two dark-inlay plates,
+sixteen seam bridges, and four caps. Individual
 `panel_*_light_body.step` files are available when importing one panel at a
-time is simpler than splitting the master assembly.
+time is simpler than splitting the master assembly. Because every panel STEP
+has a filename-matched product label, Bambu Studio should show distinct panel
+names instead of an OpenCascade occurrence identifier.
 
-### Multi-body STEP workflow
+Keep every `multicolor_rail:*` entry as one multi-part object; do not split its
+four notation glyphs into separate objects. Within each rail object, assign
+the rail body to black and its inset notation to ivory. Print all eight panel
+bodies in the chosen light color. Print the 32 loose dark-square inlays in the
+dark color, dry-fit them, and glue them flush into the panel recesses.
+
+### Legacy four-quarter workflows
 
 Import one `quarter_*.step` at a time into Bambu Studio as a single object with
 multiple parts. Assign the light body to ivory and the eight exact square
@@ -190,9 +160,14 @@ dual-nozzle intersection. Use a multi-material path that keeps all geometry
 inside the selected nozzle's reachable area. If Bambu Studio reports an
 auxiliary-nozzle reach or prime-tower conflict, use the loose-inlay workflow.
 
+The older `separated_print_kit.step` and `quarter_*.step` files remain usable,
+but their 244 x 244 mm playing bodies leave very little room for supports,
+brims, or a prime tower. The assembly manual and quantities below apply to the
+recommended eight-panel design.
+
 ### Glue-inlay STL workflow
 
-1. Print the four light quarter bodies in ivory.
+1. Print the eight `panel_*_light_body.stl` bodies in ivory.
 2. Print 32 copies of `loose_dark_square_inlay.stl` in dark brown. Each is
    59.6 x 59.6 x 1.6 mm, providing 0.2 mm nominal clearance per edge inside a
    60 mm square well.
@@ -201,20 +176,19 @@ auxiliary-nozzle reach or prime-tower conflict, use the loose-inlay workflow.
 5. Dry-fit, then glue the dark squares and flush notation glyphs into their
    pockets.
 
-Use the eight-panel route when support material requires a prime tower; the
-legacy quarter-panel route nearly fills the plate and cannot reserve that
-space.
+The legacy quarter-panel route nearly fills the plate and cannot reserve the
+same support/prime-tower space.
 
 ## Suggested PLA Matte settings
 
 - 0.4 mm nozzle and 0.20 mm layers.
 - Four or five walls.
-- Six top and bottom layers on the large quarters.
+- Six top and bottom layers on the playing panels.
 - 15-20% gyroid or cubic infill; the exported bodies are solid CAD volumes, so
   the slicer controls internal material use.
-- A 3-4 mm brim on the quarter panels and rails, with placement checked against the
-  256 mm plate boundary.
-- Print quarter bodies with the broad underside on the build plate.
+- A 3-4 mm brim on the playing panels and rails, with placement checked against
+  the 256 mm plate boundary and prime tower.
+- Print playing panels with the broad underside on the build plate.
 - Print rails and seam bridges with their recessed screw-head faces on the
   build plate.
 - The lower locating tongues and corner ribs begin on the build plane. The
@@ -226,50 +200,42 @@ space.
 
 ## Assembly
 
-Each quarter contains eight side-loading nut pockets: two per edge. Insert all
-nuts before closing the matching seam or installing its perimeter rail.
+Each 1/8 panel contains six side-loading M3 nut pockets: two per long edge and
+one per short edge. Load all six nuts before closing a matching seam or
+installing its perimeter rail.
 
-1. Place the four playing quarters face-down on a protected, flat surface.
-2. Insert two nuts into every central-seam edge and two into every outside
-   edge. Slide them through the rectangular edge openings until the hex pockets
-   capture them over the vertical screw holes.
-3. Join southwest to southeast and northwest to northeast using the horizontal
-   tongue/groove edges.
-4. Slide the north row onto the south row. The 4 mm lower tongues and two
-   concealed upper keys per internal edge both use 0.25 mm nominal depth
-   clearance. The upper keys register the playing faces while the underside
-   bridges provide the final stiffness.
-5. Install eight `seam_bridge` parts: four across the vertical center seam at
-   Y = -180, -60, 60, and 180 mm; four across the horizontal seam at
-   X = -180, -60, 60, and 180 mm. Use two M3 x 12 screws per bridge.
-6. Slide each named rail tongue into the corresponding outer panel groove and
+1. Place the eight panels face-down on a protected, flat surface. From White's
+   side, the south row is `south_ab`, `south_cd`, `south_ef`, `south_gh`; the
+   north row is `north_ab`, `north_cd`, `north_ef`, `north_gh`.
+2. Slide a standard M3 nut through every 6.1 mm entry channel until it seats in
+   the 5.8 mm hex pocket over the 3.6 mm screw passage. Confirm each nut can
+   receive a screw before joining panels.
+3. Join each row from left to right: `ab` to `cd`, then `ef`, then `gh`.
+4. Slide the complete north row southward onto the north-facing tongues of the
+   south row. The lower tongues carry shear and the concealed upper keys keep
+   the playing faces flush.
+5. Install twelve `seam_bridge` parts across the three vertical seams at
+   X = -120, 0, and 120 mm. Each seam receives bridges at Y = -180, -60, 60,
+   and 180 mm.
+6. Install four rotated bridges across the horizontal center seam at Y = 0,
+   using X = -180, -60, 60, and 180 mm. Use two M3 x 12 screws per bridge.
+7. Slide each named rail tongue into the corresponding outer panel groove and
    fasten it from below with two M3 x 12 screws.
-7. Drop one M2 nut into the open-top lock channel on each of these rail ribs:
+8. Drop one M2 nut into the open-top lock channel on each of these rail ribs:
    `bottom_ad`, `right_14`, `top_eh`, and `left_58`. The nut settles into its
    horizontal hex pocket.
-8. Slide four corner caps downward over the vertical ribs where adjacent rails
+9. Slide four corner caps downward over the vertical ribs where adjacent rails
    meet. Rotate each identical cap so its recessed cross-hole faces the nearby
    outside edge, then install one M2 x 12 screw through the cap and selected
    rib into the captured nut.
-9. Apply felt/rubber pads to the eight rail and four corner recesses, then turn
+10. Apply felt/rubber pads to the eight rail and four corner recesses, then turn
    the board over.
 
 Do not overtighten the screws. Tighten only until the seams close and the board
 is flat; PLA can creep or crack under excessive fastener preload.
 
-### Eight-panel assembly sequence
-
-1. Join the south row from left to right: `south_ab`, `south_cd`, `south_ef`,
-   and `south_gh`. Assemble the north row in the same order.
-2. Slide the complete north row southward onto the north-facing tongues of the
-   south row. The resulting playing surface remains 480 x 480 mm.
-3. Install twelve bridges across the three vertical seams at X = -120, 0, and
-   120 mm, using Y = -180, -60, 60, and 180 mm on each seam.
-4. Install four rotated bridges across the horizontal center seam at Y = 0,
-   using X = -180, -60, 60, and 180 mm.
-5. Install the existing rails and corner caps using the standard steps above.
-   Each 240 mm horizontal rail spans two panels and reinforces their added
-   vertical seam.
+Each 240 mm horizontal rail spans two 120 mm panels and helps reinforce the
+added vertical seam.
 
 ## Rail placement
 
@@ -283,20 +249,21 @@ is flat; PLA can creep or crack under excessive fastener preload.
 Run from this directory with the CAD skill Python environment available:
 
 ```bash
-python /path/to/cad/scripts/step chessboard_assembly.py
-python validate_chessboard.py
-python validate_exported_step.py separated_print_kit.step
+python /path/to/cad/scripts/step eight_panel_chessboard_assembly.py
+python validate_eight_panel.py
+python validate_eight_panel_export.py eight_panel_print_kit.step
 python validate_stl_watertightness.py
-python /path/to/cad/scripts/inspect refs chessboard_assembly.step \
+python /path/to/cad/scripts/inspect refs eight_panel_chessboard_assembly.step \
   --facts --planes --positioning
-python /path/to/cad/scripts/snapshot --job snapshot_job.json
+python /path/to/cad/scripts/snapshot --job eight_panel_snapshot_job.json
 ```
 
 The current generated assembly was checked at 520 x 520 x 27.6 mm, with a
 480 x 480 mm playing area, 60 mm square measurements in X and Y, a 10 mm
 perimeter rise, zero reported flush-alignment deltas at representative panel,
-rail, and bridge interfaces, 0.25 mm upper-key depth clearance, a clear M2
-corner-lock screw path, and 88 labeled solids in 24 top-level occurrences.
+rail, and bridge interfaces, sixteen correctly positioned seam bridges, eight
+closed playing-panel solids, no non-manifold playing-panel mesh edges, a clear
+M2 corner-lock screw path, and filename-matched panel STEP product labels.
 
 References:
 
