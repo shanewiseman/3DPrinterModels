@@ -1,0 +1,53 @@
+{
+  "jobs": [
+    {
+      "input": "eight_panel_chessboard_assembly.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/notation_orientation_assembly_iso.png",
+          "camera": "iso"
+        },
+        {
+          "path": "snapshots/notation_orientation_assembly_top.png",
+          "camera": "top"
+        }
+      ],
+      "render": {
+        "viewLabels": true,
+        "padding": 0.06,
+        "sizeProfile": "assembly-large"
+      }
+    },
+    {
+      "input": "rail_right_14.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/notation_orientation_right_14_top.png",
+          "camera": "top"
+        }
+      ],
+      "render": {
+        "viewLabels": true,
+        "padding": 0.08,
+        "sizeProfile": "diagnostic"
+      }
+    },
+    {
+      "input": "rail_left_14.step",
+      "mode": "view",
+      "outputs": [
+        {
+          "path": "snapshots/notation_orientation_left_14_top.png",
+          "camera": "top"
+        }
+      ],
+      "render": {
+        "viewLabels": true,
+        "padding": 0.08,
+        "sizeProfile": "diagnostic"
+      }
+    }
+  ]
+}
