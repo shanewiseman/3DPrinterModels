@@ -39,10 +39,20 @@
 - Perimeter construction: eight straight 240 mm rail sections, one per
   quarter outer edge, plus four vertically keyed corner caps. Each rail has an
   under-panel flange and is fixed by two M3 x 12 screws into captured nuts in
-  the quarter.
-- Corner retention: each cap is positively retained by one hidden M2 x 12
-  cross-screw and a top-loaded standard M2 nut in one rail rib. Four selected
-  ribs are enlarged to 7.0 x 9.0 mm; the nut pockets allow 0.25 mm
+  the quarter. The two 15 mm under-panel flanges at each corner terminate on
+  complementary 45-degree faces with 0.30 mm normal clearance, eliminating
+  the former coplanar 15 x 15 x 8 mm overlap.
+- Corner joinery: hidden 7.0 x 14.0 mm rail cores extend into each cap and
+  terminate on complementary 45-degree faces. The selected locking core has
+  an integral, build-plane-supported 2.5 mm mortise-and-tenon projection that
+  enters the neighbor's open mortise during the same inward motion that seats
+  the rail tongue in the playing-panel groove, using 0.25 mm nominal
+  clearance. This repeats the lower tongue/groove design language used by the
+  playing panels without adding another printed part or a cyclic assembly
+  constraint.
+- Corner retention: each hollowed cap captures both mitered rail cores and is
+  positively retained by one hidden M2 x 12 cross-screw and a top-loaded
+  standard M2 nut in the selected locking core. The nut pockets retain 0.25 mm
   across-flats and 0.30 mm thickness clearance.
 - Cosmetic edge treatment: 2 mm fillets on every exposed perimeter top edge.
   Rail-to-rail and rail-to-corner mating seams remain square so the assembled
@@ -51,7 +61,10 @@
   vertical sides. Glyphs are flush 1.2 mm inlays with enlarged pockets for
   separately printed PLA Matte inserts. Pocket clearance is formed from four
   diagonally shifted glyph cutters so exported rail bodies round-trip as
-  closed STEP solids. Orientation faces outward on all four sides.
+  closed STEP solids. File letters face their adjacent player. Rank numerals
+  are rotated across the rail rather than along it: the east/right-side set is
+  upright from White at negative Y, the west/left-side set is upright from
+  Black at positive Y, and the two rank sets differ by 180 degrees.
 - Underside stability: recessed locations for adhesive felt or rubber pads in
   the perimeter rails and corner caps.
 - Material: PLA Matte. Color intent is ivory/light squares, dark brown dark
@@ -74,10 +87,12 @@
   and four ivory notation bodies. The virtual plates are positioning datums
   only and are not exported as geometry.
 - Validation targets: 60 mm square pitch; 480 mm playing area; 520 mm outer
-  footprint; 240/244 mm quarter and 247.1 mm rail print envelopes; 20 mm border width; 10 mm raised
-  perimeter; 9.6 mm playing height; captured-nut and M3 x 12 stack; no solid
-  interference at panel, rail, upper-key, or corner-lock interfaces; clear M2
-  cross-screw path; labeled STEP children; mandatory assembly snapshot packet.
+  footprint; 240/244 mm quarter and 247.1 mm rail print envelopes; 20 mm border
+  width; 10 mm raised perimeter; 9.6 mm playing height; captured-nut and M3 x
+  12 stack; zero positive-volume intersection between every adjacent corner
+  rail pair; 45-degree flange/core faces with the specified clearance; seated
+  mortise-and-tenon joints without interference; clear M2 cross-screw path;
+  labeled STEP children; mandatory assembly snapshot packet.
 
 ## Eight-panel X2D variant
 
@@ -107,10 +122,11 @@
 - Reinforcement: twelve underside bridges cross the three vertical board
   seams and four cross the horizontal center seam, for sixteen bridges total.
   Each bridge uses two M3 x 12 screws and two standard captured M3 nuts.
-- Perimeter compatibility: the existing eight rails and four corner caps are
-  unchanged. Horizontal rails span two 120 mm panels and add stiffness across
-  the added vertical seams; their existing screw positions align with the new
-  centered panel nut traps.
+- Perimeter compatibility: the same eight named rail locations and four cap
+  locations are retained, but future-print rail/cap files use the corrected
+  45-degree keyed corner revision. Horizontal rails span two 120 mm panels and
+  add stiffness across the added vertical seams; their screw positions remain
+  aligned with the centered panel nut traps.
 - Color workflow: each panel remains one light structural body with integral
   light squares. The existing 32 loose 59.6 x 59.6 x 1.6 mm dark inlays are
   printed separately and glued into the face recesses.

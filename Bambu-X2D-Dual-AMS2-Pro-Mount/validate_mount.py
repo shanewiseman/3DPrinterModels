@@ -15,6 +15,9 @@ from x2d_dual_ams_mount_geometry import (
     AMS_PAIR_GAP,
     AMS_WIDTH,
     BRACKET_CHORD,
+    BRACKET_THICKNESS,
+    BRACKET_WEB,
+    BRACKET_WEB_CELLS,
     BRACKET_Y_CENTERS,
     BRIDGE_CENTER_BOLT_Y_OFFSETS,
     BRIDGE_CENTER_BOSS_HALF_WIDTH,
@@ -37,6 +40,8 @@ from x2d_dual_ams_mount_geometry import (
     ams_center_x,
     bracket_screw_xs,
     bridge_end_bolt_positions,
+    make_bracket_frame_members,
+    make_bracket_web_members,
 )
 
 
@@ -131,6 +136,24 @@ def main() -> None:
     check(close(AMS_FOOT_SPACING_X, 320.0), "provisional AMS foot spacing is 320 mm side-to-side")
     check(close(AMS_FOOT_SPACING_Y, 220.0), "provisional AMS foot spacing is 220 mm front-to-back")
     check(close(BRACKET_CHORD, 25.4), "triangle bracket outer chord is exactly 1 inch (25.4 mm)")
+    minimum_web_frame_overlap = BRACKET_WEB * BRACKET_THICKNESS
+    for side in (-1, 1):
+        for y in BRACKET_Y_CENTERS:
+            top_chord, _, diagonal_chord = make_bracket_frame_members(side, y)
+            webs = make_bracket_web_members(side, y)
+            check(
+                len(webs) == 2 * len(BRACKET_WEB_CELLS),
+                f"bracket {side:+d}/{y:+.0f} has all six internal truss webs",
+            )
+            for index, web in enumerate(webs, start=1):
+                check(
+                    overlap_volume(web, top_chord) >= minimum_web_frame_overlap,
+                    f"bracket {side:+d}/{y:+.0f} web {index} fully engages the top frame",
+                )
+                check(
+                    overlap_volume(web, diagonal_chord) >= minimum_web_frame_overlap,
+                    f"bracket {side:+d}/{y:+.0f} web {index} fully engages the diagonal frame",
+                )
     check(close(M4_CLEARANCE_DIAMETER, 4.5), "M4 through-hole allowance is 4.5 mm")
     check(close(M4_BUTTON_HEAD_DIAMETER, 8.2), "M4 button-head envelope is 8.2 mm")
     check(close(M4_NUT_AF, 7.4), "captive M4 nut allowance is 7.4 mm across flats")

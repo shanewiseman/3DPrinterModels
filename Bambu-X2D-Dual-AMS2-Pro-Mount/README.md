@@ -191,6 +191,10 @@ Use calipers where practical and photograph each measurement:
   tie button-head recess, and ASA side-pad fit before committing to full-size
   parts.
 
+Every 10 mm inner web in the four overhang brackets terminates on the
+centerline of its top or diagonal 25.4 mm perimeter chord, providing deliberate
+fused engagement at each truss-to-frame joint.
+
 See `cad_brief.md` for the modeling contract and `reference/SOURCES.md` for
 dimension provenance. See `connection_concept.md` for the centered AMS support
 and all-printed low-profile shelf-tie design.

@@ -47,7 +47,8 @@
   rise only inside the clear 25.4 mm gap between AMS envelopes.
 - Bracket intent: right triangle with 25.4 mm perimeter chords, internal
   triangular webbing, broad radiused nodes, and a broad-face-down print
-  orientation.
+  orientation. Every 10 mm inner web endpoint reaches the exact centerline of
+  its top or diagonal perimeter chord for deliberate fused engagement.
 - Hardware intent: M4 button-head screws and 4.5 mm nominal clearance.
   Bracket-to-shelf fasteners use plain through-holes with heads intentionally
   proud of the shelf top; replaceable captive M4 nuts remain in bracket top

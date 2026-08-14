@@ -20,11 +20,13 @@ from build123d import (
     Align,
     Axis,
     Box,
+    BuildSketch,
     Color,
     Compound,
     Cylinder,
     FontStyle,
     Location,
+    Polygon,
     RegularPolygon,
     Text,
     chamfer,
@@ -104,8 +106,8 @@ M2_NUT_THICKNESS = 1.6
 M2_NUT_POCKET_ACROSS_FLATS = 4.25
 M2_NUT_POCKET_THICKNESS = 1.9
 M2_NUT_ENTRY_WIDTH = 4.95
-M2_NUT_INWARD_OFFSET = 2.0
 CORNER_LOCK_Z = 4.0
+CORNER_LOCK_NUT_Y = -3.0
 
 # Bridge, rail, corner, and pad dimensions.
 BRIDGE_LENGTH = 50.0
@@ -114,10 +116,17 @@ BRIDGE_THICKNESS = UNDERSIDE_DEPTH
 RAIL_LENGTH = QUARTER_SIZE
 RAIL_FLANGE_DEPTH = 15.0
 CORNER_RIB_PROJECTION = 7.0
-CORNER_RIB_WIDTH = 9.0
+CORNER_RIB_WIDTH = 14.0
 CORNER_RIB_HEIGHT = 16.0
 CORNER_SLOT_CLEARANCE = 0.3
 CORNER_SLOT_LEAD_DEPTH = 0.8
+CORNER_MITER_CLEARANCE = 0.3
+CORNER_TENON_X_MIN = 3.8
+CORNER_TENON_X_MAX = 5.8
+CORNER_TENON_DEPTH = 2.5
+CORNER_TENON_BASE_OVERLAP = 0.6
+CORNER_TENON_HEIGHT = 5.0
+CORNER_TENON_CLEARANCE = 0.25
 FELT_RECESS_LENGTH = 30.0
 FELT_RECESS_WIDTH = 12.0
 FELT_RECESS_DEPTH = 0.8
@@ -132,6 +141,18 @@ NOTATION_INSERT_FONT_SIZE = 11.0
 NOTATION_POCKET_CLEARANCE = 0.18
 NOTATION_INLAY_THICKNESS = 1.2
 NOTATION_POCKET_DEPTH = 1.4
+
+# Glyph rotation is measured in the assembled XY plane. The rank numerals on
+# each player's right-hand rail face that player: east/right reads upright
+# from White at -Y, while west/left reads upright from Black at +Y. The two
+# rank sets are therefore 180 degrees opposed. File letters retain the usual
+# south/north orientation.
+NOTATION_ROTATION_BY_SIDE = {
+    "south": 0.0,
+    "north": 180.0,
+    "west": 180.0,
+    "east": 0.0,
+}
 
 # Optional separately printed dark-square inlay.
 LOOSE_INLAY_CLEARANCE = 0.2
@@ -171,6 +192,23 @@ RAIL_SPECS = {
 # four assembly rotations: southwest, southeast, northeast, northwest.
 CORNER_LOCK_RAILS = {"bottom_ad", "right_14", "top_eh", "left_58"}
 
+# Every corner is modeled from a southwest-local frame and rotated about the
+# board center. ``x`` is the rail that enters the cap from local +X and owns
+# the retained M2 nut; ``y`` enters from local +Y. The two core faces meet on
+# a 45-degree line. The x-arm has a low, support-free tenon that slides in +Y
+# into the y-arm's matching open mortise while the rail seats in its panel
+# groove.
+CORNER_RAIL_INTERFACES = {
+    "bottom_ad": ("sw", "x", 0.0),
+    "left_14": ("sw", "y", 0.0),
+    "right_14": ("se", "x", 90.0),
+    "bottom_eh": ("se", "y", 90.0),
+    "top_eh": ("ne", "x", 180.0),
+    "right_58": ("ne", "y", 180.0),
+    "left_58": ("nw", "x", 270.0),
+    "top_ad": ("nw", "y", 270.0),
+}
+
 
 def _box(
     size_x: float,
@@ -186,6 +224,50 @@ def _box(
         size_z,
         align=(Align.CENTER, Align.CENTER, Align.MIN),
     ).moved(Location((center_x, center_y, min_z)))
+
+
+def _polygon_prism(
+    points: list[tuple[float, float]] | tuple[tuple[float, float], ...],
+    height: float,
+    min_z: float,
+):
+    """Extrude one closed XY polygon from ``min_z`` by ``height``."""
+
+    with BuildSketch() as sketch:
+        Polygon(*points)
+    return extrude(sketch.sketch, amount=height).moved(Location((0.0, 0.0, min_z)))
+
+
+def _corner_center(role: str) -> tuple[float, float]:
+    center = PLAYING_SIZE / 2.0 + PERIMETER_WIDTH / 2.0
+    return {
+        "sw": (-center, -center),
+        "se": (center, -center),
+        "ne": (center, center),
+        "nw": (-center, center),
+    }[role]
+
+
+def _place_from_sw_corner_frame(shape, role: str, rotation_z: float):
+    center_x, center_y = _corner_center(role)
+    return shape.moved(
+        Location((center_x, center_y, 0.0), (0.0, 0.0, rotation_z))
+    )
+
+
+def _corner_tenon_profile_points(clearance: float = 0.0):
+    """Return the canonical +Y sliding tenon/mortise profile."""
+
+    x_min = CORNER_TENON_X_MIN - clearance
+    x_max = CORNER_TENON_X_MAX + clearance
+    depth = CORNER_TENON_DEPTH + clearance
+    base_overlap = CORNER_TENON_BASE_OVERLAP + clearance
+    return (
+        (x_min, x_min - base_overlap),
+        (x_max, x_max - base_overlap),
+        (x_max, x_max + depth),
+        (x_min, x_min + depth),
+    )
 
 
 def _cylinder(radius: float, height: float, center_x: float, center_y: float, min_z: float):
@@ -653,92 +735,130 @@ def _rail_text_solid(
     return solid.moved(Location((center_x, center_y, min_z)))
 
 
-def _rail_corner_rib(spec: RailSpec, wall_center: float):
-    long_min, long_max = _rail_long_range(spec)
-    negative_end = spec.half in {"west", "south"}
-    if spec.side in {"south", "north"}:
-        end = long_min if negative_end else long_max
-        center_x = end - CORNER_RIB_PROJECTION / 2.0 if negative_end else end + CORNER_RIB_PROJECTION / 2.0
-        rib = _box(
-            CORNER_RIB_PROJECTION + 0.1,
-            CORNER_RIB_WIDTH,
-            CORNER_RIB_HEIGHT + UNDERSIDE_DEPTH,
-            center_x,
-            wall_center,
-            -UNDERSIDE_DEPTH,
+def _corner_core_local(arm: str):
+    """Make one southwest-local rail core with a clear 45-degree mate face."""
+
+    half_width = CORNER_RIB_WIDTH / 2.0
+    inner_end = PERIMETER_WIDTH / 2.0 - CORNER_RIB_PROJECTION
+    outer_end = PERIMETER_WIDTH / 2.0 + 0.1
+    face_offset = CORNER_MITER_CLEARANCE / sqrt(2.0)
+    if arm == "x":
+        points = (
+            (inner_end, -half_width),
+            (outer_end, -half_width),
+            (outer_end, half_width),
+            (half_width + face_offset, half_width),
+            (inner_end, inner_end - face_offset),
         )
-        lock_center = (center_x, wall_center, CORNER_LOCK_Z)
-        lock_axis = "y"
-        inward = 1.0 if spec.side == "south" else -1.0
-        nut_center = (
-            center_x,
-            wall_center + inward * M2_NUT_INWARD_OFFSET,
-            CORNER_LOCK_Z,
-        )
-        channel_center_x, channel_center_y = center_x, nut_center[1]
-        channel_size_x, channel_size_y = (
-            M2_NUT_ENTRY_WIDTH,
-            M2_NUT_POCKET_THICKNESS,
+    elif arm == "y":
+        points = (
+            (-half_width, inner_end),
+            (inner_end - face_offset, inner_end),
+            (half_width, half_width + face_offset),
+            (half_width, outer_end),
+            (-half_width, outer_end),
         )
     else:
-        end = long_min if negative_end else long_max
-        center_y = end - CORNER_RIB_PROJECTION / 2.0 if negative_end else end + CORNER_RIB_PROJECTION / 2.0
-        rib = _box(
-            CORNER_RIB_WIDTH,
-            CORNER_RIB_PROJECTION + 0.1,
-            CORNER_RIB_HEIGHT + UNDERSIDE_DEPTH,
-            wall_center,
-            center_y,
-            -UNDERSIDE_DEPTH,
-        )
-        lock_center = (wall_center, center_y, CORNER_LOCK_Z)
-        lock_axis = "x"
-        inward = 1.0 if spec.side == "west" else -1.0
-        nut_center = (
-            wall_center + inward * M2_NUT_INWARD_OFFSET,
-            center_y,
-            CORNER_LOCK_Z,
-        )
-        channel_center_x, channel_center_y = nut_center[0], center_y
-        channel_size_x, channel_size_y = (
-            M2_NUT_POCKET_THICKNESS,
-            M2_NUT_ENTRY_WIDTH,
-        )
+        raise ValueError(f"Unknown corner-core arm: {arm}")
 
+    core = _polygon_prism(
+        points,
+        CORNER_RIB_HEIGHT + UNDERSIDE_DEPTH,
+        -UNDERSIDE_DEPTH,
+    )
     top_edges = [
         edge
-        for edge in rib.edges()
+        for edge in core.edges()
         if abs(edge.center().Z - CORNER_RIB_HEIGHT) < 1e-6
     ]
-    rib = chamfer(top_edges, length=FIT_LEAD_CHAMFER)
+    core = chamfer(top_edges, length=FIT_LEAD_CHAMFER)
+    if arm == "x":
+        tenon = _polygon_prism(
+            _corner_tenon_profile_points(),
+            CORNER_TENON_HEIGHT,
+            -UNDERSIDE_DEPTH,
+        )
+        return core.fuse(tenon).clean()
+
+    mortise = _polygon_prism(
+        _corner_tenon_profile_points(CORNER_TENON_CLEARANCE),
+        CORNER_TENON_HEIGHT + 2.0 * CORNER_TENON_CLEARANCE,
+        -UNDERSIDE_DEPTH - CORNER_TENON_CLEARANCE,
+    )
+    return core.cut(mortise).clean()
+
+
+def _rail_corner_rib(spec: RailSpec, wall_center: float):
+    """Return the placed mitered corner core for one rail.
+
+    ``wall_center`` remains in the signature for the existing generator and
+    validation call sites; the interface map now provides the controlling
+    corner frame.
+    """
+
+    del wall_center
+    role, arm, rotation_z = CORNER_RAIL_INTERFACES[spec.name]
+    core = _corner_core_local(arm)
 
     if spec.name in CORNER_LOCK_RAILS:
+        lock_x = PERIMETER_WIDTH / 2.0 - CORNER_RIB_PROJECTION / 2.0
         entry_min_z = CORNER_LOCK_Z - M2_NUT_POCKET_ACROSS_FLATS / 2.0
         entry_height = CORNER_RIB_HEIGHT - entry_min_z + 0.1
-        cutters = [
-            _cylinder_along_axis(
-                M2_CLEARANCE_DIAMETER / 2.0,
-                CORNER_RIB_WIDTH + 0.4,
-                lock_axis,
-                lock_center,
-            ),
-            _hex_prism_along_axis(
-                M2_NUT_POCKET_ACROSS_FLATS,
-                M2_NUT_POCKET_THICKNESS,
-                lock_axis,
-                nut_center,
-            ),
-            _box(
-                channel_size_x,
-                channel_size_y,
-                entry_height,
-                channel_center_x,
-                channel_center_y,
-                entry_min_z,
-            ),
-        ]
-        rib = _cut_many(rib, cutters)
-    return rib
+        core = _cut_many(
+            core,
+            [
+                _cylinder_along_axis(
+                    M2_CLEARANCE_DIAMETER / 2.0,
+                    CORNER_RIB_WIDTH + 0.4,
+                    "y",
+                    (lock_x, 0.0, CORNER_LOCK_Z),
+                ),
+                _hex_prism_along_axis(
+                    M2_NUT_POCKET_ACROSS_FLATS,
+                    M2_NUT_POCKET_THICKNESS,
+                    "y",
+                    (lock_x, CORNER_LOCK_NUT_Y, CORNER_LOCK_Z),
+                ),
+                _box(
+                    M2_NUT_ENTRY_WIDTH,
+                    M2_NUT_POCKET_THICKNESS,
+                    entry_height,
+                    lock_x,
+                    CORNER_LOCK_NUT_Y,
+                    entry_min_z,
+                ),
+            ],
+        )
+
+    return _place_from_sw_corner_frame(core, role, rotation_z)
+
+
+def _rail_corner_flange_miter_cutter(spec: RailSpec):
+    """Cut one half of the former 15 x 15 mm underside flange overlap."""
+
+    role, arm, rotation_z = CORNER_RAIL_INTERFACES[spec.name]
+    overlap_min = PERIMETER_WIDTH / 2.0
+    overlap_max = overlap_min + RAIL_FLANGE_DEPTH
+    overshoot = 0.25
+    face_offset = CORNER_MITER_CLEARANCE / sqrt(2.0)
+    low = overlap_min - overshoot
+    high = overlap_max + overshoot
+    if arm == "x":
+        points = (
+            (low, low - face_offset),
+            (high, high - face_offset),
+            (high, high),
+            (low, high),
+        )
+    else:
+        points = (
+            (low - face_offset, low),
+            (high, low),
+            (high, high),
+            (high - face_offset, high),
+        )
+    cutter = _polygon_prism(points, UNDERSIDE_DEPTH + 0.4, -UNDERSIDE_DEPTH - 0.2)
+    return _place_from_sw_corner_frame(cutter, role, rotation_z)
 
 
 def _fillet_rail_exposed_top_edges(wall, long_length: float):
@@ -774,7 +894,6 @@ def make_rail_details(name: str):
         tongue = _box(long_length - 2.0 * TONGUE_END_MARGIN, TONGUE_PROJECTION + overlap, TONGUE_HEIGHT, long_center, -PLAYING_SIZE / 2.0 + (TONGUE_PROJECTION - overlap) / 2.0, TONGUE_Z)
         screw_across = -PLAYING_SIZE / 2.0 + RAIL_SCREW_OFFSET
         text_across = wall_center
-        text_rotation = 0.0
         tongue_edge = "north"
         tongue_tip = -PLAYING_SIZE / 2.0 + TONGUE_PROJECTION
     elif spec.side == "north":
@@ -784,7 +903,6 @@ def make_rail_details(name: str):
         tongue = _box(long_length - 2.0 * TONGUE_END_MARGIN, TONGUE_PROJECTION + overlap, TONGUE_HEIGHT, long_center, PLAYING_SIZE / 2.0 - (TONGUE_PROJECTION - overlap) / 2.0, TONGUE_Z)
         screw_across = PLAYING_SIZE / 2.0 - RAIL_SCREW_OFFSET
         text_across = wall_center
-        text_rotation = 180.0
         tongue_edge = "south"
         tongue_tip = PLAYING_SIZE / 2.0 - TONGUE_PROJECTION
     elif spec.side == "west":
@@ -794,7 +912,6 @@ def make_rail_details(name: str):
         tongue = _box(TONGUE_PROJECTION + overlap, long_length - 2.0 * TONGUE_END_MARGIN, TONGUE_HEIGHT, -PLAYING_SIZE / 2.0 + (TONGUE_PROJECTION - overlap) / 2.0, long_center, TONGUE_Z)
         screw_across = -PLAYING_SIZE / 2.0 + RAIL_SCREW_OFFSET
         text_across = wall_center
-        text_rotation = -90.0
         tongue_edge = "east"
         tongue_tip = -PLAYING_SIZE / 2.0 + TONGUE_PROJECTION
     else:
@@ -804,15 +921,18 @@ def make_rail_details(name: str):
         tongue = _box(TONGUE_PROJECTION + overlap, long_length - 2.0 * TONGUE_END_MARGIN, TONGUE_HEIGHT, PLAYING_SIZE / 2.0 - (TONGUE_PROJECTION - overlap) / 2.0, long_center, TONGUE_Z)
         screw_across = PLAYING_SIZE / 2.0 - RAIL_SCREW_OFFSET
         text_across = wall_center
-        text_rotation = 90.0
         tongue_edge = "west"
         tongue_tip = PLAYING_SIZE / 2.0 - TONGUE_PROJECTION
+
+    text_rotation = NOTATION_ROTATION_BY_SIDE[spec.side]
 
     wall = _fillet_rail_exposed_top_edges(wall, long_length)
     tongue = _chamfer_projecting_tip(tongue, tongue_edge, tongue_tip)
     corner_rib = _rail_corner_rib(spec, wall_center)
-    body = wall.fuse(flange, tongue, corner_rib).clean()
+    body = wall.fuse(flange, tongue).clean()
+    body = body.cut(_rail_corner_flange_miter_cutter(spec)).clean()
     body = _chamfer_bottom_edges(body, -UNDERSIDE_DEPTH)
+    body = body.fuse(corner_rib).clean()
 
     screw_positions = (long_min + SQUARE_SIZE, long_min + 3.0 * SQUARE_SIZE)
     cutters = []
@@ -899,6 +1019,7 @@ def make_rail_details(name: str):
         "spec": spec,
         "body": body,
         "notation_inlays": insert_compound,
+        "notation_rotation_deg": text_rotation,
     }
 
 

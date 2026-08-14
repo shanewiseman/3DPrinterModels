@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from math import sqrt
 
 from build123d import Location
 
@@ -16,9 +17,15 @@ from chessboard_geometry import (
     BRIDGE_LENGTH,
     BRIDGE_THICKNESS,
     BRIDGE_WIDTH,
+    CORNER_LOCK_NUT_Y,
     CORNER_LOCK_RAILS,
     CORNER_LOCK_Z,
+    CORNER_MITER_CLEARANCE,
     CORNER_RIB_PROJECTION,
+    CORNER_RIB_WIDTH,
+    CORNER_TENON_CLEARANCE,
+    CORNER_TENON_DEPTH,
+    CORNER_TENON_HEIGHT,
     DARK_COLOR,
     ELEPHANT_FOOT_RELIEF,
     FACE_INLAY_THICKNESS,
@@ -29,7 +36,6 @@ from chessboard_geometry import (
     M2_CLEARANCE_DIAMETER,
     M2_HEAD_RECESS_DEPTH,
     M2_NUT_ACROSS_FLATS,
-    M2_NUT_INWARD_OFFSET,
     M2_NUT_POCKET_ACROSS_FLATS,
     M2_NUT_POCKET_THICKNESS,
     M2_NUT_THICKNESS,
@@ -39,6 +45,7 @@ from chessboard_geometry import (
     NUT_POCKET_ACROSS_FLATS,
     NUT_POCKET_HEIGHT,
     NUT_POCKET_Z,
+    NOTATION_ROTATION_BY_SIDE,
     OUTER_SIZE,
     PANEL_BASE_THICKNESS,
     PERIMETER_RISE,
@@ -54,8 +61,12 @@ from chessboard_geometry import (
     SQUARE_SIZE,
     TONGUE_PROJECTION,
     UNDERSIDE_DEPTH,
+    _corner_core_local,
+    _corner_placements,
+    _corner_tenon_profile_points,
     _cylinder_along_axis,
     _hex_prism_along_axis,
+    _polygon_prism,
     _rail_corner_rib,
     make_corner_cap,
     make_full_assembly,
@@ -129,6 +140,11 @@ def main():
     _close(GROOVE_DEPTH - TONGUE_PROJECTION, 0.25, "joinery clearance derivation")
     _close(FIT_LEAD_CHAMFER, 0.5, "fit lead-in chamfer")
     _close(ELEPHANT_FOOT_RELIEF, 0.4, "first-layer relief")
+    _close(CORNER_MITER_CLEARANCE, 0.3, "corner miter clearance")
+    _close(CORNER_TENON_CLEARANCE, 0.25, "corner mortise clearance")
+    _close(CORNER_TENON_DEPTH, 2.5, "corner tenon depth")
+    _close(CORNER_TENON_HEIGHT, 5.0, "corner tenon height")
+    _close(CORNER_RIB_WIDTH, 14.0, "corner core width")
     _close(ANTI_LIP_DEPTH_CLEARANCE, 0.25, "upper-key depth clearance")
     _close(
         ANTI_LIP_GROOVE_HEIGHT - ANTI_LIP_KEY_HEIGHT,
@@ -191,6 +207,17 @@ def main():
 
     rail_summary = {}
     rail_details = {}
+    expected_notation_rotations = {
+        "south": 0.0,
+        "north": 180.0,
+        "west": 180.0,
+        "east": 0.0,
+    }
+    if NOTATION_ROTATION_BY_SIDE != expected_notation_rotations:
+        raise AssertionError(
+            "Notation rotations must face the east ranks toward White and "
+            "the west ranks toward Black"
+        )
     for name in RAIL_SPECS:
         details = make_rail_details(name)
         rail_details[name] = details
@@ -205,6 +232,11 @@ def main():
             raise AssertionError(f"Rail {name} is not monolithic")
         if len(inlays.solids()) != 4:
             raise AssertionError(f"Rail {name} does not contain four glyphs")
+        _close(
+            details["notation_rotation_deg"],
+            expected_notation_rotations[details["spec"].side],
+            f"rail {name} notation rotation",
+        )
         if _sloped_face_count(body) < 8:
             raise AssertionError(f"Rail {name} is missing fit chamfer faces")
         if _radius_face_count(body, PERIMETER_TOP_EDGE_FILLET_RADIUS) != 2:
@@ -217,6 +249,7 @@ def main():
         rail_summary[name] = {
             "bbox": [bounds.size.X, bounds.size.Y, bounds.size.Z],
             "glyphs": list(details["spec"].symbols),
+            "notation_rotation_deg": details["notation_rotation_deg"],
         }
 
     bottom_rail = rail_details["bottom_ad"]["body"]
@@ -241,19 +274,59 @@ def main():
         raise AssertionError("Corner cap does not have two exposed top-edge fillets")
     if _sloped_face_count(corner) < 6:
         raise AssertionError("Corner cap is missing fit chamfer faces")
-    sw_corner = corner.moved(Location((-250.0, -250.0, 0.0)))
+    corner_pairs = {
+        "sw": ("bottom_ad", "left_14"),
+        "se": ("right_14", "bottom_eh"),
+        "ne": ("top_eh", "right_58"),
+        "nw": ("left_58", "top_ad"),
+    }
+    for role, (locking_name, mating_name) in corner_pairs.items():
+        locking_rail = rail_details[locking_name]["body"]
+        mating_rail = rail_details[mating_name]["body"]
+        placed_corner = corner.moved(_corner_placements()[role])
+        _close(
+            _intersection_volume(locking_rail, mating_rail),
+            0.0,
+            f"{role} rail/rail interference",
+            1e-3,
+        )
+        _close(
+            locking_rail.distance_to(mating_rail),
+            0.0,
+            f"{role} rail/rail contact",
+            1e-3,
+        )
+        for rail_name, rail in (
+            (locking_name, locking_rail),
+            (mating_name, mating_rail),
+        ):
+            _close(
+                _intersection_volume(placed_corner, rail),
+                0.0,
+                f"{role} corner/{rail_name} interference",
+                1e-3,
+            )
+
+    tenon_probe = _polygon_prism(
+        _corner_tenon_profile_points(),
+        CORNER_TENON_HEIGHT,
+        -UNDERSIDE_DEPTH,
+    )
+    mortised_core = _corner_core_local("y")
     _close(
-        _intersection_volume(sw_corner, rail_details["bottom_ad"]["body"]),
+        _intersection_volume(tenon_probe, mortised_core),
         0.0,
-        "southwest corner/bottom rail interference",
+        "corner tenon/mortise interference",
         1e-3,
     )
     _close(
-        _intersection_volume(sw_corner, rail_details["left_14"]["body"]),
-        0.0,
-        "southwest corner/left rail interference",
+        tenon_probe.distance_to(mortised_core),
+        CORNER_TENON_CLEARANCE / sqrt(2.0),
+        "corner tenon/mortise diagonal clearance",
         1e-3,
     )
+
+    sw_corner = corner.moved(_corner_placements()["sw"])
 
     # Representative southwest M2 corner lock: the top-loaded nut fits its
     # rail-rib pocket and the cross-screw path is clear through cap and rib.
@@ -267,7 +340,7 @@ def main():
         "y",
         (
             lock_rib_center_x,
-            -250.0 + M2_NUT_INWARD_OFFSET,
+            -250.0 + CORNER_LOCK_NUT_Y,
             CORNER_LOCK_Z,
         ),
     )
@@ -292,7 +365,7 @@ def main():
     )
     m2_screw_seat = -PERIMETER_WIDTH / 2.0 + M2_HEAD_RECESS_DEPTH
     m2_screw_tip = m2_screw_seat + M2_SCREW_LENGTH
-    m2_nut_far_face = M2_NUT_INWARD_OFFSET + M2_NUT_POCKET_THICKNESS / 2.0
+    m2_nut_far_face = CORNER_LOCK_NUT_Y + M2_NUT_POCKET_THICKNESS / 2.0
     if not m2_screw_tip > m2_nut_far_face:
         raise AssertionError("M2 x 12 screw does not pass through the captured nut")
 
@@ -342,6 +415,9 @@ def main():
             "first_layer_relief_mm": ELEPHANT_FOOT_RELIEF,
             "upper_keys_per_internal_edge": len(ANTI_LIP_KEY_POSITIONS),
             "upper_key_depth_clearance_mm": ANTI_LIP_DEPTH_CLEARANCE,
+            "corner_miter_clearance_mm": CORNER_MITER_CLEARANCE,
+            "corner_tenon_depth_mm": CORNER_TENON_DEPTH,
+            "corner_mortise_nominal_clearance_mm": CORNER_TENON_CLEARANCE,
         },
         "join_clearance_mm": JOIN_CLEARANCE,
         "quarters": quarter_summary,

@@ -231,9 +231,9 @@
   <section class="page">
     <div class="kicker">Installation and assembly manual</div>
     <h1>60 mm Modular Chessboard</h1>
-    <p class="subtitle">Eight-panel, full-size board for the Bambu Lab X2D, with raised perimeter, contrasting algebraic notation, concealed seam registration, and screw-retained corner caps.</p>
+    <p class="subtitle">Eight-panel, full-size board for the Bambu Lab X2D, with raised perimeter, contrasting algebraic notation, concealed seam registration, and 45-degree mortise-and-tenon corner joints under screw-retained caps.</p>
 
-    <img class="hero" src="../snapshots/eight_panel_assembly_iso_20260807T212352Z.png" alt="Completed eight-panel chessboard assembly">
+    <img class="hero" src="../snapshots/notation_orientation_assembly_iso_20260809T174120Z.png" alt="Completed eight-panel chessboard assembly with player-facing rank numerals">
 
     <div class="specs">
       <div class="spec"><b>60 mm</b><span>square size</span></div>
@@ -245,7 +245,7 @@
     <div class="note"><b>Read before assembly.</b> Several nuts become inaccessible after adjoining parts are installed. Follow the order in this manual and complete every “load nut first” step before closing a seam or adding a corner cap.</div>
 
     <p class="small muted">Designed for PLA Matte. Hardware: M3×12 and M2×12 screws with standard hex nuts. No heat-set inserts are required.</p>
-    <div class="footer"><span>FIDE 60 mm Modular Chessboard • Rev. 5 • 2026-08-07</span><span class="page-no">1 / 7</span></div>
+    <div class="footer"><span>FIDE 60 mm Modular Chessboard • Rev. 7 • 2026-08-09</span><span class="page-no">1 / 7</span></div>
     <div class="cover-band"></div>
   </section>
 
@@ -402,16 +402,16 @@
         </table>
         <div class="card blue" style="margin-top:0.13in">
           <h3>Notation check</h3>
-          <p class="small">Letters and numbers should be upright when viewed from their nearby player position. Adjacent rail segments meet under a separate corner cap.</p>
+          <p class="small">Letters face their adjacent player. Rank numerals face the player for whom that rail is on the right: right/east reads upright from White; left/west reads upright from Black. The two number sets are 180° opposed.</p>
         </div>
       </div>
     </div>
 
     <ol class="steps compact">
-      <li>With the board still face-down, place each rail beside its matching outer panel edge.</li>
-      <li>Align the rail’s long tongue with the outer panel groove or grooves. Start at one end and slide the rail straight into place; keep the screw passages aligned.</li>
-      <li>Install two M3×12 screws from the underside of each rail into the previously loaded M3 nuts. Start both screws before tightening.</li>
-      <li>Repeat for all eight rails. Leave the four corner caps off until the M2 lock nuts are loaded in the next stage.</li>
+      <li><b>Install the mortise-side rails first:</b> left_14, bottom_eh, right_58, and top_ad. Push each long tongue straight inward into the panel groove, then fasten it with two M3×12 screws.</li>
+      <li>Load one M2 nut into each locking rail before installation: bottom_ad, right_14, top_eh, and left_58.</li>
+      <li>Hold each locking rail at its final longitudinal position. Push it straight inward so its long rail tongue enters the panel groove while its low corner tenon enters the perpendicular rail’s open mortise.</li>
+      <li>Install two M3×12 screws in each locking rail. Confirm both 45-degree corner faces seat evenly, then leave the caps off for the next stage.</li>
     </ol>
 
     <img class="diagram rail" src="rail_attachment_action.svg" alt="Illustrated perimeter rail tongue and M3 captured-nut fastening action">
@@ -419,11 +419,11 @@
     <div class="grid-2" style="margin-top:0.1in">
       <div class="card green">
         <h3>Correct fit</h3>
-        <p class="small">The rail tongue seats fully, the 20 mm border is continuous, and the perimeter top remains 10 mm above the playing surface.</p>
+        <p class="small">The rail tongue and corner tenon seat together, the two 45-degree flange faces do not overlap, and the perimeter top remains 10 mm above the playing surface.</p>
       </div>
       <div class="card red">
         <h3>If a rail stops early</h3>
-        <p class="small">Remove it, inspect the entrance and tongue, then trim only obvious brim or stringing. Do not draw a misaligned rail home with the screws.</p>
+        <p class="small">Remove it and inspect the panel groove, tenon, and mortise for brim or stringing. Push the rail straight inward; do not slide it toward the corner or draw it home with screws.</p>
       </div>
     </div>
 
@@ -433,13 +433,13 @@
 
   <section class="page">
     <div class="kicker">Stage 3</div>
-    <h2>Lock the four corner caps</h2>
+    <h2>Seat the miter joints and lock the caps</h2>
 
-    <img class="diagram" src="corner_lock_action.svg" alt="Illustrated M2 nut loading, corner-cap insertion, and cross-screw locking action">
+    <img class="diagram" src="corner_lock_action.svg" alt="Illustrated 45-degree mortise-and-tenon engagement, M2 nut loading, corner-cap insertion, and cross-screw locking action">
 
     <h3>Load one M2 nut at each corner</h3>
     <table>
-      <thead><tr><th>Corner</th><th>Rail rib that receives the nut</th><th>Cap screw direction</th></tr></thead>
+      <thead><tr><th>Corner</th><th>Locking core that receives the nut</th><th>Cap screw direction</th></tr></thead>
       <tbody>
         <tr><td>Southwest</td><td class="file">bottom_ad</td><td>From the nearby outside face</td></tr>
         <tr><td>Southeast</td><td class="file">right_14</td><td>From the nearby outside face</td></tr>
@@ -449,15 +449,16 @@
     </table>
 
     <ol class="steps compact" style="margin-top:0.12in">
-      <li>Confirm the M2 nut lies flat in the hex pocket and its threaded hole aligns with the horizontal passage through the rail rib.</li>
-      <li>Rotate the identical corner cap so its recessed cross-hole faces the selected rib and is accessible from the nearby outside edge.</li>
-      <li>Slide the cap down over both ribs. The shallow slot lead-ins help both ribs enter together; keep the cap level.</li>
-      <li>Insert one M2×12 screw through the cap wall and rail rib, then thread it into the captured nut.</li>
+      <li>Confirm the locking rail’s tenon is fully inside the perpendicular rail’s mortise and the two 45-degree core faces are evenly separated. The underside flange faces must not overlap.</li>
+      <li>Confirm the M2 nut lies flat in the hex pocket and its threaded hole aligns with the horizontal passage through the locking core.</li>
+      <li>Rotate the identical corner cap so its recessed cross-hole faces the selected core and is accessible from the nearby outside edge.</li>
+      <li>Slide the cap down over both cores. The shallow slot lead-ins help both enter together; keep the cap level.</li>
+      <li>Insert one M2×12 screw through the cap wall and locking core, then thread it into the captured nut.</li>
       <li>Tighten only until the screw head sits in the 4.5 mm diameter × 2.2 mm deep recess and the cap cannot lift.</li>
       <li>Repeat at all four corners.</li>
     </ol>
 
-    <div class="note"><b>How the lock works:</b> the M2 nut is captured against rotation in the rail rib. After the cap is installed, the cap roof also prevents the nut from escaping upward. The cross-screw positively prevents the cap from lifting off.</div>
+    <div class="note"><b>How the lock works:</b> the low mortise-and-tenon resists relative corner movement, the 45-degree faces remove the former flange collision, and the cap captures both cores. The cross-screw positively prevents the cap from lifting off.</div>
     <div class="warning"><b>Do not substitute a longer screw without checking.</b> M2×12 is the validated length. A longer screw may bottom out or damage the printed pocket.</div>
     <div class="footer"><span>Stage 3 • Positive corner retention</span><span class="page-no">6 / 7</span></div>
   </section>
@@ -466,7 +467,7 @@
     <div class="kicker">Stage 4</div>
     <h2>Final setup, inspection, and care</h2>
 
-    <img class="photo medium" src="../snapshots/eight_panel_assembly_top_20260807T212352Z.png" alt="Top view of complete eight-panel chessboard">
+    <img class="photo medium" src="../snapshots/notation_orientation_assembly_top_20260809T174120Z.png" alt="Top view showing opposing player-facing rank numeral orientations">
 
     <h3 style="margin-top:0.13in">Final checklist</h3>
     <div class="checklist">
@@ -476,7 +477,7 @@
       <div class="check">No screw head protrudes below a recessed seat</div>
       <div class="check">Playing-surface seams are flush</div>
       <div class="check">a1 is dark and notation is correctly oriented</div>
-      <div class="check">Rails are fully seated and border joints are even</div>
+      <div class="check">Tenons are seated and all 45-degree corner joints are even</div>
       <div class="check">No loose nuts rattle inside the assembly</div>
     </div>
 
@@ -498,7 +499,7 @@
       </div>
       <div class="card red">
         <h3>Cap screw will not start</h3>
-        <p class="small">Remove the cap and confirm it was rotated toward the selected locking rib. Reseat the M2 nut flat in its top-loaded hex pocket and try again without forcing the thread.</p>
+        <p class="small">Remove the cap and confirm it was rotated toward the selected locking core. Reseat the M2 nut flat in its top-loaded hex pocket and try again without forcing the thread.</p>
       </div>
       <div class="card green">
         <h3>Routine care</h3>

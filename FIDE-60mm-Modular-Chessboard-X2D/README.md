@@ -23,6 +23,10 @@ playing face, raised perimeter, and underside seam bridges.
 - Concealed upper registration keys at every internal panel edge keep the
   playing surfaces flush.
 - Fit-critical interfaces use 0.5 mm lead-ins and 0.4 mm first-layer relief.
+- Each perimeter corner now uses complementary 45-degree faces on both the
+  underside flanges and the hidden cap cores. An integral low tenon on the
+  locking rail enters an open mortise in its neighbor during normal inward
+  rail installation; the cap and M2 screw provide secondary retention.
 - Each corner cap has a hidden M2 x 12 positive-retention cross-screw.
 - Largest playing-panel envelope: 124 x 244 mm. The longest perimeter rail is
   247.05 x 35 mm. Both fit the X2D's 256 x 256 mm main-nozzle area, while the
@@ -31,6 +35,10 @@ playing face, raised perimeter, and underside seam bridges.
 - Recommended color intent: ivory/light, dark brown, black perimeter, ivory
   notation.
 - `a1` is dark. White sits at the `a-h` side whose letters read upright.
+- Rank numerals face the player for whom that rail is on the right: the
+  right/east numbers read upright from White's side, while the left/west
+  numbers read upright from Black's side. The two sets are rotated 180° from
+  each other.
 
 The user's 33 mm pawn bases require at least 66 mm for a two-by-two group, so
 the same piece set cannot satisfy FIDE's separate four-pawns-on-one-square
@@ -56,7 +64,8 @@ design, not FIDE endorsement or tournament certification.
   `validate_eight_panel.py` - parametric source, plate layout, fit, mesh, and
   exported-name checks for the eight-panel design.
 - `rail_*.step` - two-color perimeter rail assemblies containing the black
-  rail and ivory notation bodies.
+  rail and ivory notation bodies. These files contain the corrected 45-degree
+  mortise-and-tenon corner revision.
 - `meshes/` - individual structural and loose-inlay STL files.
 - `validate_eight_panel_export.py` - re-imports the eight-panel STEP and checks
   the separated playing panels and other print objects.
@@ -84,6 +93,9 @@ design, not FIDE endorsement or tournament certification.
 | Complete notation inlay set | `meshes/notation_insert_set.stl` | 1 set |
 
 The notation set contains two copies of `a-h` and two copies of `1-8`.
+
+The revised rail and corner-cap files are a matched set. Do not combine a new
+14 mm-wide corner core with a cap printed from the earlier 9 mm-slot revision.
 
 Each playing panel contains two files by four ranks and six M3 nut traps: two
 on each long edge and one on each short edge. Across all eight panels, those
@@ -191,7 +203,9 @@ same support/prime-tower space.
 - Print playing panels with the broad underside on the build plate.
 - Print rails and seam bridges with their recessed screw-head faces on the
   build plate.
-- The lower locating tongues and corner ribs begin on the build plane. The
+- The lower locating tongues, 45-degree flange faces, and corner tenons begin
+  on the build plane. The corner mortises are open to that plane, so the new
+  interlock does not introduce a suspended pocket or require support. The
   open-sided panel grooves have flat ceilings around Z = 2.9 mm and may need
   painted normal/snug support depending on the selected PLA and support
   material. The eight-panel layout reserves prime-tower space for this case.
@@ -219,17 +233,25 @@ installing its perimeter rail.
    and 180 mm.
 6. Install four rotated bridges across the horizontal center seam at Y = 0,
    using X = -180, -60, 60, and 180 mm. Use two M3 x 12 screws per bridge.
-7. Slide each named rail tongue into the corresponding outer panel groove and
-   fasten it from below with two M3 x 12 screws.
-8. Drop one M2 nut into the open-top lock channel on each of these rail ribs:
+7. Install the four mortise-side rails first: `left_14`, `bottom_eh`,
+   `right_58`, and `top_ad`. Push each rail straight inward so its long tongue
+   seats in the outer panel groove, then fasten it from below with two M3 x 12
+   screws.
+8. Drop one M2 nut into the open-top lock channel on each locking rail:
    `bottom_ad`, `right_14`, `top_eh`, and `left_58`. The nut settles into its
    horizontal hex pocket.
-9. Slide four corner caps downward over the vertical ribs where adjacent rails
-   meet. Rotate each identical cap so its recessed cross-hole faces the nearby
-   outside edge, then install one M2 x 12 screw through the cap and selected
-   rib into the captured nut.
-10. Apply felt/rubber pads to the eight rail and four corner recesses, then turn
-   the board over.
+9. Install each locking rail at its final longitudinal position. As its long
+   tongue enters the panel groove, its low corner tenon enters the open mortise
+   in the already-installed perpendicular rail. Push straight inward; do not
+   slide the rail toward the corner or pull it home with screws. Fasten each
+   locking rail with two M3 x 12 screws.
+10. Confirm the 45-degree underside flange faces and hidden corner-core faces
+    are evenly seated. There must be no overlapping lip at any corner.
+11. Slide four corner caps downward over the paired cores. Rotate each cap so
+    its recessed cross-hole faces the nearby outside edge, then install one M2
+    x 12 screw through the cap and selected core into the captured nut.
+12. Apply felt/rubber pads to the eight rail and four corner recesses, then turn
+    the board over.
 
 Do not overtighten the screws. Tighten only until the seams close and the board
 is flat; PLA can creep or crack under excessive fastener preload.
@@ -243,6 +265,10 @@ added vertical seam.
 - Opposite side: `rail_top_ad`, then `rail_top_eh`.
 - Left side from White's perspective: `rail_left_14`, then `rail_left_58`.
 - Right side: `rail_right_14`, then `rail_right_58`.
+
+The right-side rank numerals are upright from White's seat. The left-side
+rank numerals are upright from Black's seat, so the two vertical notation sets
+are 180° opposed.
 
 ## Regeneration and validation
 
@@ -261,9 +287,11 @@ python /path/to/cad/scripts/snapshot --job eight_panel_snapshot_job.json
 The current generated assembly was checked at 520 x 520 x 27.6 mm, with a
 480 x 480 mm playing area, 60 mm square measurements in X and Y, a 10 mm
 perimeter rise, zero reported flush-alignment deltas at representative panel,
-rail, and bridge interfaces, sixteen correctly positioned seam bridges, eight
-closed playing-panel solids, no non-manifold playing-panel mesh edges, a clear
-M2 corner-lock screw path, and filename-matched panel STEP product labels.
+rail, and bridge interfaces, zero positive-volume intersection at all four
+rail corners, 0.25 mm nominal mortise clearance, sixteen correctly positioned
+seam bridges, eight closed playing-panel solids, no non-manifold playing-panel
+or rail mesh edges, a clear M2 corner-lock screw path, and filename-matched
+panel STEP product labels.
 
 References:
 

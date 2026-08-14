@@ -85,6 +85,7 @@ BRACKET_Y_CENTERS = (-101.0, 101.0)
 BRACKET_THICKNESS = 12.0
 BRACKET_CHORD = 25.4
 BRACKET_WEB = 10.0
+BRACKET_WEB_CELLS = ((0.18, 0.43), (0.43, 0.68), (0.68, 0.88))
 BRACKET_TOP_Z = -SHELF_THICKNESS
 BRACKET_DROP = 246.0
 BRACKET_BOTTOM_Z = BRACKET_TOP_Z - BRACKET_DROP
@@ -327,41 +328,106 @@ def make_shelf(side):
     return shelf
 
 
-def make_bracket(side, y_center):
-    """One right-triangle bracket with 25.4 mm outer chords and truss webs."""
+def make_bracket_frame_members(side, y_center):
+    """Return the top, printer-side, and diagonal perimeter members."""
     root = shelf_root_x(side)
     outer = shelf_outer_x(side)
     x_min, x_max = sorted((root, outer))
     top = BRACKET_TOP_Z
     bottom = BRACKET_BOTTOM_Z
 
-    parts = [
-        _box_at(x_min, x_max, y_center - BRACKET_THICKNESS / 2.0, y_center + BRACKET_THICKNESS / 2.0, top - BRACKET_CHORD, top),
-        _box_at(
-            min(root, root + side * BRACKET_CHORD),
-            max(root, root + side * BRACKET_CHORD),
-            y_center - BRACKET_THICKNESS / 2.0,
-            y_center + BRACKET_THICKNESS / 2.0,
-            bottom,
-            top,
-        ),
-    ]
-    diagonal_start = (root + side * BRACKET_CHORD / 2.0, bottom + BRACKET_CHORD / 2.0)
-    diagonal_end = (outer - side * BRACKET_CHORD / 2.0, top - BRACKET_CHORD / 2.0)
-    parts.append(
-        _member_xz(*diagonal_start, *diagonal_end, BRACKET_CHORD, y_center, BRACKET_THICKNESS)
+    top_chord = _box_at(
+        x_min,
+        x_max,
+        y_center - BRACKET_THICKNESS / 2.0,
+        y_center + BRACKET_THICKNESS / 2.0,
+        top - BRACKET_CHORD,
+        top,
     )
+    printer_chord = _box_at(
+        min(root, root + side * BRACKET_CHORD),
+        max(root, root + side * BRACKET_CHORD),
+        y_center - BRACKET_THICKNESS / 2.0,
+        y_center + BRACKET_THICKNESS / 2.0,
+        bottom,
+        top,
+    )
+    diagonal_start = (
+        root + side * BRACKET_CHORD / 2.0,
+        bottom + BRACKET_CHORD / 2.0,
+    )
+    diagonal_end = (
+        outer - side * BRACKET_CHORD / 2.0,
+        top - BRACKET_CHORD / 2.0,
+    )
+    diagonal_chord = _member_xz(
+        *diagonal_start,
+        *diagonal_end,
+        BRACKET_CHORD,
+        y_center,
+        BRACKET_THICKNESS,
+    )
+    return top_chord, printer_chord, diagonal_chord
 
-    def point(fraction, on_top):
-        x = root + side * SHELF_SPAN * fraction
-        if on_top:
-            return x, top - BRACKET_CHORD
-        return x, bottom + BRACKET_DROP * fraction + BRACKET_CHORD * 0.55
 
-    # Two crossed web pairs create four visible triangular cells.
-    for a, b in ((0.18, 0.43), (0.43, 0.68), (0.68, 0.88)):
-        parts.append(_member_xz(*point(a, True), *point(b, False), BRACKET_WEB, y_center, BRACKET_THICKNESS))
-        parts.append(_member_xz(*point(a, False), *point(b, True), BRACKET_WEB, y_center, BRACKET_THICKNESS))
+def bracket_web_point(side, fraction, on_top):
+    """Locate a web endpoint on the centerline of its perimeter chord."""
+    root = shelf_root_x(side)
+    outer = shelf_outer_x(side)
+    x = root + side * SHELF_SPAN * fraction
+    if on_top:
+        return x, BRACKET_TOP_Z - BRACKET_CHORD / 2.0
+
+    diagonal_start = (
+        root + side * BRACKET_CHORD / 2.0,
+        BRACKET_BOTTOM_Z + BRACKET_CHORD / 2.0,
+    )
+    diagonal_end = (
+        outer - side * BRACKET_CHORD / 2.0,
+        BRACKET_TOP_Z - BRACKET_CHORD / 2.0,
+    )
+    diagonal_fraction = (x - diagonal_start[0]) / (
+        diagonal_end[0] - diagonal_start[0]
+    )
+    z = diagonal_start[1] + diagonal_fraction * (
+        diagonal_end[1] - diagonal_start[1]
+    )
+    return x, z
+
+
+def make_bracket_web_members(side, y_center):
+    """Return six truss webs with deliberate centerline frame engagement."""
+    parts = []
+    for a, b in BRACKET_WEB_CELLS:
+        parts.append(
+            _member_xz(
+                *bracket_web_point(side, a, True),
+                *bracket_web_point(side, b, False),
+                BRACKET_WEB,
+                y_center,
+                BRACKET_THICKNESS,
+            )
+        )
+        parts.append(
+            _member_xz(
+                *bracket_web_point(side, a, False),
+                *bracket_web_point(side, b, True),
+                BRACKET_WEB,
+                y_center,
+                BRACKET_THICKNESS,
+            )
+        )
+    return tuple(parts)
+
+
+def make_bracket(side, y_center):
+    """One right-triangle bracket with 25.4 mm outer chords and truss webs."""
+    root = shelf_root_x(side)
+    top = BRACKET_TOP_Z
+    parts = [
+        *make_bracket_frame_members(side, y_center),
+        *make_bracket_web_members(side, y_center),
+    ]
 
     bracket = _fuse_all(parts)
     cuts = []

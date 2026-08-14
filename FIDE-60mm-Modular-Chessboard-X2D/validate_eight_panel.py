@@ -242,6 +242,42 @@ def main():
             1e-3,
         )
 
+    corner_pairs = {
+        "sw": ("bottom_ad", "left_14"),
+        "se": ("right_14", "bottom_eh"),
+        "ne": ("top_eh", "right_58"),
+        "nw": ("left_58", "top_ad"),
+    }
+    corner = make_corner_cap()
+    for role, (locking_name, mating_name) in corner_pairs.items():
+        locking_rail = rail_details[locking_name]["body"]
+        mating_rail = rail_details[mating_name]["body"]
+        placed_corner = corner.moved(_corner_placements()[role])
+        _close(
+            _intersection_volume(locking_rail, mating_rail),
+            0.0,
+            f"{role} rail/rail interference",
+            1e-3,
+        )
+        _close(
+            locking_rail.distance_to(mating_rail),
+            0.0,
+            f"{role} rail/rail contact",
+            1e-3,
+        )
+        _close(
+            _intersection_volume(placed_corner, locking_rail),
+            0.0,
+            f"{role} cap/locking-rail interference",
+            1e-3,
+        )
+        _close(
+            _intersection_volume(placed_corner, mating_rail),
+            0.0,
+            f"{role} cap/mating-rail interference",
+            1e-3,
+        )
+
     assembly_children = []
     for name in EIGHT_PANEL_ROLES:
         location = panel_assembly_location(name)
@@ -253,7 +289,6 @@ def main():
         )
     for details in rail_details.values():
         assembly_children.extend((details["body"], details["notation_inlays"]))
-    corner = make_corner_cap()
     assembly_children.extend(
         corner.moved(location) for location in _corner_placements().values()
     )
@@ -333,6 +368,7 @@ def main():
             full_bounds.size.Z,
         ],
         "assembled_leaf_solids": len(full.solids()),
+        "corner_interface_checks": len(corner_pairs),
         "interface_checks": interface_checks,
         "panel_clear_width_mm": panel_clear_widths,
         "panel_local_x_mm": PANEL_LOCAL_X,
